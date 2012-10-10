@@ -98,18 +98,28 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
                 encounterActivity.getEncounterType());
     }
 
-    private static Set<MRSObservation> generateObservations(FormValueElement form, List<ObservationMapping> mappings) {
+    private Set<MRSObservation> generateObservations(FormValueElement form, List<ObservationMapping> observationMappings) {
         Set<MRSObservation> observations = new HashSet<MRSObservation>();
-        for (ObservationMapping obs : mappings) {
-            String elementName = obs.getElementName();
-            if (elementName != null) {
-                FormValueElement element = form.getElementByName(elementName);
-                if (element != null && element.getValue() != null && element.getValue().trim().length() > 0) {
-                    observations.addAll(addObservations(obs, element));
+        for (ObservationMapping obs : observationMappings) {
+            String conceptId = obs.getConceptId();
+            if (conceptId != null & conceptId.trim().length() > 0) {
+                List<FormValueElement> elements = form.getElementsByAttribute("concept_id", conceptId);
+                if (elements.size() > 0) {
+                    FormValueElement element = elements.get(0);
+                    if (element.getValue() != null && element.getValue().trim().length() > 0) {
+                        observations.addAll(addObservations(obs, element));
+                    }
+                }
+            } else {
+                String elementName = obs.getElementName();
+                if (elementName != null) {
+                    FormValueElement element = form.getElementByName(elementName);
+                    if (element != null && element.getValue() != null && element.getValue().trim().length() > 0) {
+                        observations.addAll(addObservations(obs, element));
+                    }
                 }
             }
         }
-
         return observations;
     }
 
