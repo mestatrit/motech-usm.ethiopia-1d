@@ -1,19 +1,19 @@
-package org.gates.ethiopia.adapters.impl;
+package org.motechproject.mapper.adapters.impl;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.gates.ethiopia.adapters.ActivityFormAdapter;
-import org.gates.ethiopia.adapters.mappings.MRSActivity;
-import org.gates.ethiopia.adapters.mappings.OpenMRSRegistrationActivity;
-import org.gates.ethiopia.constants.FormMappingConstants;
-import org.gates.ethiopia.util.OpenMRSCommcareUtil;
 import org.joda.time.DateTime;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.CommcareUser;
 import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.service.CommcareUserService;
+import org.motechproject.mapper.adapters.ActivityFormAdapter;
+import org.motechproject.mapper.adapters.mappings.MRSActivity;
+import org.motechproject.mapper.adapters.mappings.OpenMRSRegistrationActivity;
+import org.motechproject.mapper.constants.FormMappingConstants;
+import org.motechproject.mapper.util.OpenMRSCommcareUtil;
 import org.motechproject.mrs.exception.MRSException;
 import org.motechproject.mrs.model.Attribute;
 import org.motechproject.mrs.model.MRSFacility;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AllRegistrationsAdapter implements ActivityFormAdapter {
 
-    private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
+    private Logger logger = LoggerFactory.getLogger("commcare-openmrs-mapper");
 
     @Autowired
     private OpenMRSCommcareUtil openMrsUtil;

@@ -36,16 +36,6 @@
 
     <osgi:reference id="eventQueryServiceOsgi" cardinality="0..1" interface="org.motechproject.eventlogging.service.EventQueryService" />
 
-    <osgi:reference id="personAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSPatientAdapter" />
-
-    <osgi:reference id="encounterAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSEncounterAdapter" />
-
-    <osgi:reference id="userAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSUserAdapter" />
-
-    <osgi:reference id="observationAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSObservationAdapter" />
-
-    <osgi:reference id="facilityAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSFacilityAdapter" />
-
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">

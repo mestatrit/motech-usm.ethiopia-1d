@@ -250,6 +250,7 @@
         <module>modules/appointments/api-bundle</module>
         <module>modules/cmslite/api-bundle</module>
         <module>modules/commcare/api-bundle</module>
+        <module>modules/commcare-openmrs-mapping/commcare-to-openmrs-mapper</module>
         <module>modules/decisiontree/core-bundle</module>
         <module>modules/decisiontree/server-bundle</module>
         <module>modules/demo/demo-bundle</module>

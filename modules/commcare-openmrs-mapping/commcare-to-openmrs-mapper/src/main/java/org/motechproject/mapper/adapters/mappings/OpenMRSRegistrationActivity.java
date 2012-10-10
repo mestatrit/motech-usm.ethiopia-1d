@@ -1,4 +1,4 @@
-package org.gates.ethiopia.adapters.mappings;
+package org.motechproject.mapper.adapters.mappings;
 
 import java.util.Map;
 

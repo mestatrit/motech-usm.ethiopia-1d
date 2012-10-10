@@ -1,4 +1,4 @@
-package org.gates.ethiopia.adapters;
+package org.motechproject.mapper.adapters;
 
 import org.motechproject.commcare.domain.CommcareForm;
 

@@ -1,4 +1,4 @@
-package org.gates.ethiopia.adapters.mappings;
+package org.motechproject.mapper.adapters.mappings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
-import org.gates.ethiopia.constants.FormMappingConstants;
 import org.motechproject.dao.MotechJsonReader;
+import org.motechproject.mapper.constants.FormMappingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ import com.google.gson.reflect.TypeToken;
 @Component
 public final class MappingsReader {
 
-    private static Logger logger = LoggerFactory.getLogger("gates-ethiopia");
+    private static Logger logger = LoggerFactory.getLogger("commcare-openmrs-mapper");
 
     private static final String MAPPING_FILE_NAME = "openMrsMappings.json";
 

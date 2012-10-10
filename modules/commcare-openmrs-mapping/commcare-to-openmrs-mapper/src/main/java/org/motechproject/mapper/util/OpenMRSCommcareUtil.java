@@ -1,13 +1,13 @@
-package org.gates.ethiopia.util;
+package org.motechproject.mapper.util;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.gates.ethiopia.constants.FormMappingConstants;
 import org.motechproject.commcare.domain.CaseInfo;
 import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.service.CommcareCaseService;
+import org.motechproject.mapper.constants.FormMappingConstants;
 import org.motechproject.mrs.exception.MRSException;
 import org.motechproject.mrs.model.MRSEncounter;
 import org.motechproject.mrs.model.MRSEncounter.MRSEncounterBuilder;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OpenMRSCommcareUtil {
 
-    private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
+    private Logger logger = LoggerFactory.getLogger("commcare-openmrs-mapper");
 
     @Autowired
     private MRSEncounterAdapter mrsEncounterAdapter;

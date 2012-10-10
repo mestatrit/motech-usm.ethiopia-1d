@@ -1,13 +1,13 @@
-package org.gates.ethiopia.adapters.impl;
+package org.motechproject.mapper.adapters.impl;
 
 import java.util.List;
 
-import org.gates.ethiopia.adapters.FormAdapter;
-import org.gates.ethiopia.adapters.mappings.MRSActivity;
-import org.gates.ethiopia.adapters.mappings.MappingsReader;
-import org.gates.ethiopia.adapters.mappings.OpenMRSMapping;
-import org.gates.ethiopia.constants.FormMappingConstants;
 import org.motechproject.commcare.domain.CommcareForm;
+import org.motechproject.mapper.adapters.FormAdapter;
+import org.motechproject.mapper.adapters.mappings.MRSActivity;
+import org.motechproject.mapper.adapters.mappings.MappingsReader;
+import org.motechproject.mapper.adapters.mappings.OpenMRSMapping;
+import org.motechproject.mapper.constants.FormMappingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class AllFormsAdapter implements FormAdapter {
     @Autowired
     private AllRegistrationsAdapter registrationAdapter;
 
-    private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
+    private Logger logger = LoggerFactory.getLogger("commcare-openmrs-mapper");
 
     @Override
     public void adaptForm(CommcareForm form) {

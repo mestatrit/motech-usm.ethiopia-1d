@@ -1,8 +1,7 @@
-package org.gates.ethiopia.listeners;
+package org.motechproject.mapper.listeners;
 
 import java.util.List;
 import java.util.Map;
-import org.gates.ethiopia.adapters.impl.AllFormsAdapter;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.events.constants.EventDataKeys;
@@ -10,6 +9,7 @@ import org.motechproject.commcare.events.constants.EventSubjects;
 import org.motechproject.commcare.service.CommcareFormService;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
+import org.motechproject.mapper.adapters.impl.AllFormsAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class FormListener {
     @Autowired
     private AllFormsAdapter formsAdapter;
 
-    private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
+    private Logger logger = LoggerFactory.getLogger("commcare-openmrs-mapper");
 
     @MotechListener(subjects = EventSubjects.FORM_STUB_EVENT)
     public void handleFormEvent(MotechEvent event) {

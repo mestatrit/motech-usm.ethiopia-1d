@@ -1,7 +1,7 @@
-package org.gates.ethiopia.adapters;
+package org.motechproject.mapper.adapters;
 
-import org.gates.ethiopia.adapters.mappings.MRSActivity;
 import org.motechproject.commcare.domain.CommcareForm;
+import org.motechproject.mapper.adapters.mappings.MRSActivity;
 
 public interface ActivityFormAdapter {
 

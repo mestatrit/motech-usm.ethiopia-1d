@@ -1,4 +1,4 @@
-package org.gates.ethiopia.constants;
+package org.motechproject.mapper.constants;
 
 public final class FormMappingConstants {
 
