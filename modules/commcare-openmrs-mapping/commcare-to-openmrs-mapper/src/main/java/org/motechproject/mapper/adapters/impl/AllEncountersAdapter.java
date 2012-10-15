@@ -102,7 +102,7 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
         Set<MRSObservation> observations = new HashSet<MRSObservation>();
         for (ObservationMapping obs : observationMappings) {
             String conceptId = obs.getConceptId();
-            if (conceptId != null & conceptId.trim().length() > 0) {
+            if (conceptId != null && conceptId.trim().length() > 0) {
                 List<FormValueElement> elements = form.getElementsByAttribute("concept_id", conceptId);
                 if (elements.size() > 0) {
                     FormValueElement element = elements.get(0);
