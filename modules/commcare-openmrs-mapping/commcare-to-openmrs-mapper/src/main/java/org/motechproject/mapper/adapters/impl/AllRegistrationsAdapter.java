@@ -60,8 +60,11 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
             List<FormValueElement> subElements = (List<FormValueElement>) topFormElement.getSubElements().get(
                     idFieldName);
             motechId = subElements.get(0).getValue();
+            logger.debug("MoTeCH Id retrieved: " + motechId);
         } else if (idSchemeType.equals(FormMappingConstants.COMMCARE_ID_SCHEME)) {
             logger.error("Still need to implement Commcare ID scheme");
+        } else {
+            logger.debug("No ID scheme was specified");
         }
 
         MRSPatient patient = mrsPatientAdapter.getPatientByMotechId(motechId);
@@ -186,7 +189,10 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
                         logger.info("Retreiving user: " + userId);
                         CommcareUser user = userService.getCommcareUserById(userId);
                         if (user != null) {
-                            facilityName = user.getUserData().get(facilityUserFieldName);
+                            logger.info("User: " + user.getId() + " is being used");
+                            if (user.getUserData() != null) {
+                                facilityName = user.getUserData().get(facilityUserFieldName);
+                            }
                         } else {
                             logger.info("Could not find user: " + userId);
                         }
@@ -199,6 +205,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         if (facilityName == null) {
             logger.warn("No facility name provided, using " + FormMappingConstants.DEFAULT_FACILITY);
             facilityName = FormMappingConstants.DEFAULT_FACILITY;
+            facility = openMrsUtil.findFacility(facilityName);
         } else {
             facility = openMrsUtil.findFacility(facilityName);
         }
@@ -262,6 +269,23 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
             person = patient.getPerson();
             updatePatient(patient, person, firstName, lastName, dateOfBirth, gender, middleName, preferredName,
                     address, birthDateIsEstimated, age, isDead, deathDate);
+        } else {
+            logger.info("Unable to save patient due to missing information");
+            if (facility == null) {
+                logger.info("Reason: No facility provided");
+            }
+            if (firstName == null) {
+                logger.info("Reason: No first name provided");
+            }
+            if (lastName == null) {
+                logger.info("Reason: No last name provided");
+            }
+            if (dateOfBirth == null) {
+                logger.info("Reason: No date of birth provided");
+            }
+            if (motechId == null) {
+                logger.info("Reason: No MOTECH id provided");
+            }
         }
     }
 
