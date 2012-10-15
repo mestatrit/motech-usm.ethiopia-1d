@@ -20,7 +20,11 @@ public final class ConverterUtils {
 
     public static MRSPerson convertToMrsPerson(Person person) {
         MRSPerson converted = new MRSPerson();
-        converted.id(person.getUuid()).address(person.getPreferredAddress().getAddress1())
+        String address = null;
+        if (person.getPreferredAddress() != null) {
+            address = person.getPreferredAddress().getAddress1();
+        }
+        converted.id(person.getUuid()).address(address)
                 .birthDateEstimated(person.isBirthdateEstimated()).dateOfBirth(person.getBirthdate())
                 .dead(person.isDead()).deathDate(person.getDeathDate())
                 .firstName(person.getPreferredName().getGivenName())
