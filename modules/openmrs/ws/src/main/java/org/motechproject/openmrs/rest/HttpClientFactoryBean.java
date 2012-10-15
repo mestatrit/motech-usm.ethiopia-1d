@@ -4,6 +4,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.motechproject.server.config.SettingsFacade;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -14,10 +15,15 @@ public class HttpClientFactoryBean implements FactoryBean<HttpClient> {
     private String user;
     private String password;
     private HttpClient httpClient;
+    private SettingsFacade facade;
 
-    public HttpClientFactoryBean(String user, String password) {
-        this.user = user;
-        this.password = password;
+    public HttpClientFactoryBean(SettingsFacade facade) {
+        this.facade = facade;
+    }
+
+    public void init() {
+        this.user = facade.getProperty("openmrs.user");
+        this.password = facade.getProperty("openmrs.password");     
     }
 
     @Override

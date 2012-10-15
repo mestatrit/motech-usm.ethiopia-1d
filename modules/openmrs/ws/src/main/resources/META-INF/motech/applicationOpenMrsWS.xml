@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:annotation-config />
     <context:component-scan base-package="org.motechproject.openmrs" />
 
-    <bean id="openmrsWsSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType"
-          init-method="afterPropertiesSet">
+    <bean id="openmrsWsSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType" init-method="afterPropertiesSet">
         <property name="configFiles">
             <list>
                 <value>classpath:openmrs.properties</value>
                 <value>classpath:openmrs-urls.properties</value>
             </list>
         </property>
-        <property name="moduleName" value="openmrs-ws"/>
+        <property name="moduleName" value="openmrs-ws" />
     </bean>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -28,9 +25,8 @@
         <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_NEVER" />
     </bean>
 
-    <bean id="openMrshttpClient" class="org.motechproject.openmrs.rest.HttpClientFactoryBean">
-        <constructor-arg value="${openmrs.user}" />
-        <constructor-arg value="${openmrs.password}" />
+    <bean id="openMrshttpClient" depends-on="openmrsWsSettings" init-method="init" class="org.motechproject.openmrs.rest.HttpClientFactoryBean">
+        <constructor-arg ref="openmrsWsSettings" />
     </bean>
 
     <bean id="requestFactory" class="org.springframework.http.client.CommonsClientHttpRequestFactory">
@@ -46,5 +42,5 @@
         </property>
     </bean>
 
-    <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor"/>
+    <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
 </beans>
