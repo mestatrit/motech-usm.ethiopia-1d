@@ -1,8 +1,8 @@
-.bodywrap-up {
+.body-up {
     background: #ffffff url("../img/lightblue-bg.jpg") repeat-x 0 -40px;
 }
 
-.bodywrap-down {
+.body-down {
     background: #ffffff url("../img/lightblue-bg.jpg") repeat-x 0 0;
 }
 
@@ -276,7 +276,7 @@ select {
 .box-content {
     border-radius: 4px;
     border: 1px solid #D4E1F9;
-    padding:0 0 10px 0;
+    padding: 0;
     background: #dbedf7 url("../img/frame-bg.jpg") repeat-x 0 0;
     -webkit-box-shadow: 0 0 6px #bec9de;
        -moz-box-shadow: 0 0 6px #bec9de;
@@ -292,8 +292,17 @@ select {
 }
 
 footer {
-    border-top: 1px solid #0088cc;
-    background:#e4f1f9;
+    border-top: 1px solid #D4E1F9;
+    background: #e4f1f9;
+    position: fixed;
+    bottom: 0;
+    display: block;
+    width: 100%;
+    opacity: 0.8;
+}
+
+.input-lxlarge {
+    width: 430px;
 }
 
 /* -----flags ----- */
@@ -323,4 +332,56 @@ footer {
 }
 .flag-de {
     background-image: url("../img/de.png");
+}
+
+/* ----- splash ----- */
+.splash {
+    width: 345px;
+    min-height: 20px;
+    padding: 0;
+    margin: auto auto auto -173px;
+    left: 50%;
+    position: fixed;
+    z-index: 9999;
+    background: #dbedf7 url("../img/splash-bg.jpg") repeat-x 0 0;
+    border:1px #7bb5fc solid;
+    -webkit-border-radius: 4px;
+         -moz-border-radius: 4px;
+              border-radius: 4px;
+    -webkit-box-shadow: 0 1px 5px #89aedb;
+       -moz-box-shadow: 0 1px 5px #89aedb;
+            box-shadow: 0 1px 5px #89aedb;
+}
+
+.splash-loader {
+    float:left;
+    width: 345px;
+    height: 40px;
+    margin: auto;
+    padding: 0;
+    background:#cbe4f4;
+    text-align:center;
+}
+
+.splash-loader img {
+    margin:12px 0 0 -10px;
+}
+
+.splash-logo {
+    float:left;
+    width: 260px;
+    height: 80px;
+    margin: 10px 40px 10px 45px;
+    background: url("../img/motech-logo-splash.jpg") no-repeat 0 0;
+}
+
+.splash-msg {
+    float:left;
+    width: 345px;
+    min-height: 50px;
+    margin: 10px auto;
+    text-align: center;
+    color: #224477;
+    font-size: 13px;
+    line-height: 20px;
 }
