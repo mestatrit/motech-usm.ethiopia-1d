@@ -1,19 +1,22 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setLocale value="${pageLang}" />
+<fmt:setBundle basename="org.motechproject.resources.messages" var="bundle"/>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
     <title>MOTECH - Mobile Technology for Community Health</title>
 
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap-responsive.css">
     <link rel="stylesheet" type="text/css" href="resources/css/index.css" />
 
-    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="resources/lib/jquery/jquery-1.8.2.min.js" type="text/javascript">></script>
     <script src="resources/lib/jquery/jquery.form.js" type="text/javascript"></script>
     <script src="resources/lib/jquery/jquery-ui.min.js" type="text/javascript"></script>
     <script src="resources/lib/jquery/jquery.alerts.js" type="text/javascript"></script>
@@ -50,24 +53,24 @@
     </c:if>
 </head>
 
-<body ng-controller="MasterCtrl">
+<body ng-controller="MasterCtrl"  ng-class="showDashboardLogo.backgroudUpDown()">
 
 <div class="bodywrap">
     <div class="header">
         <div class="container">
-            <div class="dashboard-logo"></div>
-            <div class="header-title">{{msg('motechTitle')}}</div>
+            <div class="dashboard-logo" ng-show="showDashboardLogo.showDashboard"></div>
+            <div class="header-title" ng-show="showDashboardLogo.showDashboard"><fmt:message key="motechTitle" bundle="${bundle}"/></div>
             <div class="top-menu">
                 <div class="navbar">
                     <ul class="nav">
-                        <li><strong>Server up time: </strong>${uptime}</li>
+                        <li><strong><fmt:message key="server.time" bundle="${bundle}"/>: </strong>${uptime}</li>
                         <li>|</li>
-                        <li><a href=""><strong>{{msg('login')}} </strong></a></li>
+                        <li><a href=""><strong><fmt:message key="login" bundle="${bundle}"/> </strong></a></li>
                         <li>|</li>
                             <li class="dropdown" id="localization">
                                 <a class="menu-flag dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="flag flag-{{userLang.key}}" title="{{userLang.key}}" alt="{{userLang.key}}"></i>
-                                    {{userLang.value}}
+                                    <i class="flag flag-${pageLang.language}" title="${pageLang.language}" alt="${pageLang.language}"></i>
+                                    <span style="text-transform:capitalize;">${pageLang.getDisplayLanguage(pageLang)}</span>
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
@@ -86,22 +89,22 @@
     <div class="header-nav navbar">
         <div class="navbar-inner navbar-inner-bg">
 
-            <a id="brand" class="brand" style="display:none;" href="#">MOTECH</a>
+            <a id="brand" class="brand" ng-hide="showDashboardLogo.showDashboard" href="#">MOTECH</a>
             <ul class="nav" role="navigation">
-                <li class="divider-vertical"  style="display:none;" ></li>
-                <li class="current"><a  role="menu"  href=".">{{msg('home')}}</a></li>
+                <li class="divider-vertical" ng-hide="showDashboardLogo.showDashboard" ></li>
+                <li class="current"><a  role="menu"  href="."><fmt:message key="home" bundle="${bundle}"/></a></li>
                 <li><a>|</a></li>
-                <li><a role="menu">{{msg('motech')}} {{msg('project')}}</a></li>
+                <li><a role="menu"><fmt:message key="motech" bundle="${bundle}"/> <fmt:message key="project" bundle="${bundle}"/></a></li>
                 <li><a>|</a></li>
-                <li><a role="menu">{{msg('community')}}</a></li>
-                <a id="minimize" ng-click="minimizeHeader()">
-                    <img src="resources/img/trans.gif" title="{{msg('minimizeLogo')}}"
-                        class="minimize action-minimize-up"/>
-                </a>
+                <li><a role="menu"><fmt:message key="community" bundle="${bundle}"/></a></li>
             </ul>
+            <a id="minimize" ng-click="minimizeHeader()">
+                                <img src="resources/img/trans.gif" title="{{msg(showDashboardLogo.changeTitle())}}" alt="{{msg(showDashboardLogo.changeTitle())}}"
+                                    ng-class="showDashboardLogo.changeClass()"/>
+            </a>
         </div>
     </div>
-    </div>
+
     <div class="clearfix"></div>
 
     <div id="content" class="container-fluid">
@@ -110,15 +113,15 @@
             <div id="side-nav" class="span2">
                 <ul class="nav nav-tabs nav-stacked">
                     <c:forEach var="module" items="${individuals}">
-                        <li class="nav-header">{{msg('${module.moduleName}')}}</li>
+                        <li class="nav-header"><fmt:message key="${module.moduleName}" bundle="${bundle}"/></li>
                         <c:forEach var="entry" items="${module.subMenu}">
-                            <li ng-class="active('?moduleName=${module.moduleName}${entry.value}')"><a href="?moduleName=${module.moduleName}${entry.value}">{{msg('${entry.key}')}}</a></li>
+                            <li ng-class="active('?moduleName=${module.moduleName}${entry.value}')"><a href="?moduleName=${module.moduleName}${entry.value}"><fmt:message key="${entry.key}" bundle="${bundle}"/></a></li>
                         </c:forEach>
                         <li class="divider"></li>
                     </c:forEach>
 
                     <c:if test="${not empty links}">
-                        <li class="nav-header">{{msg('modules')}}</li>
+                        <li class="nav-header"><fmt:message key="modules" bundle="${bundle}"/></li>
                         <c:forEach var="module" items="${links}">
                             <li <c:if test="${module.moduleName == currentModule.moduleName}">class='active'</c:if>><a href="?moduleName=${module.moduleName}">${module.moduleName}</a></li>
                         </c:forEach>
@@ -129,7 +132,15 @@
             <div id="main-content" class="span10">
                 <c:if test="${! empty currentModule}">
                     <div>
-                        <div id="module-content">
+                        <div class="splash" ng-hide="ready">
+                            <div class="splash-logo"></div>
+                            <div class="clearfix"></div>
+                            <div class="splash-loader"><img src="resources/img/loader.gif" alt="loading" /></div>
+                            <div class="clearfix"></div>
+                            <div class="splash-msg"><fmt:message key="module.loading" bundle="${bundle}"/></div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="module-content" ng-show="ready">
                             <script type="text/javascript">
                                 loadModule('${currentModule.url}', ${currentModule.angularModulesStr});
                             </script>
@@ -143,6 +154,6 @@
 
 </div>
 
-<footer class="inside"><strong>{{msg('generatedAt')}}:</strong> <%= new java.util.Date() %></footer>
+<footer class="inside"><strong><fmt:message key="generatedAt" bundle="${bundle}"/>:</strong> <%= new java.util.Date() %></footer>
 </body>
 </html>
