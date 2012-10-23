@@ -4,6 +4,8 @@ import com.google.gson.reflect.TypeToken;
 import org.motechproject.dao.MotechJsonReader;
 import org.motechproject.eventlogging.domain.MappingsJson;
 import org.motechproject.server.config.SettingsFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -31,9 +33,13 @@ public class AllEventMappings {
         Type type = new TypeToken<List<MappingsJson>>() {
         }.getType();
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream(MAPPING_FILE_NAME);
+        InputStream is = settings.getRawConfig(MAPPING_FILE_NAME);
+        
+        Logger logger = LoggerFactory.getLogger("gates-ethiopia");
 
         List<MappingsJson> mappings = (List<MappingsJson>) motechJsonReader.readFromStream(is, type);
+        
+        logger.warn(" " + mappings.size());
 
         return mappings;
     }
