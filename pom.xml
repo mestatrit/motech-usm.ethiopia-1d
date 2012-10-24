@@ -221,7 +221,7 @@
         <module>modules/message-campaign/message-campaign</module>
         <module>modules/mobileforms/api</module>
         <module>modules/mrs/api</module>
-        <module>modules/openmrs/api</module>
+        <!--<module>modules/openmrs/api</module> -->
         <module>modules/openmrs/atomfeed</module>
         <module>modules/openmrs/omod</module>
         <module>modules/openmrs/ws</module>
