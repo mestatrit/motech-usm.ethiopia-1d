@@ -1,38 +1,72 @@
 package org.motechproject.mapper;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+import org.apache.commons.io.IOUtils;
 import org.motechproject.commcare.domain.CaseInfo;
 import org.motechproject.commcare.domain.CaseTask;
 import org.motechproject.commcare.domain.CreateTask;
 import org.motechproject.commcare.domain.UpdateTask;
 import org.motechproject.commcare.service.CommcareCaseService;
+import org.motechproject.dao.MotechJsonReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.reflect.TypeToken;
 
 @Component
 public class CommcarePregnancyModule {
 
+    private static final String MAPPING_FILE_NAME = "commcare-mappings.json";
+
+    private static Logger logger = LoggerFactory.getLogger("openmrs-commcare-mapper");
+
+    private static final MotechJsonReader READER = new MotechJsonReader();
+
     private final CommcareCaseService caseService;
-    private final List<CaseElementMapping> mappings;
+    private final List<CommcareMapping> mappings;
 
     @Autowired
     public CommcarePregnancyModule(CommcareCaseService caseService) {
         this.caseService = caseService;
 
-        mappings = new ArrayList<>();
+        mappings = getAllMappings();
 
-        CaseElementMapping mapping = new CaseElementMapping("Emergency Referral", "emrg_referral");
-        mapping.addFieldValue("true", "yes");
-        mapping.addFieldValue("false", "no");
-        mappings.add(mapping);
+        logger.warn("# of mappings: " + mappings.size());
 
-        mapping = new CaseElementMapping("Estimated Date of Conception", "edd");
-        mappings.add(mapping);
+        //        CaseElementMapping mapping = new CaseElementMapping("Emergency Referral", "emrg_referral");
+        //        mapping.addFieldValue("true", "yes");
+        //        mapping.addFieldValue("false", "no");
+        //        mappings.add(mapping);
+        //
+        //        mapping = new CaseElementMapping("Estimated Date of Conception", "edd");
+        //        mappings.add(mapping);
+    }
+
+    public static List<CommcareMapping> getAllMappings() {
+        InputStream is = CommcarePregnancyModule.class.getClassLoader().getResourceAsStream(MAPPING_FILE_NAME);
+
+        StringWriter writer = new StringWriter();
+        try {
+            IOUtils.copy(is, writer, "UTF-8");
+        } catch (IOException e) {
+            logger.error("Error retreiving all mappings: " + e.getMessage());
+        }
+
+        return readJson(writer.toString());
+    }
+
+    public static List<CommcareMapping> readJson(String json) {
+        Type type = new TypeToken<List<CommcareMapping>>() { } .getType();
+        return (List<CommcareMapping>) READER.readFromString(json, type);
     }
 
     public class CreateCaseBuilder {
@@ -48,12 +82,12 @@ public class CommcarePregnancyModule {
         }
 
         public void addUpdateElement(String conceptName, String value) {
-            for (CaseElementMapping mapping : mappings) {
-                if (mapping.handles(conceptName)) {
-                    UpdateTask update = caseTask.getUpdateTask();
-                    addCaseElements(update, mapping.getCaseElement(), mapping.translateValue(value));
-                    break;
-                }
+            for (CommcareMapping mapping : mappings) {
+//                if (mapping.handles(conceptName)) {
+//                    UpdateTask update = caseTask.getUpdateTask();
+//                    addCaseElements(update, mapping.getCaseElement(), mapping.translateValue(value));
+//                    break;
+//                }
             }
         }
 
@@ -68,19 +102,19 @@ public class CommcarePregnancyModule {
         }
     }
 
-    public CaseElementMapping getCaseMapping(String conceptName) {
-        CaseElementMapping match = null;
-        for (CaseElementMapping mapping : mappings) {
-            if (mapping.handles(conceptName)) {
-                match = mapping;
-                break;
-            }
-        }
+    public CommcareMapping getCaseMapping(String conceptName) {
+        CommcareMapping match = null;
+//        for (CommcareMapping mapping : mappings) {
+//            if (mapping.handles(conceptName)) {
+//                match = mapping;
+//                break;
+//            }
+//        }
 
         return match;
     }
 
-    public void updateCase(CaseElementMapping caseElementMapping, String value, String motechId) {
+    public void updateCase(CommcareMapping match, String value, String motechId) {
         List<CaseInfo> cases = caseService.getAllCasesByType("test_form");
         CaseInfo targetCase = null;
         for (CaseInfo ccCase : cases) {
@@ -92,7 +126,7 @@ public class CommcarePregnancyModule {
         }
 
         UpdateTask update = getUpdateTask(targetCase.getCaseName(), targetCase.getCaseType());
-        addCaseElements(update, caseElementMapping.getCaseElement(), caseElementMapping.translateValue(value));
+//        addCaseElements(update, match.getCaseElement(), match.translateValue(value));
 
         CaseTask task = createCaseTask(targetCase, update);
         caseService.uploadCase(task);

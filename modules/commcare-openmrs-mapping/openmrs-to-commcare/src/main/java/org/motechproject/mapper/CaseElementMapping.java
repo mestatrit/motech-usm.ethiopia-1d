@@ -8,6 +8,10 @@ public class CaseElementMapping {
     private String caseElementName;
     private HashMap<String, String> obsValuesToCaseValue;
 
+    public CaseElementMapping() {
+
+    }
+
     public CaseElementMapping(String conceptName, String caseElementName) {
         this.conceptName = conceptName;
         this.caseElementName = caseElementName;

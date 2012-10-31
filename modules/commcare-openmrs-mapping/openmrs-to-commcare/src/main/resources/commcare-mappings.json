@@ -1,27 +1,24 @@
-{
-  "matchOnEncounterType":"visit",
-  "mappings":[
-    {
-      "conceptName":"PATIENT REFERRED",
-      "caseElementName":"referral_given",
-      "translationMappings":{
-        "true": "yes",
-        "false": "no"
-      }
-    },
-    {
-      "conceptName":"EDUCATION/COUNSELING ORDERS",
-      "caseElementName":"counsel_type",
-      "translationMappings":{
-        "NUTRITION COUNSELING":"nutrition",
-        "BEDNET COUNSELING":"bednet",
-        "Counseling for expectant mother":{
-          "value":"birthplan",
-          "inferredElements":[
-            "birthplan"
-          ]
+[
+  {
+    "matchOnEncounterType": "visit",
+    "type": "create",
+    "mappings": [
+      {
+        "conceptName": "EDUCATION/COUNSELING ORDERS",
+        "caseElementName": "counsel_type",
+        "translationMappings": {
+          "NUTRITION COUNSELING": "nutrition",
+          "BEDNET COUNSELING": "bednet"
+        }
+      },
+      {
+        "conceptName": "PATIENT REFERRED",
+        "caseElementName": "referral_given",
+        "translationMappings": {
+          "true": "yes",
+          "false": "no"
         }
       }
-    }
-  ]
-}
+    ]
+  }
+]

@@ -35,7 +35,7 @@ public class ObservationChangeListener {
         MRSObservation<?> obs = obsAdapter.getObservationById(observationId);
 
         // do we care about this observation type
-        CaseElementMapping match = pregnancyApplication.getCaseMapping(obs.getConceptName());
+        CommcareMapping match = pregnancyApplication.getCaseMapping(obs.getConceptName());
         if (match == null) {
             return;
         }
