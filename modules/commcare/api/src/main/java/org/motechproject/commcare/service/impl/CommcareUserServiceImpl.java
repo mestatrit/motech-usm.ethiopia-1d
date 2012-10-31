@@ -50,4 +50,15 @@ public class CommcareUserServiceImpl implements CommcareUserService {
         }
         return null;
     }
+
+    @Override
+    public CommcareUser getCommcareUserByUserName(String username) {
+        List<CommcareUser> userList = getAllUsers();
+        for (CommcareUser user : userList) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
 }

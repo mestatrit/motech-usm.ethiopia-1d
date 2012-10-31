@@ -6,7 +6,7 @@ import java.util.Map;
 public class CommcareMapping {
 
     private String matchOnEncounterType;
-    private String type;
+    private String action;
     private Map<String, String> idScheme;
     private List<CaseElementMapping> mappings;
 
@@ -18,12 +18,12 @@ public class CommcareMapping {
         this.matchOnEncounterType = matchOnEncounterType;
     }
 
-    public String getType() {
-        return type;
+    public String getAction() {
+        return action;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public Map<String, String> getIdScheme() {

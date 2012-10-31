@@ -23,4 +23,6 @@ public interface CommcareUserService {
      * @return A CommcareUser object representing the information about the user from CommCareHQ, or null if that user did not exist on that domain.
      */
     CommcareUser getCommcareUserById(String id);
+    
+    CommcareUser getCommcareUserByUserName(String username);
 }

@@ -40,6 +40,10 @@ public class EncounterCreateListener {
         for (MRSObservation<?> obs : encounter.getObservations()) {
             builder.addUpdateElement(obs.getConceptName(), obs.getValue().toString());
         }
+        
+        String providerName = encounter.getProvider().getFullName();
+        
+        builder.setProviderName(providerName);
 
         pregnancyModule.createCase(builder.build());
     }

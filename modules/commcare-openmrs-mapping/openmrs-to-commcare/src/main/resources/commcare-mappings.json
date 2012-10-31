@@ -1,7 +1,26 @@
 [
   {
+    "matchOnEncounterType": "PregnancyRegistration",
+    "action": "create",
+    "mappings": [
+      {
+        "conceptName": "ESTIMATED DATE OF CONFINEMENT",
+        "caseElementName": "edd_calc",
+        "required": "true"
+      },
+      {
+        "conceptName": "contact phone number",
+        "caseElementName": "mobile_phone_number",
+        "translationMappings": {
+          "true": "yes",
+          "false": "no"
+        }
+      }
+    ]
+  },
+  {
     "matchOnEncounterType": "visit",
-    "type": "create",
+    "action": "create",
     "mappings": [
       {
         "conceptName": "EDUCATION/COUNSELING ORDERS",
