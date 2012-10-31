@@ -42,6 +42,7 @@ fi
 mkdir -p $BUILD_DIR
 
 ARTIFACT_DIR=$BUILD_DIR/artifacts
+DEPENDENCY_DIR=$BUILD_DIR/dependencies
 CONFIG_DIR=$BUILD_DIR/
 
 MOTECH_PACKAGENAME="motech_$MOTECH_VERSION.deb"
@@ -76,6 +77,13 @@ mkdir -p motech-base/usr/share/motech/.motech/rules
 cp -r $CONTENT_DIR/motech-base .
 mv $WARNAME ./motech-base/var/lib/motech/webapps/ROOT.war
 
+# handle changelogs
+perl -p -i -e "s/\\$\\{version\\}/$MOTECH_VERSION/g" ./motech-base/usr/share/doc/motech-base/changelog
+perl -p -i -e "s/\\$\\{version\\}/$MOTECH_VERSION/g" ./motech-base/usr/share/doc/motech-base/changelog.Debian
+
+gzip --best ./motech-base/usr/share/doc/motech-base/changelog
+gzip --best ./motech-base/usr/share/doc/motech-base/changelog.Debian
+
 # Update version
 perl -p -i -e "s/\\$\\{version\\}/$MOTECH_VERSION/g" ./motech-base/DEBIAN/control
 
@@ -85,6 +93,8 @@ cp -r $CONFIG_DIR ./motech-base/usr/share/motech/.motech
 mkdir -p ./motech-base/usr/share/motech/.motech/bundles
 # Include motech-admin
 cp -r $ARTIFACT_DIR/motech-admin-bundle*.jar ./motech-base/usr/share/motech/.motech/bundles
+# Include dependencies
+cp -r $DEPENDENCY_DIR/* ./motech-base/usr/share/motech/.motech/bundles
 
 # set up permissions
 find ./motech-base -type d | xargs chmod 755  # for directories
@@ -117,6 +127,14 @@ echo "====================="
 
 # copy files
 cp -r $CONTENT_DIR/motech .
+
+# handle changelogs
+perl -p -i -e "s/\\$\\{version\\}/$MOTECH_VERSION/g" ./motech/usr/share/doc/motech/changelog
+perl -p -i -e "s/\\$\\{version\\}/$MOTECH_VERSION/g" ./motech/usr/share/doc/motech/changelog.Debian
+
+gzip --best ./motech/usr/share/doc/motech/changelog
+gzip --best ./motech/usr/share/doc/motech/changelog.Debian
+
 # Update version
 perl -p -i -e "s/\\$\\{version\\}/$MOTECH_VERSION/g" ./motech/DEBIAN/control
 

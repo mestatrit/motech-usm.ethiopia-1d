@@ -3,14 +3,14 @@
     <parent>
         <groupId>org.motechproject</groupId>
         <artifactId>motech</artifactId>
-        <version>0.14-SNAPSHOT</version>
+        <version>0.15-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-scheduletracking-api</artifactId>
     <name>MOTECH Schedule Tracking API</name>
     <description>MOTECH Schedule Tracking API</description>
-    <version>0.14-SNAPSHOT</version>
+    <version>0.15-SNAPSHOT</version>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
     </properties>
@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
+            <artifactId>org.motechproject.com.google.code.gson</artifactId>
             <version>1.7.1</version>
         </dependency>
         <dependency>
@@ -42,9 +42,9 @@
             <version>20080701</version>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.4</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.io</artifactId>
+            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

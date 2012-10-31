@@ -3,12 +3,12 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.14-SNAPSHOT</version>
+        <version>0.15-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-ivr-voxeo</artifactId>
-    <version>0.14-SNAPSHOT</version>
+    <version>0.15-SNAPSHOT</version>
     <name>MOTECH IVR Voxeo</name>
     <description>Voxeo IVR Provider</description>
     <properties>
@@ -83,7 +83,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-core</artifactId>
+            <artifactId>org.motechproject.org.apache.activemq</artifactId>
             <version>5.4.2</version>
             <exclusions>
                 <exclusion>

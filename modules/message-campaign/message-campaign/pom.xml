@@ -4,14 +4,14 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.14-SNAPSHOT</version>
+        <version>0.15-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-message-campaign</artifactId>
     <name>MOTECH Message Campaign</name>
     <description>MOTECH Message Campaign</description>
-    <version>0.14-SNAPSHOT</version>
+    <version>0.15-SNAPSHOT</version>
     <properties>
         <modules.root.dir>${basedir}/../../..</modules.root.dir>
     </properties>
@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
+            <artifactId>org.motechproject.com.google.code.gson</artifactId>
             <version>1.7.1</version>
         </dependency>
         <dependency>
@@ -37,9 +37,9 @@
             <version>20080701</version>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.4</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.io</artifactId>
+            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

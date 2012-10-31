@@ -3,13 +3,13 @@
     <parent>
         <artifactId>motech</artifactId>
         <groupId>org.motechproject</groupId>
-        <version>0.14-SNAPSHOT</version>
+        <version>0.15-SNAPSHOT</version>
         <relativePath>../../../</relativePath>
     </parent>
     <groupId>org.motechproject</groupId>
     <artifactId>motech-pillreminder-api-bundle</artifactId>
     <name>MOTECH Pill Reminder API Bundle</name>
-    <version>0.14-SNAPSHOT</version>
+    <version>0.15-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>MOTECH Pill Reminder API</description>
     <properties>
@@ -104,17 +104,6 @@
             <version>1.9.7</version>
         </dependency>
         <!-- Non-OSGI dependencies -->
-        <dependency>
-            <groupId>org.ektorp</groupId>
-            <artifactId>org.ektorp</artifactId>
-            <version>1.3.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-oxm-tiger</artifactId>

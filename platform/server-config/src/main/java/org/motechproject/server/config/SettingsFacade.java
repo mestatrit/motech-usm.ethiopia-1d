@@ -185,7 +185,7 @@ public class SettingsFacade {
                     HttpClientFactoryBean httpClientFactoryBean = new HttpClientFactoryBean();
                     httpClientFactoryBean.setProperties(couchDb);
                     httpClientFactoryBean.setTestConnectionAtStartup(true);
-
+                    httpClientFactoryBean.setCaching(false);
                     httpClientFactoryBean.afterPropertiesSet();
 
                     CouchDbInstance instance = new StdCouchDbInstance(httpClientFactoryBean.getObject());
