@@ -410,4 +410,23 @@ public class OsgiFrameworkService implements ApplicationContextAware {
             }
         }
     }
+
+    public void startPlatformBundles() {
+//        ExecutorService bundleLoader = Executors.newFixedThreadPool(THREADS_NUMBER);
+//
+//        for (Bundle bundle : bundles) {
+//            String bundleSymbolicName = bundle.getSymbolicName();
+//
+//            if (bundleSymbolicName.startsWith("org.motechproject.motech-") && bundleSymbolicName.contains("-platform-")) {
+//                try {
+//                    bundleLoader.execute(new BundleStarter(bundle));
+//                } catch (Exception e) {
+//                    logger.error("Failed to start Bundles", e);
+//                }
+//            }
+//        }
+//
+//        waitForBundles(bundleLoader);
+        
+    }
 }

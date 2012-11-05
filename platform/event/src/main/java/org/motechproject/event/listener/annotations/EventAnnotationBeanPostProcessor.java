@@ -43,6 +43,7 @@ public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPos
     }
 
     private void processAnnotations(final Object bean, final String beanName) {
+        logger.warn("Processing annotations for" + beanName);
         ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
 
             @Override
@@ -68,7 +69,7 @@ public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPos
                             default:
                         }
 
-                        logger.info(String.format("Registering listener type(%20s) bean: %s , method: %s, for subjects: %s", annotation.type().toString(), beanName, method.toGenericString(), subjects));
+                        logger.warn(String.format("Registering listener type(%20s) bean: %s , method: %s, for subjects: %s", annotation.type().toString(), beanName, method.toGenericString(), subjects));
 
                         if (eventListenerRegistry != null) {
                             eventListenerRegistry.registerListener(proxy, subjects);
@@ -97,7 +98,7 @@ public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPos
     }
 
     //TODO:keeping required false for now, should be removed.
-    @Autowired (required = false)
+    @Autowired (required = true)
     public void setEventListenerRegistry(EventListenerRegistryService eventListenerRegistry) {
         this.eventListenerRegistry = eventListenerRegistry;
     }

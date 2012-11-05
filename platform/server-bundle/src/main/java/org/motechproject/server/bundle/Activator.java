@@ -138,6 +138,7 @@ public class Activator implements BundleActivator {
 
         if (startupManager.canLaunchBundles()) {
             logger.info("Launching MOTECH bundles...");
+            OsgiListener.getOsgiService().startPlatformBundles();
             OsgiListener.getOsgiService().startMotechBundles();
         }
     }
