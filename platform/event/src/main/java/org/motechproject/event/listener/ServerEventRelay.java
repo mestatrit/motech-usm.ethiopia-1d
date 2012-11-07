@@ -73,9 +73,11 @@ public class ServerEventRelay implements EventRelay {
             log.warn(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
+        
+
 
         Set<EventListener> listeners = eventListenerRegistry.getListeners(event.getSubject());
-
+        log.warn("Received event: " + event.getSubject() + " # of listeners: " + listeners.size());
         // Is this message destine for a specific listener?
         if (event.getParameters().containsKey(MESSAGE_DESTINATION)) {
 
@@ -138,6 +140,7 @@ public class ServerEventRelay implements EventRelay {
             parameters.put(ORIGINAL_PARAMETERS, event.getParameters());
             enrichedEventMessage = event.copy(event.getSubject(), parameters);
 
+            log.warn("Raising new event...");
             outboundEventGateway.sendEventMessage(enrichedEventMessage);
         }
     }

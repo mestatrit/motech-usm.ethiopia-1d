@@ -43,7 +43,7 @@ public class EventAnnotationBeanPostProcessor implements DestructionAwareBeanPos
     }
 
     private void processAnnotations(final Object bean, final String beanName) {
-        logger.warn("Processing annotations for" + beanName);
+
         ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
 
             @Override
