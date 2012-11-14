@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util" xmlns:osgi="http://www.springframework.org/schema/osgi"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+               http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <context:annotation-config />
+
+    <context:component-scan base-package="org.motechproject.mapper.*" />
+
+    <osgi:reference id="commcareFormServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareFormService" />
+
+    <osgi:reference id="commcareCaseServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareCaseService" />
+
+    <osgi:reference id="commcareUserServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareUserService" />
+
+    <osgi:reference id="eventListenerRegistryService" cardinality="0..1" interface="org.motechproject.event.listener.EventListenerRegistryService" />
+
+    <osgi:reference id="eventRelayOsgi" cardinality="0..1" interface="org.motechproject.event.listener.EventRelay" />
+
+    <osgi:reference id="personAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSPatientAdapter" />
+
+    <osgi:reference id="encounterAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSEncounterAdapter" />
+
+    <osgi:reference id="userAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSUserAdapter" />
+
+    <osgi:reference id="observationAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSObservationAdapter" />
+
+    <osgi:reference id="facilityAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSFacilityAdapter" />
+
+    <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
+
+</beans>
