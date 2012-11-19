@@ -1,7 +1,8 @@
 [
   {
+    "type": "observation",
     "matchOnEncounterType": "PregnancyRegistration",
-    "action": "create",
+    "action": "update",
     "mappings": [
       {
         "conceptName": "ESTIMATED DATE OF CONFINEMENT",
