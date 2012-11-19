@@ -1,25 +1,29 @@
 package org.motechproject.mapper;
 
 import org.motechproject.event.MotechEvent;
-//import org.motechproject.event.listener.annotations.MotechListener;
+import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mrs.model.MRSObservation;
+import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.services.MRSObservationAdapter;
 import org.motechproject.mrs.services.MRSPatientAdapter;
 import org.motechproject.openmrs.atomfeed.events.EventDataKeys;
-//import org.motechproject.openmrs.atomfeed.events.EventSubjects;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Component;
+import org.motechproject.openmrs.atomfeed.events.EventSubjects;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Listens on Observation update events from the Atom Feed and updates a case if the observation updated is in the case
  */
-//@Component
+@Component
 public class ObservationChangeListener {
     private final MRSObservationAdapter obsAdapter;
     private final MRSPatientAdapter patientAdapter;
     private final CommcarePregnancyModule pregnancyApplication;
+    private static Logger logger = LoggerFactory.getLogger("openmrs-commcare-mapper");
 
-//    @Autowired
+    @Autowired
     public ObservationChangeListener(CommcarePregnancyModule pregnancyApplication, MRSObservationAdapter obsAdapter,
             MRSPatientAdapter patientAdapter) {
         this.pregnancyApplication = pregnancyApplication;
@@ -28,8 +32,9 @@ public class ObservationChangeListener {
 
     }
 
-//    @MotechListener(subjects = EventSubjects.OBSERVATION_UPDATE)
+    @MotechListener(subjects = EventSubjects.OBSERVATION_CREATE)
     public void handleObservationUpdate(MotechEvent event) {
+
         String observationId = event.getParameters().get(EventDataKeys.UUID).toString();
         MRSObservation<?> obs = obsAdapter.getObservationById(observationId);
 
@@ -40,9 +45,12 @@ public class ObservationChangeListener {
         }
 
         // get patient to retrieve motech id
-        //String patientId = obs.getPatientId();
-        //MRSPatient patient = patientAdapter.getPatient(patientId);
+        String patientId = obs.getPatientId();
 
-        //pregnancyApplication.updateCase(match, obs.getValue().toString(), patient.getMotechId());
+        if (patientId != null) {
+            MRSPatient patient = patientAdapter.getPatient(patientId);
+
+            pregnancyApplication.updateCase(match, obs.getValue().toString(), patient.getMotechId(), obs.getConceptName());
+        }
     }
 }

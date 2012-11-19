@@ -142,11 +142,11 @@ public class CommcarePregnancyModule {
         return match;
     }
 
-    public void updateCase(CommcareMapping match, String value, String motechId) {
-        List<CaseInfo> cases = caseService.getAllCasesByType("test_form");
+    public void updateCase(CommcareMapping match, String value, String motechId, String conceptName) {
+        List<CaseInfo> cases = caseService.getAllCasesByType("pregnancy");
         CaseInfo targetCase = null;
         for (CaseInfo ccCase : cases) {
-            String healthId = ccCase.getFieldValues().get("health_id");
+            String healthId = ccCase.getFieldValues().get(MappingConstants.DEFAULT_ID_FIELD);
             if (motechId.equals(healthId)) {
                 targetCase = ccCase;
                 break;
@@ -154,8 +154,13 @@ public class CommcarePregnancyModule {
         }
 
         UpdateTask update = getUpdateTask(targetCase.getCaseName(), targetCase.getCaseType());
-        // addCaseElements(update, match.getCaseElement(),
-        // match.translateValue(value));
+        List<CaseElementMapping> elementMappings = match.getMappings();
+        for (CaseElementMapping mapping : elementMappings) {
+            if (mapping.getConceptName().equals(conceptName)) {
+                mapping.getCaseElementName();
+                addCaseElements(update, mapping.getCaseElementName(), value);
+            }
+        }
 
         CaseTask task = createCaseTask(targetCase, update);
         caseService.uploadCase(task);
