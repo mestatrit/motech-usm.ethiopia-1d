@@ -80,7 +80,11 @@ public final class ConverterUtils {
     }
 
     public static MRSObservation convertObservationToMrsObservation(Observation ob) {
-        return new MRSObservation(ob.getUuid(), ob.getObsDatetime(), ob.getConcept().getDisplay(), ob.getValue()
+        MRSObservation obs = new MRSObservation(ob.getUuid(), ob.getObsDatetime(), ob.getConcept().getDisplay(), ob.getValue()
                 .getDisplay());
+        if (ob.getEncounter().getPatient() != null) {
+            obs.setPatientId(ob.getEncounter().getPatient().getUuid());
+        }
+        return obs;
     }
 }

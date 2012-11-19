@@ -17,6 +17,7 @@ public class Observation {
     private ObservationValue value;
     private Date obsDatetime;
     private List<Observation> groupsMembers;
+    private Encounter encounter;
 
     public static class ObservationValue {
         private String display;
@@ -94,5 +95,13 @@ public class Observation {
 
     public boolean hasConceptByName(String conceptName) {
         return concept.getDisplay().equals(conceptName);
+    }
+
+    public Encounter getEncounter() {
+        return encounter;
+    }
+
+    public void setEncounter(Encounter encounter) {
+        this.encounter = encounter;
     }
 }

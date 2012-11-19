@@ -21,6 +21,7 @@ public class MRSObservation<T> {
 
     private String id;
     private Date date;
+    private String patientId;
     private String conceptName;
     private T value;
     private Set<MRSObservation> dependantObservations;
@@ -61,6 +62,14 @@ public class MRSObservation<T> {
 
     public String getConceptName() {
         return conceptName;
+    }
+    
+    public String getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
     }
 
     public T getValue() {
