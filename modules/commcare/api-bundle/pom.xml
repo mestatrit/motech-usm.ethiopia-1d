@@ -55,6 +55,11 @@
                             org.motechproject.commcare.osgi.Activator
                         </Bundle-Activator>
                         <Import-Package>
+                            javax.xml.parsers,
+                            org.w3c.dom,
+                            org.xml.sax,
+                            org.xml.sax.ext,
+                            org.xml.sax.helpers,
                             org.ektorp.impl,
                             org.ektorp.impl.jackson,
                             org.ektorp.spring,
