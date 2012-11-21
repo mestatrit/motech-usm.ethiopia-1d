@@ -287,8 +287,9 @@
         <module>modules/sms/smpp-bundle</module>
         <module>modules/web-security/web-security-bundle</module>
         <module>utils/http-agent/http-agent-bundle</module>
-		<module>modules/commcare-openmrs-mapping/commcare-to-openmrs-mapper</module>
-		<module>modules/commcare-openmrs-mapping/openmrs-to-commcare</module>
+        <module>modules/commcare-openmrs-mapping/commcare-to-openmrs-mapper</module>
+        <module>modules/commcare-openmrs-mapping/openmrs-to-commcare</module>
+        <module>modules/ethiopia</module>
         <module>utils/c3p0-fragment-bundle</module>
 
         <!-- Packaging modules -->
