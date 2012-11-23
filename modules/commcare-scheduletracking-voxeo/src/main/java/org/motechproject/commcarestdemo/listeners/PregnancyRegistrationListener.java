@@ -25,16 +25,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PregnancyRegistrationListener {
-    
+
     @Autowired
     private CommcareFormService formService;
-    
+
     @Autowired
     private CommcareCaseService caseService;
-    
+
     @Autowired
     private ScheduleTrackingService scheduleTrackingService;
-    
+
     @Autowired
     private EventRelay eventRelay;
 
@@ -58,18 +58,18 @@ public class PregnancyRegistrationListener {
         } else {
             logger.info("Form Id was null");
         }
-        
+
         if ("http://openrosa.org/formdesigner/882FC273-E436-4BA1-B8CC-9CA526FFF8C2".equals(form.getForm().getAttributes().get("xmlns"))) {
             logger.info("Received pregnancy registration form...");
-            
+
             String caseId = getCaseId(form);
-            
+
             String healthId = getHealthId(caseId);
-            
+
             if (healthId != null) {
                 enrollPregnancy(healthId);
             }
-            
+
         }
 
         FormValueElement rootElement = null;
@@ -77,11 +77,11 @@ public class PregnancyRegistrationListener {
         if (form != null) {
             rootElement = form.getForm();
         }
-        
+
         String caseType = rootElement.getElementByNameIncludeCase("case_type").getValue();
-        
+
         if ("pregnancy".equals(caseType)) {
-            
+
         }
     }
 
@@ -90,17 +90,19 @@ public class PregnancyRegistrationListener {
     }
 
     private void enrollPregnancy(String healthId) {
-        //EnrollmentRecord enrollment = scheduleTrackingService.getEnrollment(healthId, "pregnancy_schedule");
-        
+        // EnrollmentRecord enrollment =
+        // scheduleTrackingService.getEnrollment(healthId,
+        // "pregnancy_schedule");
+
         EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
-        
+
         enrollmentRequest.setEnrollmentDate(LocalDate.now());
         enrollmentRequest.setEnrollmentTime(new Time(LocalTime.now()));
         enrollmentRequest.setExternalId(healthId);
         enrollmentRequest.setScheduleName("pregnancy_schedule");
-        
+
         scheduleTrackingService.enroll(enrollmentRequest);
-        
+
         logger.info("Health id: " + healthId + " now enrolled.");
 
     }
