@@ -1,4 +1,4 @@
-package org.gates.ethiopia.listeners;
+package org.motechproject.commcarestdemo.listeners;
 
 import java.util.List;
 import java.util.Map;

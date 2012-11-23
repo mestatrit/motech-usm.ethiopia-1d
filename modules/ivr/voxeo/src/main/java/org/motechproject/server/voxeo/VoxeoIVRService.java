@@ -6,8 +6,8 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.motechproject.ivr.model.CallDetailRecord;
 import org.motechproject.ivr.model.CallInitiationException;
-import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.ivr.service.IVRService;
+import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.server.voxeo.config.ConfigReader;
 import org.motechproject.server.voxeo.config.VoxeoConfig;
 import org.motechproject.server.voxeo.dao.AllPhoneCalls;
@@ -24,13 +24,14 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Voxeo specific implementation of the IVR Service interface, supports initiating call given call request.
+ * Voxeo specific implementation of the IVR Service interface, supports
+ * initiating call given call request.
  * <p/>
  * Date: 07/03/11
  */
 @Component
 @Qualifier("VoxeoIVRService")
-public class VoxeoIVRService implements IVRService {
+public class VoxeoIVRService implements IVRService{
     public static final String APPLICATION_NAME = "applicationName";
     public static final String SUCCESS = "success";
     private static Logger log = LoggerFactory.getLogger(VoxeoIVRService.class);
@@ -53,8 +54,9 @@ public class VoxeoIVRService implements IVRService {
 
     /**
      * Initiates call to given phone number/sip id in call request.
-     *
-     * @param callRequest - data required by IVR phone system to start outbound call
+     * 
+     * @param callRequest
+     *            - data required by IVR phone system to start outbound call
      */
 
     @Override
@@ -63,7 +65,7 @@ public class VoxeoIVRService implements IVRService {
             throw new IllegalArgumentException("CallRequest can not be null");
         }
 
-        //Create a call record to track this call
+        // Create a call record to track this call
         PhoneCall phoneCall = new PhoneCall(callRequest);
         phoneCall.setDirection(PhoneCall.Direction.OUTGOING);
         phoneCall.setDisposition(CallDetailRecord.Disposition.UNKNOWN);
@@ -73,8 +75,10 @@ public class VoxeoIVRService implements IVRService {
         String voxeoURL = voxeoConfig.getServerUrl();
         String tokenId = voxeoConfig.getTokenId(callRequest.getPayload().get(APPLICATION_NAME));
 
+        String externalId = phoneCall.getId();
+
         try {
-            HttpMethod httpMethod = generateRequestFor(voxeoURL, callRequest.getPhone(), tokenId, callRequest.getTimeOut());
+            HttpMethod httpMethod = generateRequestFor(voxeoURL, tokenId, externalId, callRequest);
             int status = commonsHttpClient.executeMethod(httpMethod);
             String response = httpMethod.getResponseBodyAsString();
             log.info("HTTP Status:" + status + "|Response:" + response);
@@ -90,15 +94,22 @@ public class VoxeoIVRService implements IVRService {
         }
     }
 
-    private HttpMethod generateRequestFor(String voxeoUrl, String phoneNumber, String tokenId, int callTimeOut) {
+    private HttpMethod generateRequestFor(String voxeoUrl, String tokenId, String externalId, CallRequest callRequest) {
         GetMethod getMethod = new GetMethod(voxeoUrl);
 
         List<NameValuePair> queryStringValues = new ArrayList<NameValuePair>();
         queryStringValues.add(new NameValuePair("tokenid", tokenId));
-        queryStringValues.add(new NameValuePair("numbertodial", phoneNumber));
+        queryStringValues.add(new NameValuePair("externalId", externalId));
+        queryStringValues.add(new NameValuePair("phonenum", callRequest.getPhone()));
+        queryStringValues.add(new NameValuePair("vxml", callRequest.getVxml()));
+        queryStringValues.add(new NameValuePair("motechid", callRequest.getMotechId()));
+
+        int callTimeOut = callRequest.getTimeOut();
         if (0 != callTimeOut) {
             queryStringValues.add(new NameValuePair("calltimeout", Integer.toString(callTimeOut)));
+            queryStringValues.add(new NameValuePair("timeout", Integer.toString(callTimeOut) + "s"));
         }
+
         getMethod.setQueryString(queryStringValues.toArray(new NameValuePair[queryStringValues.size()]));
         return getMethod;
     }

@@ -11,14 +11,17 @@ import java.util.UUID;
 /**
  * This class is used to request a call from the IVR system
  * <p/>
- * To receive events related to this call provide this class with the events to raise when the following
- * events within the IVR system happen.  The supplied event will be augmented with {@link org.motechproject.decisiontree.server.domain.CallDetailRecord}
- * if one is available
+ * To receive events related to this call provide this class with the events to
+ * raise when the following events within the IVR system happen. The supplied
+ * event will be augmented with
+ * {@link org.motechproject.decisiontree.server.domain.CallDetailRecord} if one
+ * is available
  * <p/>
- * onSuccessEvent - Following the successful completion of the call
- * onBusyEvent - If the IVR system is unable to place the call because the line is busy
- * onNoAnswerEvent - If the IVR system is unable to complete the call because of no answer
- * onFailureEvent - It failed.  I'm sorry for you.  Why?  Not sure. Your guess is as good as mine,
+ * onSuccessEvent - Following the successful completion of the call onBusyEvent
+ * - If the IVR system is unable to place the call because the line is busy
+ * onNoAnswerEvent - If the IVR system is unable to complete the call because of
+ * no answer onFailureEvent - It failed. I'm sorry for you. Why? Not sure. Your
+ * guess is as good as mine,
  */
 public class CallRequest implements Serializable {
 
@@ -29,8 +32,11 @@ public class CallRequest implements Serializable {
     @JsonProperty
     private int timeOut;
     @JsonProperty
-    private String callBackUrl;     // this is really the channel!
-
+    private String callBackUrl; // this is really the channel!
+    @JsonProperty
+    private String vxml;
+    @JsonProperty
+    private String motechId;
     @JsonProperty
     private Map<String, String> payload = new HashMap<String, String>();
 
@@ -47,7 +53,7 @@ public class CallRequest implements Serializable {
 
     /**
      * Generate a call request for the IVR system
-     *
+     * 
      * @param phone
      * @param callBackUrl
      */
@@ -67,12 +73,16 @@ public class CallRequest implements Serializable {
 
     /**
      * Creates call request with name value pair additional config
-     *
-     * @param phone       dialing number / sip id
-     * @param params      custom data for additional parameters
-     * @param callBackUrl application endpoint to process callbacks
+     * 
+     * @param phone
+     *            dialing number / sip id
+     * @param params
+     *            custom data for additional parameters
+     * @param callBackUrl
+     *            application endpoint to process callbacks
      */
-    public CallRequest(String phone, Map<String, String> params, String callBackUrl) {
+    public CallRequest(String phone, Map<String, String> params,
+            String callBackUrl) {
         if (phone == null) {
             throw new IllegalArgumentException("phone can not be null");
         }
@@ -153,4 +163,21 @@ public class CallRequest implements Serializable {
     public String getCallId() {
         return callId;
     }
+    
+    public String getVxml() {
+        return vxml;
+    }
+
+    public void setVxml(String vxml) {
+        this.vxml = vxml;
+    }
+    
+    public String getMotechId() {
+        return motechId;
+    }
+
+    public void setMotechId(String motechId) {
+        this.motechId = motechId;
+    }
+
 }

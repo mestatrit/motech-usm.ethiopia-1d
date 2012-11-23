@@ -36,6 +36,7 @@ public class IvrController extends MultiActionController {
     @Autowired
     private EventRelay eventRelay;
 
+    @Autowired
     private AllPhoneCalls allPhoneCalls;
 
     @Autowired
@@ -130,9 +131,6 @@ public class IvrController extends MultiActionController {
     public ModelAndView outgoing(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
-
-        ModelAndView mav = new ModelAndView();
-
 
         String sessionId = request.getParameter("session.id");
         String externalId = request.getParameter("externalId");
