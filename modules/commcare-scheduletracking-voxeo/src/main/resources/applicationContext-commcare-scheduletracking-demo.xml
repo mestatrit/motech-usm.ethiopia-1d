@@ -15,7 +15,9 @@
     <osgi:reference id="commcareCaseServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareCaseService"/>
 
     <osgi:reference id="commcareFormServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareFormService"/>
-        
+
+    <osgi:reference id="commcareUserServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareUserService"/>
+    
     <osgi:reference id="eventListenerRegistryService" cardinality="0..1" interface="org.motechproject.event.listener.EventListenerRegistryService" />
 
     <osgi:reference id="eventRelayOsgi" cardinality="0..1" interface="org.motechproject.event.listener.EventRelay" />
