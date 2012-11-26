@@ -12,6 +12,7 @@ import org.motechproject.commcare.events.constants.EventDataKeys;
 import org.motechproject.commcare.events.constants.EventSubjects;
 import org.motechproject.commcare.service.CommcareCaseService;
 import org.motechproject.commcare.service.CommcareFormService;
+import org.motechproject.commcarestdemo.util.DemoConstants;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.event.listener.annotations.MotechListener;
@@ -81,7 +82,7 @@ public class PregnancyRegistrationListener {
         String caseType = rootElement.getElementByNameIncludeCase("case_type").getValue();
 
         if ("pregnancy".equals(caseType)) {
-
+            logger.warn("Pregnancy case type handled" );
         }
     }
 
@@ -98,8 +99,10 @@ public class PregnancyRegistrationListener {
 
         enrollmentRequest.setEnrollmentDate(LocalDate.now());
         enrollmentRequest.setEnrollmentTime(new Time(LocalTime.now()));
+        enrollmentRequest.setReferenceDate(LocalDate.now());
+        enrollmentRequest.setReferenceTime(new Time(LocalTime.now()));
         enrollmentRequest.setExternalId(healthId);
-        enrollmentRequest.setScheduleName("pregnancy_schedule");
+        enrollmentRequest.setScheduleName(DemoConstants.SCHEDULE_NAME);
 
         scheduleTrackingService.enroll(enrollmentRequest);
 

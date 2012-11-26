@@ -1,0 +1,44 @@
+{
+    "name":"pregnancy",
+    "milestones":[
+        {
+            "name":"visit1",
+            "scheduleWindows":{
+                "earliest":["0 Minutes"],
+                "due":["2 Minutes"],
+                "late":["3 Minutes"],
+                "max":["5 minutes"]
+            },
+            "data":{
+            },
+            "alerts":[
+                {
+                    "window":"late",
+                    "offset":["0 Minutes"],
+                    "interval":["1 Minutes"],
+                    "count":"1"
+                }
+            ]
+        },
+        {
+            "name":"visit 2",
+            "scheduleWindows":{
+                "earliest":["6 Minutes"],
+                "due":["7 Minutes"],
+                "late":["8 Minutes"],
+                "max":["52 Weeks"]
+            },
+            "data":{
+            },
+            "alerts":[
+                {
+                    "window":"late",
+                    "offset":["0 Minutes"],
+                    "interval":["1 Minute"],
+                    "count":"1"
+                }
+
+            ]
+        }
+    ]
+}
