@@ -86,6 +86,7 @@ public class LateVisitHandler {
         }
         
         //alert to provider's phone number
+        logger.warn("Sending alert to provider phone number: " + providerPhoneNum);
     }
 
     private void sendLateMessageToPatient(String patientId) {
@@ -97,5 +98,6 @@ public class LateVisitHandler {
             //alert to patient's phone number
         }
 
+        logger.warn("Sending alert to patient phone number: " + phoneNum);
     }
 }
