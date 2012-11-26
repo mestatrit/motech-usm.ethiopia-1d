@@ -266,4 +266,23 @@ public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
             return null;
         }
     }
+
+    public List<MRSEncounter> getEncountersByEncounterType(String motechId, String encounterType) {
+        Validate.notEmpty(motechId, "MoTeCH Id cannot be empty");
+
+        List<MRSEncounter> previousEncounters = getAllEncountersByPatientMotechId(motechId);
+        Iterator<MRSEncounter> encounterItr = previousEncounters.iterator();
+
+        // filter out encounters with non matching encounterType
+        while (StringUtils.isNotBlank(encounterType) && encounterItr.hasNext()) {
+            MRSEncounter enc = encounterItr.next();
+            if (!encounterType.equals(enc.getEncounterType())) {
+                encounterItr.remove();
+            }
+        }
+
+        return previousEncounters;
+    }
+
+
 }

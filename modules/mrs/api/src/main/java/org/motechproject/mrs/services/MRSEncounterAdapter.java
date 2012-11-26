@@ -4,6 +4,8 @@
 */
 package org.motechproject.mrs.services;
 
+import java.util.List;
+
 import org.motechproject.mrs.model.MRSEncounter;
  /**
  * Interface for fetching and storing MRSEncounter details
@@ -25,4 +27,6 @@ public interface MRSEncounterAdapter {
     MRSEncounter getLatestEncounterByPatientMotechId(String motechId, String encounterType);
 
     MRSEncounter getEncounterById(String id);
+    
+    List<MRSEncounter> getEncountersByEncounterType(String motechId, String encounterType);
 }
