@@ -5,9 +5,9 @@
             "name":"visit1",
             "scheduleWindows":{
                 "earliest":["0 Minutes"],
-                "due":["2 Minutes"],
-                "late":["3 Minutes"],
-                "max":["5 minutes"]
+                "due":["5 Minutes"],
+                "late":["10 Minutes"],
+                "max":["15 minutes"]
             },
             "data":{
             },
@@ -23,10 +23,30 @@
         {
             "name":"visit 2",
             "scheduleWindows":{
-                "earliest":["6 Minutes"],
-                "due":["7 Minutes"],
-                "late":["8 Minutes"],
-                "max":["52 Weeks"]
+                "earliest":["0 Minutes"],
+                "due":["5 Minutes"],
+                "late":["10 Minutes"],
+                "max":["15 Minutes"]
+            },
+            "data":{
+            },
+            "alerts":[
+                {
+                    "window":"late",
+                    "offset":["0 Minutes"],
+                    "interval":["1 Minute"],
+                    "count":"1"
+                }
+
+            ]
+        },
+        {
+            "name":"visit 3",
+            "scheduleWindows":{
+                "earliest":["0 Minutes"],
+                "due":["5 Minutes"],
+                "late":["10 Minutes"],
+                "max":["15 Minutes"]
             },
             "data":{
             },

@@ -10,4 +10,10 @@ public final class DemoConstants {
 
     public static final String VISIT_ENCOUNTER_TYPE = "pregnancyVisit";
 
+    public static final String CASE_TYPE = "pregnancy";
+
+    public static final Object MOBILE_PHONE_FIELD = "mobile_phone_number";
+
+    public static final Object HEALTH_ID_FIELD = "health_id";
+
 }

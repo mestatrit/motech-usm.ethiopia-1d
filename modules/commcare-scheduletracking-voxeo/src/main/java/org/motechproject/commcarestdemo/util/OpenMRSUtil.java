@@ -1,7 +1,6 @@
 package org.motechproject.commcarestdemo.util;
 
 import java.util.List;
-
 import org.joda.time.DateTime;
 import org.motechproject.mrs.model.MRSEncounter;
 import org.motechproject.mrs.model.MRSObservation;
