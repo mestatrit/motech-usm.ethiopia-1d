@@ -5,7 +5,7 @@
     "activities": [
       {
         "type": "encounter",
-        "encounterType": "ADULTRETURN",
+        "encounterType": "pregnancyVisit",
         "idScheme": {
           "type": "commcare",
           "fieldName": "health_id"
