@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+            http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+    <import resource="classpath*:META-INF/motech/*.xml"/>
+
+    <context:annotation-config />
+    <context:component-scan base-package="org.motech.provider" />
+
+    <bean id="settingsFacade" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
+        <property name="moduleName" value="provider-repository" />
+    </bean>
+
+    <bean id="providerRepositoryDatabaseConnector" factory-bean="settingsFacade" factory-method="getConnector">
+        <constructor-arg value="provider-repository" />
+        <constructor-arg value="couchdb.properties" />
+    </bean>
+
+    <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor"/>
+
+    <osgi:service id="providerRepositoryServiceOsgi" auto-export="interfaces" ref="providerRepositoryServiceImpl"
+                  interface="org.motech.provider.repository.service.ProviderRepositoryService"/>
+
+</beans>

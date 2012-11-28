@@ -291,6 +291,7 @@
         <module>modules/commcare-openmrs-mapping/commcare-to-openmrs-mapper</module>
         <module>modules/commcare-openmrs-mapping/openmrs-to-commcare</module>
         <module>modules/ethiopia</module>
+        <module>modules/motech-provider-repository</module>
         <module>utils/c3p0-fragment-bundle</module>
 
         <!-- Packaging modules -->
