@@ -12,6 +12,8 @@
 
     <osgi:reference id="scheduleTrackingServiceOsgi" cardinality="0..1" interface="org.motechproject.scheduletracking.api.service.ScheduleTrackingService" />
 
+    <osgi:reference id="cmsLiteService" cardinality="0..1" interface="org.motechproject.cmslite.api.service.CMSLiteService" />
+    
     <osgi:reference id="commcareCaseServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareCaseService"/>
 
     <osgi:reference id="commcareFormServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareFormService"/>
