@@ -94,4 +94,18 @@ public interface ScheduleTrackingService {
     Schedule getScheduleByName(String scheduleName);
 
     List<Schedule> getAllSchedules();
+
+    /**
+     * Updates a schedule by name in the database. If a schedule was not already in the DB the new schedule is added
+     * 
+     * @param scheduleJson : in JSON format
+     */
+    void updateSchedule(String scheduleJson);
+
+    /**
+     * Deletes a schedule by name in the database (only the first schedule with the given name will be deleted). 
+     * 
+     * @param scheduleName The name of the schedule to delete
+     */
+    void deleteSchedule(String scheduleName);
 }

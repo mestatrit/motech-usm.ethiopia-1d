@@ -38,7 +38,7 @@ public class SchedulesUtil {
 
         logger.warn("Adding schedule... ");
         
-        scheduleTrackingService.add(writer.toString());
+        scheduleTrackingService.updateSchedule(writer.toString());
     }
 
 }

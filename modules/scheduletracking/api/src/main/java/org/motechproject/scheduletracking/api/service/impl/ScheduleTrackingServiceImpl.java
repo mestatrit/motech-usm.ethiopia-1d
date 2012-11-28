@@ -20,11 +20,9 @@ import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
 import org.motechproject.scheduletracking.api.service.contract.UpdateCriteria;
 import org.motechproject.scheduletracking.api.service.contract.UpdateCriterion;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import static java.text.MessageFormat.format;
 import static org.motechproject.util.DateUtil.newDateTime;
 
@@ -108,6 +106,24 @@ public class ScheduleTrackingServiceImpl implements ScheduleTrackingService {
         ScheduleRecord schedule = schedulesJsonReader.getSchedule(scheduleJson);
 
         allSchedules.add(schedule);
+    }
+
+    @Override
+    public void updateSchedule(String scheduleJson) {
+        ScheduleRecord newSchedule = schedulesJsonReader.getSchedule(scheduleJson);
+
+        ScheduleRecord oldSchedule = allSchedules.getRecordByName(newSchedule.name());
+        
+        allSchedules.remove(oldSchedule);
+        
+        allSchedules.add(newSchedule);
+    }
+
+    @Override
+    public void deleteSchedule(String scheduleName) {
+        ScheduleRecord recordToDelete = allSchedules.getRecordByName(scheduleName);
+        
+        allSchedules.deleteRecord(recordToDelete);
     }
 
     @Override

@@ -47,4 +47,21 @@ public class AllSchedules extends MotechBaseRepository<ScheduleRecord> {
 
         return schedules;
     }
+
+    public ScheduleRecord getRecordByName(String name) {
+        List<ScheduleRecord> records = queryView("by_name", name);
+        if (records.isEmpty()) {
+            return null;
+        }
+        
+        return records.get(0);
+    }
+
+    public void updateRecord(ScheduleRecord newSchedule) {
+        this.update(newSchedule);
+    }
+
+    public void deleteRecord(ScheduleRecord recordToDelete) {
+        this.remove(recordToDelete);        
+    }
 }
