@@ -2,11 +2,13 @@ package org.motechproject.commcarestdemo.eventhandlers;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.motechproject.commcare.domain.CommcareUser;
 import org.motechproject.commcare.service.CommcareUserService;
 import org.motechproject.commcarestdemo.util.CommcareUtil;
 import org.motechproject.commcarestdemo.util.DemoConstants;
 import org.motechproject.commcarestdemo.util.OpenMRSUtil;
+import org.motechproject.model.Time;
 import org.motechproject.scheduletracking.api.events.MilestoneEvent;
 import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
 import org.slf4j.Logger;
@@ -42,7 +44,7 @@ public class LateVisitHandler {
         }
 
         //The schedule's milestone is fulfilled since either the patient had a visit or late messages were sent
-        scheduleTrackingService.fulfillCurrentMilestone(milestoneEvent.getExternalId(), milestoneEvent.getScheduleName(), LocalDate.now());
+        scheduleTrackingService.fulfillCurrentMilestone(milestoneEvent.getExternalId(), milestoneEvent.getScheduleName(), LocalDate.now(), new Time(LocalTime.now()));
     }
 
 
