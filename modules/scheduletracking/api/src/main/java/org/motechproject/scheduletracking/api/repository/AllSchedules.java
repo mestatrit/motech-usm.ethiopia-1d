@@ -58,7 +58,11 @@ public class AllSchedules extends MotechBaseRepository<ScheduleRecord> {
     }
 
     public void updateRecord(ScheduleRecord newSchedule) {
-        this.update(newSchedule);
+        if (getRecordByName(newSchedule.name()) != null) {
+            this.update(newSchedule);
+        } else {
+            this.add(newSchedule);
+        }
     }
 
     public void deleteRecord(ScheduleRecord recordToDelete) {
