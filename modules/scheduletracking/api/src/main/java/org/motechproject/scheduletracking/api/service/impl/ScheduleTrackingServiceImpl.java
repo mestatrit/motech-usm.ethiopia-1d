@@ -114,7 +114,9 @@ public class ScheduleTrackingServiceImpl implements ScheduleTrackingService {
 
         ScheduleRecord oldSchedule = allSchedules.getRecordByName(newSchedule.name());
         
-        allSchedules.remove(oldSchedule);
+        if (oldSchedule != null) {
+            allSchedules.remove(oldSchedule);
+        }
         
         allSchedules.add(newSchedule);
     }
