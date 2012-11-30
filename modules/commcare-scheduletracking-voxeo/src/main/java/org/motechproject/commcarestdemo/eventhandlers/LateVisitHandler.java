@@ -3,19 +3,11 @@ package org.motechproject.commcarestdemo.eventhandlers;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
-import org.motechproject.cmslite.api.model.ContentNotFoundException;
-import org.motechproject.cmslite.api.model.StringContent;
-import org.motechproject.cmslite.api.service.CMSLiteService;
 import org.motechproject.commcarestdemo.util.DemoConstants;
 import org.motechproject.commcarestdemo.util.OpenMRSUtil;
-import org.motechproject.commcarestdemo.vxml.VxmlCalculator;
-import org.motechproject.event.MotechEvent;
-import org.motechproject.ivr.service.CallRequest;
-import org.motechproject.ivr.service.IVRService;
 import org.motechproject.model.Time;
 import org.motechproject.scheduletracking.api.events.MilestoneEvent;
 import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
-import org.motechproject.sms.api.service.SmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +19,16 @@ public class LateVisitHandler {
     private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
 
     @Autowired
-    private CMSLiteService cmsLiteService;
-
-    @Autowired
-    private ScheduleTrackingService scheduleTrackingService;
-
-    @Autowired
-    private IVRService voxeoService;  
+    private ScheduleTrackingService scheduleTrackingService; 
     
     @Autowired
     private OpenMRSUtil openMrsUtil;
 
     @Autowired
-    private SmsService smsService;
-
-    @Autowired
     private VisitHandlerCommon visitHandlerCommon;
-
+    
     @Autowired
-    private VxmlCalculator vxmlCalculator;
+    private ContactInitiator contactInitiator;
 
     public void handle(MilestoneEvent milestoneEvent) {
         String motechID = milestoneEvent.getExternalId();
@@ -87,124 +70,14 @@ public class LateVisitHandler {
         String messageNameProvider = "providerMessageMissed";
 
         if (visitHandlerCommon.isIvrTrue() && language != null) {
-            placeCallToPatient(motechID, language, messageNamePatient);
-            //placeCallToProvider(motechID, language, ivrMessageNameProvider);
+            contactInitiator.placeCallToPatient(motechID, language, messageNamePatient);
+            contactInitiator.placeCallToProvider(motechID, language, messageNameProvider);
         }
 
         if (visitHandlerCommon.isSmsTrue() && language != null) {
-            sendLateSMSToPatient(patientName, motechID, language, messageNamePatient);
-            //sendLateSMSToProvider(patientName, motechID, language, smsMessageNameProvider);
-        }
-    }
-    
-    private void sendLateSMSToPatient(String patientName, String motechID, String language, String smsMessageNamePatient) {       
-        if (!visitHandlerCommon.isFormedMessage()){
-            return;
-        }
-        
-        // only send if patient has a contact number in either the case or OpenMRS
-        String patientPhoneNum = visitHandlerCommon.getPatientPhone();
-
-        if (patientPhoneNum != null) {
-            // MessageSource resources = new
-            // ClassPathXmlApplicationContext("applicationContext-commcare-scheduletracking-demo.xml");
-            // String message = resources.getMessage("SMSVisitToPatient", new
-            // Object[] { patientName }, "Required", null);
-            String message = "Hello " + patientName + ". You are due for a visit. You must complete this visit within 5 minutes.";
-            smsService.sendSMS(patientPhoneNum, message);
-        }
-        logger.warn("Sending alert to patient phone number: " + patientPhoneNum);
-    }
-
-    private void placeCallToPatient(String motechID, String language, String messageName) {
-        if (!visitHandlerCommon.isFormedMessage()){
-            return;
-        }
-        
-        String patientPhoneNum = visitHandlerCommon.getPatientPhone();
-
-        if (patientPhoneNum != null) {
-            if (cmsLiteService.isStringContentAvailable(language, messageName)) {
-                StringContent content = null;
-                try {
-                    content = cmsLiteService.getStringContent(language, messageName);
-                } catch (ContentNotFoundException e) {
-                    logger.error("Failed to retrieve IVR content for language: " + language + " and name: " + messageName);
-                    return;
-                }
-
-                CallRequest request = new CallRequest(patientPhoneNum, 119, content.getValue());
-                request.getPayload().put("USER_ID", motechID);
-                request.getPayload().put("applicationName", "CommCareApp");
-                request.setMotechId(motechID);
-                request.setOnBusyEvent(new MotechEvent("CALL_BUSY"));
-                request.setOnFailureEvent(new MotechEvent("CALL_FAIL"));
-                request.setOnNoAnswerEvent(new MotechEvent("CALL_NO_ANSWER"));
-                request.setOnSuccessEvent(new MotechEvent("CALL_SUCCESS"));
-                request.setVxml(vxmlCalculator.calculateVxmlLocation(messageName));
-                voxeoService.initiateCall(request);
-            } else {
-                logger.error("Could not find IVR content for language: " + language + " and name: " + messageName);
-            }
-        } else {
-            return;
+            contactInitiator.sendSMSToPatient(patientName, motechID, "Hello " + "patientNameMethod" + ". You have missed your visit. Please visit your clinic as soon as possible.");
+            contactInitiator.sendSMSToProvider(patientName, motechID, "Your patient with ID " + motechID + " has missed a visit. Please contact your patient to be sure they are aware of this.");
         }
     }
 
-    private void sendLateSMSToProvider(String patientName, String motechID, String language, String smsMessageNamePatient) {
-        if (!visitHandlerCommon.isFormedMessage()){
-            return;
-        }
-        
-        if (visitHandlerCommon.getUserId() == null) { // No provider found
-            return;
-        }
-
-        String providerPhoneNum = visitHandlerCommon.getProviderPhone();
-
-        if (providerPhoneNum != null) {
-
-            // MessageSource resources = new
-            // ClassPathXmlApplicationContext("applicationContext-commcare-scheduletracking-demo.xml");
-            // String message = resources.getMessage("SMSVisitToProvider", new
-            // Object[] { motechID }, "Required", null);
-            String message = "Your patient with ID " + motechID + " is due for a visit in the next 5 minutes.";
-            smsService.sendSMS(providerPhoneNum, message);
-            logger.warn("Sending alert to provider phone number: " + providerPhoneNum);
-        }
-    }
-
-    private void placeCallToProvider(String motechID, String language, String messageName) {
-        
-        if (!visitHandlerCommon.isFormedMessage()){
-            return;
-        }
-        
-        if (visitHandlerCommon.getUserId() == null) { // No provider found
-            return;
-        }
-
-        String providerPhoneNum = visitHandlerCommon.getProviderPhone();
-        if (providerPhoneNum == null) {
-            return;
-        }
-
-        if (cmsLiteService.isStringContentAvailable(language, messageName)) {
-            StringContent content = null;
-            try {
-                content = cmsLiteService.getStringContent(language, messageName);
-            } catch (ContentNotFoundException e) {
-                logger.error("Failed to retrieve IVR content for language: " + language + " and name: " + messageName);
-                return;
-            }
-
-            CallRequest request = new CallRequest(providerPhoneNum, 119, content.getValue());
-            request.getPayload().put("USER_ID", motechID);
-            request.getPayload().put("applicationName", "CommCareApp");
-            request.setVxml(vxmlCalculator.calculateVxmlLocation(messageName));
-            voxeoService.initiateCall(request);
-        } else {
-            logger.error("Could not find IVR content for language: " + language + " and name: " + messageName);
-        }
-    }
 }

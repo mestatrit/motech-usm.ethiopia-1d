@@ -22,21 +22,4 @@ public class VxmlCalculator {
         return vxmlLoc;
     }
 
-    /*
-     * @RequestMapping(value = "/vxml", method = RequestMethod.GET) public
-     * ModelAndView handleRequest(HttpServletRequest request,
-     * HttpServletResponse response) { logger.info("Generate VXML");
-     * 
-     * response.setContentType("text/xml");
-     * response.setCharacterEncoding("UTF-8");
-     * 
-     * ModelAndView mav = new ModelAndView();
-     * 
-     * mav.addObject("audioPathBase",
-     * "http://130.111.132.59:8080/motech-platform-server/module");
-     * 
-     * mav.setViewName("vxml");
-     * 
-     * return mav; }
-     */
 }
