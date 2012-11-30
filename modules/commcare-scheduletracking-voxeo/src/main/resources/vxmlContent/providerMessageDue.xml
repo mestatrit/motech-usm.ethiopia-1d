@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.1">
 
-<var name="audio_path" expr="'http://130.111.132.59:8080/motech-platform-server/module/cmsliteapi/stream/en/message1'" />
+<var name="audio_path" expr="'http://130.111.132.59:8080/motech-platform-server/module/cmsliteapi/stream/en/IVRVisitToProvider'" />
   <form>
     <block>
        <audio expr="audio_path"/> 

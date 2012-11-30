@@ -231,9 +231,9 @@
         <module>modules/demo/demo</module>
         <module>modules/event-logging/event-logging</module>
         <module>modules/ivr/api</module>
-        <module>modules/ivr/asterisk</module>
+<!--         <module>modules/ivr/asterisk</module>
         <module>modules/ivr/kookoo</module>
-        <module>modules/ivr/verboice</module>
+        <module>modules/ivr/verboice</module> -->
         <module>modules/ivr/voxeo</module>
         <module>modules/message-campaign/message-campaign</module>
         <module>modules/mobileforms/api</module>
@@ -268,9 +268,9 @@
         <module>modules/demo/demo-bundle</module>
         <module>modules/event-logging/event-logging-bundle</module>
         <module>modules/ivr/api-bundle</module>
-        <module>modules/ivr/asterisk-bundle</module>
+        <!-- <module>modules/ivr/asterisk-bundle</module>
         <module>modules/ivr/kookoo-bundle</module>
-        <module>modules/ivr/verboice-bundle</module>
+        <module>modules/ivr/verboice-bundle</module> -->
         <module>modules/ivr/voxeo-bundle</module>
         <module>modules/message-campaign/message-campaign-bundle</module>
         <module>modules/mobileforms/api-bundle</module>
