@@ -77,7 +77,7 @@ public class LateVisitHandler {
             return;
         }
 
-        String patientName = commcareUtil.getUserAssociatedWithPregnancy(motechID);
+        String patientName = "patientNameMethod"; //commcareUtil.getUserAssociatedWithPregnancy(motechID).??();
         String ivrFormat = milestoneData.get("IVRFormat");
         String smsFormat = milestoneData.get("SMSFormat");
         String language = milestoneData.get("language");
