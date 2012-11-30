@@ -1,7 +1,5 @@
 package org.motechproject.commcarestdemo.eventhandlers;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 //import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -18,10 +16,10 @@ import org.motechproject.cmslite.api.model.StringContent;
 import org.motechproject.cmslite.api.service.CMSLiteService;
 import org.motechproject.commcare.domain.CommcareUser;
 import org.motechproject.commcare.service.CommcareUserService;
-import org.motechproject.commcarestdemo.controllers.VxmlCalculator;
 import org.motechproject.commcarestdemo.util.CommcareUtil;
 import org.motechproject.commcarestdemo.util.DemoConstants;
 import org.motechproject.commcarestdemo.util.OpenMRSUtil;
+import org.motechproject.commcarestdemo.vxml.VxmlCalculator;
 import org.motechproject.ivr.service.CallRequest;
 import org.motechproject.ivr.service.IVRService;
 import org.motechproject.model.Time;
@@ -80,38 +78,9 @@ public class DueVisitHandler {
     private void sendDueMessage(String motechID, MilestoneEvent milestoneEvent) {
         logger.warn("SENDING DUE MESSAGE");
 
-        Map<String, String> milestoneData = milestoneEvent.getMilestoneData();
-
-       /* String milestoneConceptName = milestoneData.get("conceptName");
-
-        if (milestoneConceptName == null) {
-            return;
-        }
-
-        String patientName = commcareUtil.getUserAssociatedWithPregnancy(motechID);
-        String ivrFormat = milestoneData.get("IVRFormat");
-        String smsFormat = milestoneData.get("SMSFormat");
-        String language =  milestoneData.get("language");
-
-        String messageNamePatient = "VisitToPatient";
-        String messageNameProvider = "VisitToProvider";
-
-        if ("true".equals(ivrFormat) && language != null) {
-            String ivrMessageNamePatient = messageNamePatient.concat("IVR");
-            String ivrMessageNameProvider = messageNameProvider.concat("IVR");
-            // placeCallToPatient(motechID, language, ivrMessageNamePatient);
-            // //messageName = IVRVisitToPatient
-            // placeCallToProvider(providerPhoneNum, motechID, language,
-            // ivrMessageNameProvider); //messageName = IVRVisitToProvider
-        }
-
-        if ("true".equals(smsFormat) && language != null) {
-            String smsMessageNamePatient = messageNamePatient.concat("SMS");
-            String smsMessageNameProvider = messageNameProvider.concat("SMS");
-            sendDueSMSToPatient(patientName, motechID, language, smsMessageNamePatient);
-            sendDueSMSToProvider(patientName, motechID, language, smsMessageNameProvider);
-        }*/
         
+
+       
     }
 
     private boolean fulfilledVisit(DateTime lastVisit, MilestoneEvent milestoneEvent) {

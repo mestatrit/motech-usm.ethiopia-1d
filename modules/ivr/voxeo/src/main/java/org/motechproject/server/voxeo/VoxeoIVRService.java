@@ -106,7 +106,7 @@ public class VoxeoIVRService implements IVRService{
 
         int callTimeOut = callRequest.getTimeOut();
         if (0 != callTimeOut) {
-            queryStringValues.add(new NameValuePair("calltimeout", Integer.toString(callTimeOut)));
+            queryStringValues.add(new NameValuePair("calltimeout", Integer.toString(callTimeOut)+ "s"));
             queryStringValues.add(new NameValuePair("timeout", Integer.toString(callTimeOut) + "s"));
         }
 

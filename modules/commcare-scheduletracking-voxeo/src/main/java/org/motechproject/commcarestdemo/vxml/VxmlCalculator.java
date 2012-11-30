@@ -1,4 +1,4 @@
-package org.motechproject.commcarestdemo.controllers;
+package org.motechproject.commcarestdemo.vxml;
 
 import org.springframework.stereotype.Component;
 
@@ -6,21 +6,19 @@ import org.springframework.stereotype.Component;
 public class VxmlCalculator {
 
     public String calculateVxmlLocation(String messageName) {
-        String vxmlLoc = "http://webhosting.voxeo.net/92594/www/";
-        if (messageName.matches("IVRVisitToPatient")) {
+        String vxmlLoc = "http://webhosting.voxeo.net/150494/www/";
+        if (messageName.matches("providerMessageDue")) {
             vxmlLoc += "providerMessageDue.xml";
         }
-        if (messageName.matches("IVRVisitToProvider")) {
+        if (messageName.matches("patientMessageDue")) {
             vxmlLoc += "patientMessageDue.xml";
         }
-        if (messageName.matches("IVRMissedVisitToPatient")) {
+        if (messageName.matches("patientMessageMissed")) {
             vxmlLoc += "patientMessageMissed.xml";
         }
-        if (messageName.matches("IVRMissedVisitToProvider")) {
+        if (messageName.matches("providerMessageMissed")) {
             vxmlLoc += "providerMessageMissed.xml";
-        } else {
-            return null;
-        }
+        } 
         return vxmlLoc;
     }
 
