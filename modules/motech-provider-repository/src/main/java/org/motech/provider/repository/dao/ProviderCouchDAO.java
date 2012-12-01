@@ -1,6 +1,11 @@
 package org.motech.provider.repository.dao;
 
+import java.util.List;
+
+import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
+import org.ektorp.support.View;
+import org.motech.provider.repository.domain.MotechIdentifier;
 import org.motech.provider.repository.domain.Provider;
 import org.motech.provider.repository.domain.ProviderIdentifier;
 import org.motechproject.dao.MotechBaseRepository;
@@ -11,6 +16,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ProviderCouchDAO extends MotechBaseRepository<Provider> {
 
+    
+    private static final String FUNCTION_DOC_EMIT_IDENTIFIER = "function(doc) { if(doc.type === \'Provider\') for (var identifier in doc.identifiers) emit([doc.identifiers[identifier].identifierName, doc.identifiers[identifier].identity], doc._id);}";
+
+    private static final String FUNCTION_DOC_EMIT_MOTECH_IDENTIFIER = "function(doc) { if(doc.type === \'Provider\') emit(doc.motechId.identity, doc._id);}";
+    
     @Autowired
     protected ProviderCouchDAO(@Qualifier("providerRepositoryDatabaseConnector") CouchDbConnector db) {
         super(Provider.class, db);
@@ -29,8 +39,17 @@ public class ProviderCouchDAO extends MotechBaseRepository<Provider> {
         this.remove(provider);
     }
 
+    @View(name = "find_by_identifier", map = FUNCTION_DOC_EMIT_IDENTIFIER)
     public Provider queryProviderByIdentifier(ProviderIdentifier identifier) {
-        // TODO Auto-generated method stub
-        return null;
+        List<Provider> providers = queryView("find_by_identifier", ComplexKey.of(identifier.getIdentifierName(), identifier.getIdentity()));
+        return providers.size() > 0 ? providers.get(0) : null;
     }
+    
+    @View(name = "find_by_motech_id", map = FUNCTION_DOC_EMIT_MOTECH_IDENTIFIER)
+    public Provider queryProviderByMotechId(MotechIdentifier identifier) {
+        List<Provider> providers = queryView("find_by_identifier", identifier.getIdentity());
+        return providers.size() > 0 ? providers.get(0) : null;
+    }
+    
+    
 }

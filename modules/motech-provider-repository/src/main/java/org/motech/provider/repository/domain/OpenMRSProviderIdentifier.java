@@ -42,7 +42,7 @@ public class OpenMRSProviderIdentifier extends ProviderIdentifier {
         return uuid;
     }
 
-    public void setUuid(String uuuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
@@ -56,4 +56,10 @@ public class OpenMRSProviderIdentifier extends ProviderIdentifier {
         // TODO Auto-generated method stub
         return 0;
     }
+
+    @Override
+    public String getIdentity() {
+        return uuid;
+    }
+
 }

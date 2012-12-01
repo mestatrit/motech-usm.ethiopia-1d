@@ -42,4 +42,9 @@ public class MotechIdentifier extends ProviderIdentifier {
         // TODO Auto-generated method stub
         return 0;
     }
+
+    @Override
+    public String getIdentity() {
+        return externalId;
+    }
 }

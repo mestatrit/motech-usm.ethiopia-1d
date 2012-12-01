@@ -3,7 +3,9 @@ package org.motech.provider.repository.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import org.motech.provider.repository.dao.IdentifierDeserializer;
+import org.motech.provider.repository.dao.GeneralIdentifierDeserializer;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.model.MotechBaseDataObject;
 
@@ -12,9 +14,13 @@ public class Provider extends MotechBaseDataObject {
     
     private static final long serialVersionUID = 1L;
 
+    @JsonDeserialize(using = IdentifierDeserializer.class)
     private MotechIdentifier motechId;
     
+    @JsonDeserialize(using = GeneralIdentifierDeserializer.class)
     private List<ProviderIdentifier> identifiers;
+    
+    private List<String> locationIdentities;
     
     public List<ProviderIdentifier> getEquivalentIdentifiers(ProviderIdentifier queryIdentifier) {
         if (this.identifiers.contains(queryIdentifier)) {
@@ -24,7 +30,7 @@ public class Provider extends MotechBaseDataObject {
     }
 
     
-    public List<? extends ProviderIdentifier> getEquivalentIdentifierByType(String identifierType, ProviderIdentifier queryIdentifier) {
+    public List<ProviderIdentifier> getEquivalentIdentifierByType(String identifierType, ProviderIdentifier queryIdentifier) {
         List<ProviderIdentifier> equivalentIdentifiers = new ArrayList<ProviderIdentifier>();
         if (this.identifiers.contains(queryIdentifier)) {
             for (ProviderIdentifier identifier : identifiers) {
@@ -50,5 +56,20 @@ public class Provider extends MotechBaseDataObject {
 
     public void setIdentifiers(List<ProviderIdentifier> identifiers) {
         this.identifiers = identifiers;
+    }
+
+
+    public List<String> getLocationIdentities() {
+        return locationIdentities;
+    }
+
+
+    public void setLocationIdentities(List<String> locationIdentities) {
+        this.locationIdentities = locationIdentities;
+    }
+
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
     }
 }
