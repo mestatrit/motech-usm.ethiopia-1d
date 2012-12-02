@@ -34,6 +34,16 @@
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
+            <artifactId>motech-location-repository</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-provider-repository</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.motechproject</groupId>
             <artifactId>motech-mrs-api</artifactId>
             <version>${project.version}</version>
         </dependency>
