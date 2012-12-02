@@ -28,7 +28,7 @@ public class MilestoneEventsListener {
     private MaxVisitHandler maxVisitHandler;
     
     @MotechListener(subjects = EventSubjects.MILESTONE_ALERT)
-    public void handleMilstoneEvent(MotechEvent event) {
+    public void handleMilestoneEvent(MotechEvent event) {
         MilestoneEvent milestoneEvent = new MilestoneEvent(event);
         
         if (DemoConstants.SCHEDULE_NAME.equals(milestoneEvent.getScheduleName())) {

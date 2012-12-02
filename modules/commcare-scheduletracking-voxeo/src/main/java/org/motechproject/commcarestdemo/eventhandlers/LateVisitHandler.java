@@ -3,9 +3,6 @@ package org.motechproject.commcarestdemo.eventhandlers;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
-import org.motechproject.commcare.domain.CommcareUser;
-import org.motechproject.commcare.service.CommcareUserService;
-import org.motechproject.commcarestdemo.util.CommcareUtil;
 import org.motechproject.commcarestdemo.util.DemoConstants;
 import org.motechproject.commcarestdemo.util.OpenMRSUtil;
 import org.motechproject.model.Time;
@@ -22,32 +19,26 @@ public class LateVisitHandler {
     private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
 
     @Autowired
-    private ScheduleTrackingService scheduleTrackingService;
+    private ScheduleTrackingService scheduleTrackingService; 
     
-    @Autowired
-    private CommcareUserService userService;
-
     @Autowired
     private OpenMRSUtil openMrsUtil;
 
     @Autowired
-    private CommcareUtil commcareUtil;
+    private VisitHandlerCommon visitHandlerCommon;
+    
+    @Autowired
+    private ContactInitiator contactInitiator;
 
     public void handle(MilestoneEvent milestoneEvent) {
-
-        String motechId = milestoneEvent.getExternalId();
-
-        DateTime lastVisit = openMrsUtil.dateOfLastEncounter(motechId, DemoConstants.VISIT_ENCOUNTER_TYPE, null);
-
+        String motechID = milestoneEvent.getExternalId();
+        DateTime lastVisit = openMrsUtil.dateOfLastEncounter(motechID, DemoConstants.VISIT_ENCOUNTER_TYPE, null);
         if (lastVisit == null || !fulfilledVisit(lastVisit, milestoneEvent)) {
-            sendLateMessage(motechId);
+            sendLateMessage(motechID, milestoneEvent);
         }
-
-        //The schedule's milestone is fulfilled since either the patient had a visit or late messages were sent
+        // The schedule's milestone is fulfilled since either the patient had a visit or late messages were sent
         scheduleTrackingService.fulfillCurrentMilestone(milestoneEvent.getExternalId(), milestoneEvent.getScheduleName(), LocalDate.now(), new Time(LocalTime.now()));
     }
-
-
 
     private boolean fulfilledVisit(DateTime lastVisit, MilestoneEvent milestoneEvent) {
         DateTime dueTime = milestoneEvent.getMilestoneAlert().getDueDateTime();
@@ -62,44 +53,31 @@ public class LateVisitHandler {
         return false;
     }
 
-
-
-    private void sendLateMessage(String patientId) {
+    private void sendLateMessage(String motechID, MilestoneEvent milestoneEvent) {
         logger.warn("SENDING LATE MESSAGE");
-        sendLateMessageToPatient(patientId);
-        sendLateMessageToProvider(patientId);
-    }
 
-    private void sendLateMessageToProvider(String patientId) {
-        //retrieve the case and check the user id, map it to OpenMRS
-        String userId = commcareUtil.getUserAssociatedWithPregnancy(patientId);
+        //sets values for milestoneEvent details
+        visitHandlerCommon.formMessage(motechID, milestoneEvent);
 
-        if (userId == null) {
-            //No provider found
+        if (visitHandlerCommon.getMilestoneConceptName() == null) {
             return;
         }
 
-        CommcareUser provider = userService.getCommcareUserById(userId);
-        
-        String providerPhoneNum = provider.getDefaultPhoneNumber();
-        
-        if (providerPhoneNum == null) {
-            return;
-        }
-        
-        //alert to provider's phone number
-        logger.warn("Sending alert to provider phone number: " + providerPhoneNum);
-    }
+        String patientName = visitHandlerCommon.getPatientName();
+        String language = visitHandlerCommon.getLanguage();
 
-    private void sendLateMessageToPatient(String patientId) {
-        //only send if patient has a contact number in either the case or OpenMRS
+        String messageNamePatient = "patientMessageMissed";
+        String messageNameProvider = "providerMessageMissed";
 
-        String phoneNum = commcareUtil.phoneNumberOfPatient(patientId);
-
-        if (phoneNum != null) {
-            //alert to patient's phone number
+        if (visitHandlerCommon.isIvrTrue() && language != null) {
+            contactInitiator.placeCallToPatient(motechID, language, messageNamePatient);
+            contactInitiator.placeCallToProvider(motechID, language, messageNameProvider);
         }
 
-        logger.warn("Sending alert to patient phone number: " + phoneNum);
+        if (visitHandlerCommon.isSmsTrue() && language != null) {
+            contactInitiator.sendSMSToPatient(patientName, motechID, "Hello " + "patientNameMethod" + ". You have missed your visit. Please visit your clinic as soon as possible.");
+            contactInitiator.sendSMSToProvider(patientName, motechID, "Your patient with ID " + motechID + " has missed a visit. Please contact your patient to be sure they are aware of this.");
+        }
     }
+
 }

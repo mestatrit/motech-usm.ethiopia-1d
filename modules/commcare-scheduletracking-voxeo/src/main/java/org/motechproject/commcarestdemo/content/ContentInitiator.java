@@ -15,18 +15,41 @@ public class ContentInitiator {
 
     public void loadContent() throws CMSLiteException {
 
-        InputStream inputStreamToResource1 = this.getClass().getResourceAsStream("/providerMessage.wav");
+        InputStream inputStreamToResource1 = this.getClass().getResourceAsStream("/providerMessageDue.wav");
 
-        // This points to the actual audio/wav file:
-        StreamContent providerMessageIVR = new StreamContent("en", "providerMessage", inputStreamToResource1, "checksum1", "audio/wav");
-        cmsLiteService.addContent(providerMessageIVR);
+        // This maps to "/cmsliteapi/stream/en/VisitToProviderIVR"
+        StreamContent providerMessageDueIVR = new StreamContent("en", "VisitToProviderIVR", inputStreamToResource1, "checksum1", "audio/wav");
+        cmsLiteService.addContent(providerMessageDueIVR);        
+        // This points to the Vxml location for the Provider Due Message
+        StringContent providerMessageDueVxml = new StringContent("en", "providerMessageDue", "providerMessageDue.xml");
+        cmsLiteService.addContent(providerMessageDueVxml);
+       
+        InputStream inputStreamToResource2 = this.getClass().getResourceAsStream("/patientMessageDue.wav");
+        
+        //This maps to "/cmsliteapi/stream/en/VisitToPatientIVR"
+        StreamContent patientMessageDueIVR = new StreamContent("en", "VisitToPatientIVR", inputStreamToResource2, "checksum1", "audio/wav");
+        cmsLiteService.addContent(patientMessageDueIVR);       
+        // This points to the Vxml location for the Patient Due Message
+        StringContent patientMessageDueVxml = new StringContent("en", "patientMessageDue", "patientMessageDue.xml");
+        cmsLiteService.addContent(patientMessageDueVxml);
+                              
+        InputStream inputStreamToResource3 = this.getClass().getResourceAsStream("/providerMessageMissed.wav");
+        
+        //This maps to "/cmsliteapi/stream/en/MissedVisitToProviderIVR"
+        StreamContent providerMessageMissedIVR = new StreamContent("en", "MissedVisitToProviderIVR", inputStreamToResource3, "checksum1", "audio/wav");
+        cmsLiteService.addContent(providerMessageMissedIVR);        
+        // This points to the Vxml location for the Provider Missed Message
+        StringContent providerMessageMissedVxml = new StringContent("en", "providerMessageMissed", "providerMessageMissed.xml");
+        cmsLiteService.addContent(providerMessageMissedVxml);
+        
+        InputStream inputStreamToResource4 = this.getClass().getResourceAsStream("/patientMessageMissed.wav");
+        
+        //This maps to "/cmsliteapi/stream/en/MissedVisitToPatientIVR"
+        StreamContent patientMessageMissedIVR = new StreamContent("en", "MissedVisitToPatientIVR", inputStreamToResource4, "checksum1", "audio/wav");
+        cmsLiteService.addContent(patientMessageMissedIVR);        
+        // This points to the Vxml location for the Patient Missed Message
+        StringContent patientMessageMissedVxml = new StringContent("en", "patientMessageMissed", "patientMessageMissed.xml");
+        cmsLiteService.addContent(patientMessageMissedVxml);
 
-        // This points to the Vxml location
-        StringContent providerMessageVxml = new StringContent("en", "messageIVR", "providerMessage.wav");
-        cmsLiteService.addContent(providerMessageVxml);
-
-        StringContent providerMessageSMS = new StringContent("en", "message1", "Your patient has missed a visit. Please contact your "
-                + "patient and be sure that he or she is aware of this.");
-        cmsLiteService.addContent(providerMessageSMS);
     }
 }

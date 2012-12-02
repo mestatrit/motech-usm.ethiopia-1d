@@ -5,18 +5,27 @@
             "name":"visit1",
             "scheduleWindows":{
                 "earliest":["0 Minutes"],
-                "due":["5 Minutes"],
-                "late":["10 Minutes"],
-                "max":["15 minutes"]
+                "due":["1 Minutes"],
+                "late":["2 Minutes"],
+                "max":["6 minutes"]
             },
             "data":{
+           			"conceptName" : "Visit 1",
+                    "IVRFormat" : "true",
+                    "SMSFormat" : "true",
+                    "language" : "en"
             },
             "alerts":[
-                {
+            	{
+                   "window" : "due",
+                   "interval" : ["1 minute"],
+                   "count" : "1"
+                 },    
+                 {           
                     "window":"late",
                     "offset":["0 Minutes"],
                     "interval":["1 Minutes"],
-                    "count":"1"
+                    "count":"4"
                 }
             ]
         },
@@ -24,20 +33,29 @@
             "name":"visit 2",
             "scheduleWindows":{
                 "earliest":["0 Minutes"],
-                "due":["5 Minutes"],
-                "late":["10 Minutes"],
-                "max":["15 Minutes"]
+                "due":["2 Minutes"],
+                "late":["4 Minutes"],
+                "max":["6 Minutes"]
             },
             "data":{
+            		"conceptName" : "Visit 2",
+                    "IVRFormat" : "true",
+                    "SMSFormat" : "true",
+                    "language" : "en"
             },
             "alerts":[
+            	{
+                   "window" : "due",
+                   "offset":["0 Minutes"],
+                   "interval" : ["1 minute"],
+                   "count" : "1"
+                 },  
                 {
                     "window":"late",
                     "offset":["0 Minutes"],
                     "interval":["1 Minute"],
                     "count":"1"
                 }
-
             ]
         },
         {
@@ -49,8 +67,18 @@
                 "max":["15 Minutes"]
             },
             "data":{
+            		"conceptName" : "Visit 3",
+                    "IVRFormat" : "true",
+                    "SMSFormat" : "true",
+                    "language" : "en"
             },
             "alerts":[
+            	{
+                   "window" : "due",
+                   "offset":["0 Minutes"],
+                   "interval" : ["1 minute"],
+                   "count" : "1"
+                 },  
                 {
                     "window":"late",
                     "offset":["0 Minutes"],

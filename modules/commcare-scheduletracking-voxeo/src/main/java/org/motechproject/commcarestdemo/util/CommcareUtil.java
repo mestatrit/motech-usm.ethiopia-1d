@@ -37,5 +37,11 @@ public class CommcareUtil {
 
         return null;
     }
+    
+    //Is this possible?
+    public String getNameOfPatient(String patientId){
+        
+        return null;
+    }
 
 }

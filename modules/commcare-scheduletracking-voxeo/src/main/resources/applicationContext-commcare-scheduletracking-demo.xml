@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:util="http://www.springframework.org/schema/util" xmlns:osgi="http://www.springframework.org/schema/osgi"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:osgi="http://www.springframework.org/schema/osgi"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
                http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <context:annotation-config />
+  <context:annotation-config />
 
-    <context:component-scan base-package="org.motechproject.commcarestdemo.*" />
+  <context:component-scan base-package="org.motechproject.commcarestdemo.*" />
 
-    <osgi:reference id="scheduleTrackingServiceOsgi" cardinality="0..1" interface="org.motechproject.scheduletracking.api.service.ScheduleTrackingService" />
+  <!-- <util:properties id="scheduleMessages" location="classpath:schedulemessages.properties" /> -->
 
-    <osgi:reference id="cmsLiteService" cardinality="0..1" interface="org.motechproject.cmslite.api.service.CMSLiteService" />
-    
-    <osgi:reference id="commcareCaseServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareCaseService"/>
+  <!-- <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"> <property name="scheduleMessages"> 
+    <value>schedulemessages</value> </property> </bean> -->
 
     <osgi:reference id="providerRepositoryServiceOsgi" cardinality="0..1" interface="org.motech.provider.repository.service.ProviderRepositoryService"/>
 
@@ -22,22 +22,47 @@
 
     <osgi:reference id="commcareFormServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareFormService"/>
 
-    <osgi:reference id="commcareUserServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareUserService"/>
-    
-    <osgi:reference id="eventListenerRegistryService" cardinality="0..1" interface="org.motechproject.event.listener.EventListenerRegistryService" />
+  <!-- For bootstrapping content at server startup -->
+  <bean id="contentInitiator" class="org.motechproject.commcarestdemo.content.ContentInitiator" init-method="loadContent">
+  </bean>
 
-    <osgi:reference id="eventRelayOsgi" cardinality="0..1" interface="org.motechproject.event.listener.EventRelay" />
 
-    <osgi:reference id="personAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSPatientAdapter" />
+  <osgi:reference id="scheduleTrackingServiceOsgi" cardinality="0..1"
+    interface="org.motechproject.scheduletracking.api.service.ScheduleTrackingService" />
 
-    <osgi:reference id="encounterAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSEncounterAdapter" />
+  <osgi:reference id="cmsLiteService" cardinality="0..1" interface="org.motechproject.cmslite.api.service.CMSLiteService" />
 
-    <osgi:reference id="userAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSUserAdapter" />
+  <osgi:reference id="smsServiceOsgi" cardinality="0..1" interface="org.motechproject.sms.api.service.SmsService" />
 
-    <osgi:reference id="observationAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSObservationAdapter" />
+  <osgi:reference id="ivrServiceOsgi" cardinality="0..1" interface="org.motechproject.ivr.service.IVRService" />
 
-    <osgi:reference id="facilityAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSFacilityAdapter" />
+  <osgi:reference id="commcareCaseServiceOsgi" cardinality="0..1"
+    interface="org.motechproject.commcare.service.CommcareCaseService" />
 
-    <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
+  <osgi:reference id="commcareFormServiceOsgi" cardinality="0..1"
+    interface="org.motechproject.commcare.service.CommcareFormService" />
+
+  <osgi:reference id="commcareUserServiceOsgi" cardinality="0..1"
+    interface="org.motechproject.commcare.service.CommcareUserService" />
+
+  <osgi:reference id="eventListenerRegistryService" cardinality="0..1"
+    interface="org.motechproject.event.listener.EventListenerRegistryService" />
+
+  <osgi:reference id="eventRelayOsgi" cardinality="0..1" interface="org.motechproject.event.listener.EventRelay" />
+
+  <osgi:reference id="personAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSPatientAdapter" />
+
+  <osgi:reference id="encounterAdapterOsgi" cardinality="0..1"
+    interface="org.motechproject.mrs.services.MRSEncounterAdapter" />
+
+  <osgi:reference id="userAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSUserAdapter" />
+
+  <osgi:reference id="observationAdapterOsgi" cardinality="0..1"
+    interface="org.motechproject.mrs.services.MRSObservationAdapter" />
+
+  <osgi:reference id="facilityAdapterOsgi" cardinality="0..1"
+    interface="org.motechproject.mrs.services.MRSFacilityAdapter" />
+
+  <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
 
 </beans>
