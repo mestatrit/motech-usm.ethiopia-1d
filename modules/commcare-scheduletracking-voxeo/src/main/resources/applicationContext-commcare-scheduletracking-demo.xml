@@ -20,8 +20,6 @@
 
     <osgi:reference id="locationRepositoryServiceOsgi" cardinality="0..1" interface="org.motech.location.repository.service.LocationRepositoryService"/>
 
-    <osgi:reference id="commcareFormServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareFormService"/>
-
   <!-- For bootstrapping content at server startup -->
   <bean id="contentInitiator" class="org.motechproject.commcarestdemo.content.ContentInitiator" init-method="loadContent">
   </bean>

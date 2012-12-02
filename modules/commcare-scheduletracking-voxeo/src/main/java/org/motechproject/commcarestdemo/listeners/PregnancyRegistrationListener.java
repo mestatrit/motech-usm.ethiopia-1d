@@ -66,6 +66,10 @@ public class PregnancyRegistrationListener {
             String caseId = getCaseId(form);
 
             String healthId = getHealthId(caseId);
+            
+            //String providerId = getUserId(form);
+            
+            
 
             if (healthId != null) {
                 enrollPregnancy(healthId);
@@ -88,6 +92,10 @@ public class PregnancyRegistrationListener {
 
     private String getCaseId(CommcareForm form) {
         return form.getForm().getElementByNameIncludeCase("case").getAttributes().get("case_id");
+    }
+    
+    private String getUserId(CommcareForm form) {
+        return form.getForm().getElementByName("user_id").getValue();
     }
 
     private void enrollPregnancy(String healthId) {
