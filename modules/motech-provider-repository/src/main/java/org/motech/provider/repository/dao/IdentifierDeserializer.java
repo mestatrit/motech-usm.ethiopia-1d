@@ -23,7 +23,6 @@ public class IdentifierDeserializer extends JsonDeserializer<MotechIdentifier> {
         JsonNode node = oc.readTree(jsonParser);
         MotechIdentifier identifier = new MotechIdentifier();
         identifier.setExternalId(node.get("externalId").getTextValue());
-        logger.warn("Id was: " + identifier.getExternalId());
         return identifier;
     }
 

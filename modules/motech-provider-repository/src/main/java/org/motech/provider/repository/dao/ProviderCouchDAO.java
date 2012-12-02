@@ -21,6 +21,8 @@ public class ProviderCouchDAO extends MotechBaseRepository<Provider> {
 
     private static final String FUNCTION_DOC_EMIT_MOTECH_IDENTIFIER = "function(doc) { if(doc.type === \'Provider\') emit(doc.motechId.identity, doc._id);}";
     
+    private static final String FUNCTION_DOC_EMIT_PROVIDERS_LOCATION_ID = "function(doc) { if(doc.type === \'Provider\') for (var location in doc.locationIdentities) { emit(doc.locationIdentities[location], doc.id); }}";
+
     @Autowired
     protected ProviderCouchDAO(@Qualifier("providerRepositoryDatabaseConnector") CouchDbConnector db) {
         super(Provider.class, db);
@@ -49,6 +51,12 @@ public class ProviderCouchDAO extends MotechBaseRepository<Provider> {
     public Provider queryProviderByMotechId(MotechIdentifier identifier) {
         List<Provider> providers = queryView("find_by_identifier", identifier.getIdentity());
         return providers.size() > 0 ? providers.get(0) : null;
+    }
+
+    @View(name = "find_by_location_id", map = FUNCTION_DOC_EMIT_PROVIDERS_LOCATION_ID)
+    public List<Provider> queryProvidersByLocationId(String locationId) {
+        List<Provider> providers = queryView("find_by_location_id", locationId);
+        return providers;
     }
     
     

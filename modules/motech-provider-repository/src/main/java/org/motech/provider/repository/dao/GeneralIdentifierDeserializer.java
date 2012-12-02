@@ -27,19 +27,13 @@ public class GeneralIdentifierDeserializer extends JsonDeserializer<List<Provide
         List<ProviderIdentifier> identifiers = new ArrayList<ProviderIdentifier>();
         ObjectCodec oc = jsonParser.getCodec();
         JsonNode node = oc.readTree(jsonParser);
-        logger.warn("Node string: " + node.toString());
+
         Iterator<JsonNode> nodes = node.getElements();
         while (nodes.hasNext()) {
             JsonNode localnode = nodes.next();
-            logger.warn("Local Node string: " + localnode.toString());
-            Iterator<String> fieldNames = localnode.getFieldNames();
-            logger.warn("Node here: ");
-            while (fieldNames.hasNext()) {
-                String fieldName = fieldNames.next();
-                logger.warn("Field name: " + fieldName);
-            }
+
             String identifierType = localnode.get("identifierName").getTextValue();
-            logger.warn("Identifier name: " + identifierType);
+
             if ("openmrs_provider_id".equals(identifierType)) {
                 identifiers.add(deserializeOpenMRSIdentifier(localnode));
             } else if ("commcare_provider_id".equals(identifierType)) {

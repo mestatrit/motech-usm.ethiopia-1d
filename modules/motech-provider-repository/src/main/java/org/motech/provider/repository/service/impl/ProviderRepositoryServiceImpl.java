@@ -3,6 +3,7 @@ package org.motech.provider.repository.service.impl;
 import java.util.List;
 
 import org.motech.provider.repository.dao.ProviderCouchDAO;
+import org.motech.provider.repository.domain.MotechIdentifier;
 import org.motech.provider.repository.domain.Provider;
 import org.motech.provider.repository.domain.ProviderIdentifier;
 import org.motech.provider.repository.service.ProviderRepositoryService;
@@ -32,4 +33,13 @@ public class ProviderRepositoryServiceImpl implements ProviderRepositoryService 
         providerDao.addProvider(provider);
     }
 
+    @Override
+    public List<Provider> getProvidersByLocationId(String locationId) {
+        return providerDao.queryProvidersByLocationId(locationId);
+    }
+
+    @Override
+    public Provider getProviderByMotechId(MotechIdentifier motechId) {
+        return providerDao.queryProviderByMotechId(motechId);
+    }
 }

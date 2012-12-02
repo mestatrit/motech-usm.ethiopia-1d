@@ -67,9 +67,4 @@ public class Provider extends MotechBaseDataObject {
     public void setLocationIdentities(List<String> locationIdentities) {
         this.locationIdentities = locationIdentities;
     }
-
-
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
 }
