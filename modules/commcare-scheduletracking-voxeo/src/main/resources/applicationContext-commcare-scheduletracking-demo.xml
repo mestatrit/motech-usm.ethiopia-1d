@@ -16,6 +16,10 @@
     
     <osgi:reference id="commcareCaseServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareCaseService"/>
 
+    <osgi:reference id="providerRepositoryServiceOsgi" cardinality="0..1" interface="org.motech.provider.repository.service.ProviderRepositoryService"/>
+
+    <osgi:reference id="locationRepositoryServiceOsgi" cardinality="0..1" interface="org.motech.location.repository.service.LocationRepositoryService"/>
+
     <osgi:reference id="commcareFormServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareFormService"/>
 
     <osgi:reference id="commcareUserServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareUserService"/>
