@@ -90,6 +90,8 @@ public class RegistrationPoller {
 
             }
         }
+        
+        int count = 0;
 
         for (Map.Entry<String, List<String>> entry : woredaFacilityReportingDayMap.entrySet()) {
 
@@ -100,11 +102,17 @@ public class RegistrationPoller {
                 enrollmentService.enrollHEW(entry.getKey(), MotechConstants.SCHEDULE_NAME, localDate,
                         new Time(MotechConstants.HOUR_DUE, MotechConstants.MINUTE_DUE), null);
             }
+            
+            count++;
+            
+            if (count >= 20) {
+                List<String> list = new ArrayList<String>(woredaFacilityReportingDayMap.keySet());
+
+                logger.info("Number of woreda-facility pairs: " + list.size());
+                
+                return;
+            }
         }
-
-        List<String> list = new ArrayList<String>(woredaFacilityReportingDayMap.keySet());
-
-        logger.info("Number of woreda-facility pairs: " + list.size());
 
 //        Collections.sort(list);
 //
