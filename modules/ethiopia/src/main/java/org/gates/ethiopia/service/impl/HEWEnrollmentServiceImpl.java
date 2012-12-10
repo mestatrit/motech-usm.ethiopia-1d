@@ -30,10 +30,10 @@ public class HEWEnrollmentServiceImpl implements HEWEnrollmentService {
         EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
         enrollmentRequest.setExternalId(hewId);
         enrollmentRequest.setScheduleName(nameOfSchedule);
-        enrollmentRequest.setReferenceDate(date);
-        enrollmentRequest.setReferenceTime(theTime);
-        enrollmentRequest.setEnrollmentDate(date);
-        enrollmentRequest.setEnrollmentTime(theTime);
+        enrollmentRequest.setReferenceDate(LocalDate.now());
+        enrollmentRequest.setReferenceTime(new Time(DateTime.now().getHourOfDay(), DateTime.now().getMinuteOfHour()));
+        enrollmentRequest.setEnrollmentDate(LocalDate.now());
+        enrollmentRequest.setEnrollmentTime(new Time(DateTime.now().getHourOfDay(), DateTime.now().getMinuteOfHour()));
         enrollmentRequest.setMetadata(metadata);
 
         scheduleTrackingService.enroll(enrollmentRequest);
