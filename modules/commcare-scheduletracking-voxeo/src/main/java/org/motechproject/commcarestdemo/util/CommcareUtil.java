@@ -37,11 +37,17 @@ public class CommcareUtil {
 
         return null;
     }
-    
-    //Is this possible?
-    public String getNameOfPatient(String patientId){
-        
+
+    public String getNameOfPatient(String patientId) {
+
+        List<CaseInfo> caseList = caseService.getAllCasesByType(DemoConstants.CASE_TYPE);
+
+        for (CaseInfo pregnancyCase : caseList) {
+            if (patientId.equals(pregnancyCase.getFieldValues().get(DemoConstants.HEALTH_ID_FIELD))) {
+                return pregnancyCase.getFieldValues().get(DemoConstants.NAME_FIELD);
+            }
+
+        }
         return null;
     }
-
 }

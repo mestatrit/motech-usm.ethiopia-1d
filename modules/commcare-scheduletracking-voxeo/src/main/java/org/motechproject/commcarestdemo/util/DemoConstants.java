@@ -12,8 +12,12 @@ public final class DemoConstants {
 
     public static final String CASE_TYPE = "pregnancy";
 
-    public static final Object MOBILE_PHONE_FIELD = "mobile_phone_number";
+    public static final String MOBILE_PHONE_FIELD = "mobile_phone_number";
 
-    public static final Object HEALTH_ID_FIELD = "health_id";
+    public static final String HEALTH_ID_FIELD = "health_id";
+    
+    public static final String NAME_FIELD = "full_name";
+
+    public static final String PROVIDER_RESPONSIBLE = "registering_provider";
 
 }

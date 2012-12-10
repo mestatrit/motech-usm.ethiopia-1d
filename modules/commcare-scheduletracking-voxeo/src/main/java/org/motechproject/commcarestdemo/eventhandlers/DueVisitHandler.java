@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
+//import org.joda.time.LocalDate;
+//import org.joda.time.LocalTime;
 import org.motechproject.commcarestdemo.util.DemoConstants;
 import org.motechproject.commcarestdemo.util.OpenMRSUtil;
-import org.motechproject.model.Time;
+//import org.motechproject.model.Time;
 import org.motechproject.scheduletracking.api.events.MilestoneEvent;
 import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
 
@@ -35,7 +35,7 @@ public class DueVisitHandler {
     
     public void handle(MilestoneEvent milestoneEvent) {
         
-        logger.debug("Handled due visit milestone event for: " + milestoneEvent.getExternalId() + " --- " + milestoneEvent.getScheduleName() + " --- "
+        logger.warn("Handled due visit milestone event for: " + milestoneEvent.getExternalId() + " --- " + milestoneEvent.getScheduleName() + " --- "
                 + milestoneEvent.getWindowName());
         
         String motechID = milestoneEvent.getExternalId();
@@ -46,7 +46,7 @@ public class DueVisitHandler {
             sendDueMessage(motechID, milestoneEvent);
         }      
         
-        scheduleTrackingService.fulfillCurrentMilestone(milestoneEvent.getExternalId(), milestoneEvent.getScheduleName(), LocalDate.now(), new Time(LocalTime.now()));
+        //scheduleTrackingService.fulfillCurrentMilestone(milestoneEvent.getExternalId(), milestoneEvent.getScheduleName(), LocalDate.now(), new Time(LocalTime.now()));
     }
 
     private void sendDueMessage(String motechID, MilestoneEvent milestoneEvent) {
@@ -71,7 +71,7 @@ public class DueVisitHandler {
         }
 
         if (visitHandlerCommon.isSmsTrue() && language != null) {
-            contactInitiator.sendSMSToPatient(patientName, motechID, "Hello " + "patientNameMethod" + ". You are due for a visit. You must complete this visit within 5 minutes.");
+            contactInitiator.sendSMSToPatient(patientName, motechID, "Hello " + patientName + ". You are due for a visit. You must complete this visit within 5 minutes.");
             contactInitiator.sendSMSToProvider(patientName, motechID, "Your patient with ID " + motechID + " is due for a visit in the next 5 minutes.");
         }       
     }

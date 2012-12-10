@@ -5,8 +5,11 @@ import java.util.Map;
 import org.motechproject.commcare.domain.CommcareUser;
 import org.motechproject.commcare.service.CommcareUserService;
 import org.motechproject.commcarestdemo.util.CommcareUtil;
+import org.motechproject.commcarestdemo.util.DemoConstants;
 import org.motechproject.commcarestdemo.util.OpenMRSUtil;
 import org.motechproject.scheduletracking.api.events.MilestoneEvent;
+import org.motechproject.scheduletracking.api.service.EnrollmentRecord;
+import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +24,9 @@ public class VisitHandlerCommon {
     
     @Autowired
     private CommcareUserService userService;
+    
+    @Autowired
+    private ScheduleTrackingService scheduleTrackingService;
 
     private Map<String, String> milestoneData;
     private String milestoneConceptName;    
@@ -53,13 +59,14 @@ public class VisitHandlerCommon {
             return;
         }
 
-        setPatientName("patientNameMethod"); //commcareUtil.getUserAssociatedWithPregnancy(motechID)??;
+        setPatientName(commcareUtil.getNameOfPatient((motechID)));
         setIvrFormat(milestoneData.get("IVRFormat"));
         setSmsFormat(milestoneData.get("SMSFormat"));
         setLanguage(milestoneData.get("language"));
         
         // retrieve the case and check the user id, map it to OpenMRS
-        setUserId(commcareUtil.getUserAssociatedWithPregnancy(motechID));
+        //setUserId(commcareUtil.getUserAssociatedWithPregnancy(motechID));
+        setUserId(getUserFromEnrollment(motechID));
         
         CommcareUser provider = userService.getCommcareUserById(userId);
         setProviderPhone(provider.getDefaultPhoneNumber());
@@ -76,6 +83,11 @@ public class VisitHandlerCommon {
         setFormedMessage(true);
     }
     
+    private String getUserFromEnrollment(String motechID) {
+        EnrollmentRecord record = scheduleTrackingService.getEnrollment(motechID, DemoConstants.SCHEDULE_NAME);
+        return record.getMetadata().get(DemoConstants.PROVIDER_RESPONSIBLE);
+    }
+
     public Map<String, String> getMilestoneData() {
         return milestoneData;
     }

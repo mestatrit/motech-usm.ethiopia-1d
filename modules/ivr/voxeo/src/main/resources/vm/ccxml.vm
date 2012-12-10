@@ -3,7 +3,7 @@
 	<var name="sessionId" expr="session.id" />
 	<var name="phoneNum" expr="session.values.phonenum" />
 	<var name="vxml" expr="session.values.vxml"/>
-	<var name="base_url" expr="'http://130.111.132.59:8080/motech-platform-server'"/>
+	<var name="base_url" expr="'http://ec2-107-20-92-105.compute-1.amazonaws.com:61725/motech-platform-server'"/>
 	<eventprocessor>
 		<transition event="ccxml.loaded">
 			<send name="'TIMEOUT_REACHED'" target="session.id" delay="'60s'" />

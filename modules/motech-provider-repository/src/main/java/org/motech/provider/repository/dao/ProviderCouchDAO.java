@@ -49,7 +49,7 @@ public class ProviderCouchDAO extends MotechBaseRepository<Provider> {
     
     @View(name = "find_by_motech_id", map = FUNCTION_DOC_EMIT_MOTECH_IDENTIFIER)
     public Provider queryProviderByMotechId(MotechIdentifier identifier) {
-        List<Provider> providers = queryView("find_by_identifier", identifier.getIdentity());
+        List<Provider> providers = queryView("find_by_motech_id", identifier.getIdentity());
         return providers.size() > 0 ? providers.get(0) : null;
     }
 

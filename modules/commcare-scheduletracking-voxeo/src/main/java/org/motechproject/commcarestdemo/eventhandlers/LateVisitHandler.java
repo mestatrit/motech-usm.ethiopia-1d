@@ -75,7 +75,7 @@ public class LateVisitHandler {
         }
 
         if (visitHandlerCommon.isSmsTrue() && language != null) {
-            contactInitiator.sendSMSToPatient(patientName, motechID, "Hello " + "patientNameMethod" + ". You have missed your visit. Please visit your clinic as soon as possible.");
+            contactInitiator.sendSMSToPatient(patientName, motechID, "Hello " + patientName + ". You have missed your visit. Please visit your clinic as soon as possible.");
             contactInitiator.sendSMSToProvider(patientName, motechID, "Your patient with ID " + motechID + " has missed a visit. Please contact your patient to be sure they are aware of this.");
         }
     }

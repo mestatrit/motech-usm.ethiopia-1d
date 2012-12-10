@@ -4,9 +4,9 @@
         {
             "name":"visit1",
             "scheduleWindows":{
-                "earliest":["0 Minutes"],
-                "due":["1 Minutes"],
-                "late":["2 Minutes"],
+                "earliest":["2 Minutes"],
+                "due":["5 Minutes"],
+                "late":["6 Minutes"],
                 "max":["6 minutes"]
             },
             "data":{
@@ -18,23 +18,23 @@
             "alerts":[
             	{
                    "window" : "due",
-                   "interval" : ["1 minute"],
+                   "interval" : ["1 Minutes"],
                    "count" : "1"
                  },    
                  {           
                     "window":"late",
                     "offset":["0 Minutes"],
                     "interval":["1 Minutes"],
-                    "count":"4"
+                    "count":"1"
                 }
             ]
         },
         {
             "name":"visit 2",
             "scheduleWindows":{
-                "earliest":["0 Minutes"],
-                "due":["2 Minutes"],
-                "late":["4 Minutes"],
+                "earliest":["2 Minutes"],
+                "due":["5 Minutes"],
+                "late":["6 Minutes"],
                 "max":["6 Minutes"]
             },
             "data":{
@@ -61,10 +61,10 @@
         {
             "name":"visit 3",
             "scheduleWindows":{
-                "earliest":["0 Minutes"],
+                "earliest":["2 Minutes"],
                 "due":["5 Minutes"],
-                "late":["10 Minutes"],
-                "max":["15 Minutes"]
+                "late":["6 Minutes"],
+                "max":["6 Minutes"]
             },
             "data":{
             		"conceptName" : "Visit 3",

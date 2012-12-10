@@ -1,13 +1,11 @@
 package org.motechproject.commcarestdemo.listeners;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.motechproject.commcare.domain.CaseInfo;
 import org.motechproject.commcare.domain.CommcareForm;
-import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.events.constants.EventDataKeys;
 import org.motechproject.commcare.events.constants.EventSubjects;
 import org.motechproject.commcare.service.CommcareCaseService;
@@ -43,62 +41,63 @@ public class PregnancyRegistrationListener {
 
     @MotechListener(subjects = EventSubjects.FORM_STUB_EVENT)
     public void handleFormEvent(MotechEvent event) {
-        eventRelay.sendEventMessage(new MotechEvent("verificationEvent"));
+
         Map<String, Object> parameters = event.getParameters();
 
-        String receivedOn = (String) parameters.get(EventDataKeys.RECEIVED_ON);
+        //String receivedOn = (String) parameters.get(EventDataKeys.RECEIVED_ON);
         String formId = (String) parameters.get(EventDataKeys.FORM_ID);
-        List<String> caseIds = (List<String>) parameters.get(EventDataKeys.CASE_IDS);
+        //List<String> caseIds = (List<String>) parameters.get(EventDataKeys.CASE_IDS);
 
         logger.warn("Received form (schedule tracking listener): " + formId);
 
         CommcareForm form = null;
 
-        if (formId != null && formId.trim().length() > 0) {
-            form = formService.retrieveForm(formId);
-        } else {
-            logger.info("Form Id was null");
-        }
-
-        if ("http://openrosa.org/formdesigner/882FC273-E436-4BA1-B8CC-9CA526FFF8C2".equals(form.getForm().getAttributes().get("xmlns"))) {
-            logger.info("Received pregnancy registration form...");
-
-            String caseId = getCaseId(form);
-
-            String healthId = getHealthId(caseId);
-            
-            //String providerId = getUserId(form);
-            
-            
-
-            if (healthId != null) {
-                enrollPregnancy(healthId);
+        try {
+            if (formId != null && formId.trim().length() > 0) {
+                form = formService.retrieveForm(formId);
+                if (form == null) {
+                    logger.warn("Unable to retrieve form");
+                    return;
+                }
+            } else {
+                logger.info("Form Id was null");
             }
-
+        } catch (Exception e) {
+            logger.warn("Unable to retrieve form: " + e.getMessage());
+            return;
         }
 
-        FormValueElement rootElement = null;
+        try {
+            if ("http://openrosa.org/formdesigner/882FC273-E436-4BA1-B8CC-9CA526FFF8C2".equals(form.getForm().getAttributes().get("xmlns"))) {
+                logger.info("Received pregnancy registration form...");
 
-        if (form != null) {
-            rootElement = form.getForm();
-        }
+                String caseId = getCaseId(form);
 
-        String caseType = rootElement.getElementByNameIncludeCase("case_type").getValue();
+                String healthId = getHealthId(caseId);
 
-        if ("pregnancy".equals(caseType)) {
-            logger.warn("Pregnancy case type handled" );
+                String providerId = getUserId(form);
+
+
+
+                if (healthId != null) {
+                    enrollPregnancy(healthId, providerId);
+                }
+
+            } 
+        } catch (Exception e) {
+            logger.warn("Warning: " + e.getMessage());
         }
     }
 
     private String getCaseId(CommcareForm form) {
         return form.getForm().getElementByNameIncludeCase("case").getAttributes().get("case_id");
     }
-    
+
     private String getUserId(CommcareForm form) {
-        return form.getForm().getElementByName("user_id").getValue();
+        return form.getForm().getElementByName("userID").getValue();
     }
 
-    private void enrollPregnancy(String healthId) {
+    private void enrollPregnancy(String healthId, String providerId) {
         // EnrollmentRecord enrollment =
         // scheduleTrackingService.getEnrollment(healthId,
         // "pregnancy_schedule");
@@ -111,6 +110,12 @@ public class PregnancyRegistrationListener {
         enrollmentRequest.setReferenceTime(new Time(LocalTime.now()));
         enrollmentRequest.setExternalId(healthId);
         enrollmentRequest.setScheduleName(DemoConstants.SCHEDULE_NAME);
+
+        Map<String, String> metaData = new HashMap<String, String>();
+
+        metaData.put(DemoConstants.PROVIDER_RESPONSIBLE, providerId);
+
+        enrollmentRequest.setMetadata(metaData);
 
         scheduleTrackingService.enroll(enrollmentRequest);
 

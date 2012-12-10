@@ -35,6 +35,9 @@ public class OpenMRSUtil {
             }
         }
 
+        if (latestDate != null) {
+            latestDate = latestDate.plusHours(8).plusMinutes(5);
+        }
         return latestDate;
     }
 }

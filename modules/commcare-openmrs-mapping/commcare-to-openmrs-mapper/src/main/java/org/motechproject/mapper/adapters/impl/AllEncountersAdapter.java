@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import org.joda.time.DateTime;
 import org.motechproject.commcare.domain.CommcareForm;
-import org.motechproject.commcare.domain.CommcareUser;
 import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.service.CommcareUserService;
 import org.motechproject.mapper.adapters.ActivityFormAdapter;
@@ -79,15 +78,17 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
         }
 
         if (facilityName == null) {
-            if (encounterActivity.getFacilityScheme() != null && "commcareUser".equals(encounterActivity.getFacilityScheme().get("type"))) {
-                String facilityUserFieldName = encounterActivity.getFacilityScheme().get("fieldName");
-                if (facilityUserFieldName != null) {
-                    String userId = form.getMetadata().get("userID");
-                    CommcareUser user = userService.getCommcareUserById(userId);
-                    facilityName = user.getUserData().get(facilityUserFieldName);
-                }
-            }
+            facilityName = openMrsUtil.getFacility(form);
         }
+        //            if (encounterActivity.getFacilityScheme() != null && "commcareUser".equals(encounterActivity.getFacilityScheme().get("type"))) {
+        //                String facilityUserFieldName = encounterActivity.getFacilityScheme().get("fieldName");
+        //                if (facilityUserFieldName != null) {
+        //                    String userId = form.getMetadata().get("userID");
+        //                    CommcareUser user = userService.getCommcareUserById(userId);
+        //                    facilityName = user.getUserData().get(facilityUserFieldName);
+        //                }
+        //            }
+
 
         if (facilityName == null) {
             logger.warn("No facility name provided, using " + FormMappingConstants.DEFAULT_FACILITY);
