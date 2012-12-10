@@ -9,7 +9,7 @@ public final class MotechConstants {
 
     public static final String LATE_WINDOW = "late";
 
-    public static final String SCHEDULE_NAME = "Health Worker Form Submission Tracking";
+    public static final String SCHEDULE_NAME = "Quick Health Worker Form Submission Tracking";
 
     public static final String MAPPING_FILE_NAME = "hew-schedule.json";
 
@@ -53,9 +53,19 @@ public final class MotechConstants {
 
     public static final String REGION = "region";
 
+    public static final String WOREDA = "woreda";
+
+    public static final String FACILITY_NAME = "facility_name";
+
     public static final int NUM_DAYS_TO_CHECK = 7;
 
     public static final int YEAR = 2012;
+
+    public static final String EMAIL_SUBJECT = "subject";
+
+    public static final CharSequence REGION_PLACEHOLDER = "[REGION]";
+
+    public static final String DEFAULT_EMAIL = "default_email";
 
     private MotechConstants() {
     }
