@@ -88,4 +88,11 @@ public class GatesEthiopiaServiceImpl implements GatesEthiopiaMailService {
         schedulerService.scheduleRunOnceJob(emailJob);
     }
 
+    @Override
+    public void sendAggregateEmailReminder(String emailAddress, String body, String subject) {
+        logger.info("Sending aggregate e-mail to: " + emailAddress);
+        SimpleMailMessage emailReminder = buildEmail(emailAddress, subject, body);
+        mailService.send(emailReminder);
+    }
+
 }

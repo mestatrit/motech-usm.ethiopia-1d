@@ -6,4 +6,6 @@ public interface GatesEthiopiaMailService {
 
     void scheduleMail(String recipient, String emailAddress, String region);
 
+    void sendAggregateEmailReminder(String emailAddress, String body, String subject);
+
 }
