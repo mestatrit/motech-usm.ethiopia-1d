@@ -59,7 +59,7 @@ public class LateFormListener {
 
             String region = null;
             if ((region = (formSubmittedForWoredaFacilityWithinLastWeek(woredaFacility[0], woredaFacility[1], hews))) != null) {
-                sendEmailAlert(woredaFacilityId, region);
+                //sendEmailAlert(woredaFacilityId, region);
                 logger.info("**** Form was NOT submitted for " + milestoneEvent.getExternalId());
             } else {
                 logger.info("&&&& Form was submitted for " + milestoneEvent.getExternalId());
@@ -229,6 +229,7 @@ public class LateFormListener {
         MotechEvent lateEvent = new MotechEvent(EventConstants.LATE_EVENT);
         lateEvent.getParameters().put(CommcareConstants.WOREDA, woreda);
         lateEvent.getParameters().put(CommcareConstants.FACILITY_NAME, facility);
+        lateEvent.getParameters().put("region", region);
         eventRelay.sendEventMessage(lateEvent);
         return region;
     }
