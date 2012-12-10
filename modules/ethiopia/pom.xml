@@ -125,12 +125,15 @@
                             org.gates.ethiopia.*
                         </Export-Package>
                         <Import-Package>
-                            *,
                             org.motechproject.event.listener,
-                            org.springframework.beans.factory.xml,
                             org.motechproject.event.listener.annotations,
+                            org.motechproject.server.config,
+                            org.motechproject.server.config.service,
+                            org.springframework.beans.factory.config,
+                            org.springframework.beans.factory.xml,
                             org.springframework.context.config,
-                            org.springframework.osgi.config
+                            org.springframework.osgi.config,
+                            *
                         </Import-Package>
                         <Private-Package>
                             org.ektorp.impl,
