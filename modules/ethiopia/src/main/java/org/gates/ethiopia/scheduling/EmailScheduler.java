@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import javax.annotation.PostConstruct;
 import org.gates.ethiopia.constants.EventConstants;
 import org.gates.ethiopia.constants.MotechConstants;
@@ -14,14 +13,12 @@ import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.eventlogging.domain.CouchEventLog;
 import org.motechproject.eventlogging.service.EventQueryService;
-import org.motechproject.model.DayOfWeek;
 import org.motechproject.scheduler.MotechSchedulerService;
 import org.motechproject.scheduler.domain.RepeatingSchedulableJob;
 import org.motechproject.server.config.SettingsFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,15 +26,7 @@ public class EmailScheduler {
 
     private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
 
-    private static final long REPEAT_INTERVAL_IN_MILLIS = 60000;
-
-    private static final int START_DAY = DayOfWeek.Monday.getValue();
-
-    private static final int HOUR_OF_DAY = 16;
-
-    private static final int MINUTE_OF_HOUR = 16;
-
-    private static final int PREVIOUS_DAYS_TO_CHECK = 7;
+    private static final long MILLIS_IN_HOUR = 3600000;
 
     @Autowired
     private MotechSchedulerService schedulerService;
@@ -49,14 +38,6 @@ public class EmailScheduler {
     private GatesEthiopiaMailService mailService;
 
     @Autowired
-    @Qualifier(value = "regionEmailConfiguration")
-    private Properties regionEmailConfiguration;
-
-    @Autowired
-    @Qualifier(value = "emailSettings")
-    private Properties emailSettings;
-
-    @Autowired
     private SettingsFacade settingsFacade;
 
     @PostConstruct
@@ -66,12 +47,32 @@ public class EmailScheduler {
 
         RepeatingSchedulableJob job = new RepeatingSchedulableJob();
 
-        DateTime startTime = new DateTime().withDayOfWeek(START_DAY).withHourOfDay(HOUR_OF_DAY).withMinuteOfHour(MINUTE_OF_HOUR);
+        String day = settingsFacade.getProperty(MotechConstants.SCHEDULE_DAY_OF_WEEK_FIELD);
+
+        String hour = settingsFacade.getProperty(MotechConstants.SCHEDULE_HOUR_OF_DAY_FIELD);
+
+        String minute = settingsFacade.getProperty(MotechConstants.SCHEDULE_MINUTE_OF_HOUR_FIELD);
+
+        String repeatInHours = settingsFacade.getProperty(MotechConstants.SCHEDULE_EMAIL_REPEAT_IN_HOURS_FIELD);
+
+        String delayInMinutes = settingsFacade.getProperty(MotechConstants.SCHEDULE_EMAIL_DELAY_IN_MINUTES_FIELD);
+
+        long repeatInMillis = Integer.parseInt(repeatInHours) * MILLIS_IN_HOUR;
+
+        int startDay = GenerateDateTimeUtil.getDayValue(day);
+
+        int hourOfDay = Integer.parseInt(hour);
+
+        int minuteOfHour = Integer.parseInt(minute);
+
+        int delayInMinutesValue = Integer.parseInt(delayInMinutes);
+
+        DateTime startTime = new DateTime().withDayOfWeek(startDay).withHourOfDay(hourOfDay).withMinuteOfHour(minuteOfHour).plusMinutes(delayInMinutesValue);
 
         logger.info("Starting aggregate e-mail job at: " + startTime.toDate());
 
         job.setStartTime(startTime.toDate());
-        job.setRepeatIntervalInMilliSeconds((REPEAT_INTERVAL_IN_MILLIS));
+        job.setRepeatIntervalInMilliSeconds(repeatInMillis);
         job.setMotechEvent(combineEmails);
 
         schedulerService.safeScheduleRepeatingJob(job);
@@ -95,7 +96,11 @@ public class EmailScheduler {
 
             region = region.trim().toLowerCase();
 
-            if (logTime.isAfter(DateTime.now().minusDays(PREVIOUS_DAYS_TO_CHECK))) {
+            String previousDays = settingsFacade.getProperty(MotechConstants.PREVIOUS_DAYS_TO_CHECK_FIELD);
+
+            int previousDaysValue = Integer.parseInt(previousDays);
+
+            if (logTime.isAfter(DateTime.now().minusDays(previousDaysValue))) {
                 List<CouchEventLog> couchLogs = emailBuilderMap.get(region);
                 if (couchLogs == null) {
                     couchLogs = new ArrayList<CouchEventLog>();

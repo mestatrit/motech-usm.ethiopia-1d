@@ -4,12 +4,24 @@ import org.motechproject.model.DayOfWeek;
 
 public final class MotechConstants {
 
-    // Schedule tracking constants
+    // Scheduling constants
     public static final String SCHEDULE_NAME_KEY = "schedule_name";
 
     public static final String LATE_WINDOW = "late";
 
-    public static final String SCHEDULE_NAME = "Quick Health Worker Form Submission Tracking";
+    public static final String SCHEDULE_FIELD_NAME = "healthWorkerSchedule";
+
+    public static final String SCHEDULE_DAY_OF_WEEK_FIELD = "scheduleDayOfWeek";
+
+    public static final String SCHEDULE_HOUR_OF_DAY_FIELD = "scheduleHourOfDay";
+
+    public static final String SCHEDULE_MINUTE_OF_HOUR_FIELD = "scheduleMinuteOfHour";
+
+    public static final String SCHEDULE_EMAIL_DELAY_IN_MINUTES_FIELD = "emailDelayInMinutes";
+
+    public static final String SCHEDULE_EMAIL_REPEAT_IN_HOURS_FIELD = "emailFrequencyInHours";
+    
+    public static final String PREVIOUS_DAYS_TO_CHECK_FIELD = "previousDaysToCheck";
 
     public static final String MAPPING_FILE_NAME = "hew-schedule.json";
 

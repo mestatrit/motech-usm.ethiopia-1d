@@ -16,6 +16,7 @@ import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.model.Time;
 import org.motechproject.scheduler.MotechSchedulerService;
 import org.motechproject.scheduler.domain.CronSchedulableJob;
+import org.motechproject.server.config.SettingsFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RegistrationPoller {
+    
+    @Autowired
+    private SettingsFacade settingsFacade;
 
     @Autowired
     private MotechSchedulerService schedulerService;
@@ -92,15 +96,27 @@ public class RegistrationPoller {
         }
         
         int count = 0;
+        
+        String scheduleName = settingsFacade.getProperty(MotechConstants.SCHEDULE_FIELD_NAME);
+        
+        String dayDue = settingsFacade.getProperty(MotechConstants.SCHEDULE_DAY_OF_WEEK_FIELD);
+        
+        String hourOfDay = settingsFacade.getProperty(MotechConstants.SCHEDULE_HOUR_OF_DAY_FIELD);
+        
+        String minuteOfHour = settingsFacade.getProperty(MotechConstants.SCHEDULE_MINUTE_OF_HOUR_FIELD);
+        
+        int hourOfDayValue = Integer.parseInt(hourOfDay);
+        
+        int minuteOfHourValue = Integer.parseInt(minuteOfHour);
 
         for (Map.Entry<String, List<String>> entry : woredaFacilityReportingDayMap.entrySet()) {
 
-            LocalDate localDate = new LocalDate(GenerateDateTimeUtil.nextTime());
+            LocalDate localDate = new LocalDate(GenerateDateTimeUtil.nextTime(dayDue, hourOfDayValue, minuteOfHourValue));
             
 
-            if (!enrollmentService.isEnrolled(entry.getKey(), MotechConstants.SCHEDULE_NAME)) {
-                enrollmentService.enrollHEW(entry.getKey(), MotechConstants.SCHEDULE_NAME, localDate,
-                        new Time(MotechConstants.HOUR_DUE, MotechConstants.MINUTE_DUE), null);
+            if (!enrollmentService.isEnrolled(entry.getKey(), scheduleName)) {
+                enrollmentService.enrollHEW(entry.getKey(), scheduleName, localDate,
+                        new Time(hourOfDayValue, minuteOfHourValue), null);
             }
             
             count++;

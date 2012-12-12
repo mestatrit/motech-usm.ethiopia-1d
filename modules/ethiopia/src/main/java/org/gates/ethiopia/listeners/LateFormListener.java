@@ -17,6 +17,7 @@ import org.motechproject.model.Time;
 import org.motechproject.scheduletracking.api.events.MilestoneEvent;
 import org.motechproject.scheduletracking.api.events.constants.EventSubjects;
 import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
+import org.motechproject.server.config.SettingsFacade;
 import org.motechproject.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,14 +46,19 @@ public class LateFormListener {
     @Qualifier(value = "regionEmailConfiguration")
     private Properties regionEmailConfiguration;
 
+    @Autowired
+    private SettingsFacade settingsFacade;
+
     @MotechListener(subjects = EventSubjects.MILESTONE_ALERT)
     public void handleWoredaFacilityLateOnForm(MotechEvent event) {
         MilestoneEvent milestoneEvent = new MilestoneEvent(event);
 
-         logger.info("Alert for schedule: " +
-         milestoneEvent.getScheduleName());
+        logger.info("Alert for schedule: " +
+                milestoneEvent.getScheduleName());
 
-        if (milestoneEvent.getScheduleName().equals(MotechConstants.SCHEDULE_NAME)) {
+        String scheduleName = settingsFacade.getProperty(MotechConstants.SCHEDULE_FIELD_NAME);
+
+        if (milestoneEvent.getScheduleName().equals(scheduleName)) {
             String woredaFacilityId = milestoneEvent.getExternalId();
             List<CaseInfo> hews = caseService.getAllCasesByType(CommcareConstants.CASE_TYPE);
             String[] woredaFacility = woredaFacilityId.split("[.]");
@@ -68,9 +74,9 @@ public class LateFormListener {
             LocalDate localDate = DateUtil.today();
             Time time = DateUtil.time(DateTime.now());
 
-             scheduleTrackingService.fulfillCurrentMilestone(woredaFacilityId,
-             MotechConstants.SCHEDULE_NAME, localDate,
-             time);
+            scheduleTrackingService.fulfillCurrentMilestone(woredaFacilityId,
+                    scheduleName, localDate,
+                    time);
 
         }
     }
@@ -200,6 +206,14 @@ public class LateFormListener {
 
     private String formSubmittedForWoredaFacilityWithinLastWeek(String woreda, String facility, List<CaseInfo> hews) {
 
+        String dayDue = settingsFacade.getProperty(MotechConstants.SCHEDULE_DAY_OF_WEEK_FIELD);
+        
+        String daysToCheck = settingsFacade.getProperty(MotechConstants.PREVIOUS_DAYS_TO_CHECK_FIELD);
+
+        int dayDueBy = Integer.parseInt(dayDue);
+        
+        int daysToCheckValue = Integer.parseInt(daysToCheck);
+
         String region = null;
 
         for (CaseInfo hew : hews) {
@@ -209,14 +223,13 @@ public class LateFormListener {
 
             if (woreda.equals(hewWoreda) && facility.equals(hewFacility)) {
                 region = hew.getFieldValues().get(CommcareConstants.REGION);
-                int dayDueBy = MotechConstants.DAY_DUE;
                 String lastSubmittedString = hew.getFieldValues().get(CommcareConstants.LAST_SUBMITTED);
                 logger.info("HEW " + hew.getFieldValues().get(CommcareConstants.HEW_NAME) + " for " + woreda + " : "
                         + facility + " - last submitted a form at: " + lastSubmittedString);
                 if (lastSubmittedString != null) {
                     DateTime lastSubmitted = DateTime.parse(lastSubmittedString);
                     if (checkLate(lastSubmitted, dayDueBy, MotechConstants.SECONDS_IN_DAY
-                            * MotechConstants.NUM_DAYS_TO_CHECK)) {
+                            * daysToCheckValue)) {
                         return null;
                     }
                 }
@@ -229,16 +242,16 @@ public class LateFormListener {
         MotechEvent lateEvent = new MotechEvent(EventConstants.LATE_EVENT);
         lateEvent.getParameters().put(CommcareConstants.WOREDA, woreda);
         lateEvent.getParameters().put(CommcareConstants.FACILITY_NAME, facility);
-        lateEvent.getParameters().put("region", region);
+        lateEvent.getParameters().put(MotechConstants.REGION, region);
         eventRelay.sendEventMessage(lateEvent);
         return region;
     }
 
     private boolean checkLate(DateTime lastSubmitted, int dayDueBy, int secondsDueAgo) {
-        DateTime fixedDate = lastSubmitted.withYear(MotechConstants.YEAR);
+
         DateTime secondsAgo = DateTime.now().minusSeconds(secondsDueAgo);
 
-        if (!fixedDate.isBefore(secondsAgo)) {
+        if (!lastSubmitted.isBefore(secondsAgo)) {
             return true;
         }
 
