@@ -21,6 +21,8 @@ public final class EventConstants {
     public static final String EMAIL_DELIVERY = BASE_SUBJECT + "email.send";
     
     public static final String COMBINE_EMAILS = BASE_SUBJECT + "email.combine";
+    
+    public static final String AGGREGATED_EVENT = BASE_SUBJECT + "region.aggregate";
 
     private EventConstants() {
     }

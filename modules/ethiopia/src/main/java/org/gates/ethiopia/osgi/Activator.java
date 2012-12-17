@@ -38,8 +38,9 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.motechproject.osgi.web.MotechOsgiWebApplicationContext;
+import org.motechproject.osgi.web.ServletRegistrationException;
 
 public class Activator implements BundleActivator {
     private static Logger logger = LoggerFactory.getLogger(Activator.class);
@@ -84,7 +85,7 @@ public class Activator implements BundleActivator {
         }
     }
 
-    public static class GatesEthiopiaApplicationContext extends OsgiBundleXmlWebApplicationContext {
+    public static class GatesEthiopiaApplicationContext extends MotechOsgiWebApplicationContext {
 
         public GatesEthiopiaApplicationContext() {
             super();
@@ -108,7 +109,7 @@ public class Activator implements BundleActivator {
                 Thread.currentThread().setContextClassLoader(old);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ServletRegistrationException(e);
         }
     }
 

@@ -6,19 +6,20 @@ import org.gates.ethiopia.constants.CommcareConstants;
 import org.gates.ethiopia.constants.EventConstants;
 import org.gates.ethiopia.constants.MotechConstants;
 import org.gates.ethiopia.service.GatesEthiopiaMailService;
+import org.gates.ethiopia.scheduling.GenerateDateTimeUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.motechproject.commcare.domain.CaseInfo;
 import org.motechproject.commcare.service.CommcareCaseService;
+import org.motechproject.commons.date.model.Time;
+import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.event.listener.annotations.MotechListener;
-import org.motechproject.model.Time;
 import org.motechproject.scheduletracking.api.events.MilestoneEvent;
 import org.motechproject.scheduletracking.api.events.constants.EventSubjects;
 import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
 import org.motechproject.server.config.SettingsFacade;
-import org.motechproject.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,14 +208,18 @@ public class LateFormListener {
     private String formSubmittedForWoredaFacilityWithinLastWeek(String woreda, String facility, List<CaseInfo> hews) {
 
         String dayDue = settingsFacade.getProperty(MotechConstants.SCHEDULE_DAY_OF_WEEK_FIELD);
-        
+
         String daysToCheck = settingsFacade.getProperty(MotechConstants.PREVIOUS_DAYS_TO_CHECK_FIELD);
 
-        int dayDueBy = Integer.parseInt(dayDue);
-        
+        int dayDueBy = GenerateDateTimeUtil.getDayValue(dayDue);
+
         int daysToCheckValue = Integer.parseInt(daysToCheck);
 
         String region = null;
+
+        DateTime lastSubmitted = null;
+
+        MotechEvent lateEvent = new MotechEvent(EventConstants.LATE_EVENT);
 
         for (CaseInfo hew : hews) {
             String hewWoreda = hew.getFieldValues().get(CommcareConstants.WOREDA).trim().toLowerCase();
@@ -227,19 +232,20 @@ public class LateFormListener {
                 logger.info("HEW " + hew.getFieldValues().get(CommcareConstants.HEW_NAME) + " for " + woreda + " : "
                         + facility + " - last submitted a form at: " + lastSubmittedString);
                 if (lastSubmittedString != null) {
-                    DateTime lastSubmitted = DateTime.parse(lastSubmittedString);
+                    lastSubmitted = DateTime.parse(lastSubmittedString);
                     if (checkLate(lastSubmitted, dayDueBy, MotechConstants.SECONDS_IN_DAY
                             * daysToCheckValue)) {
                         return null;
                     }
+                    lateEvent.getParameters().put(MotechConstants.LAST_SUBMITTED, lastSubmitted.toLocalDate());
                 }
             }
         }
 
-        if (region == null) {
-            region = "default";
+        if (region == null || region.trim().length() == 0) {
+            region = MotechConstants.DEFAULT_EMAIL;
         }
-        MotechEvent lateEvent = new MotechEvent(EventConstants.LATE_EVENT);
+
         lateEvent.getParameters().put(CommcareConstants.WOREDA, woreda);
         lateEvent.getParameters().put(CommcareConstants.FACILITY_NAME, facility);
         lateEvent.getParameters().put(MotechConstants.REGION, region);

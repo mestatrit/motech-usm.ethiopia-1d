@@ -2,7 +2,7 @@ package org.gates.ethiopia.scheduling;
 
 import org.gates.ethiopia.constants.MotechConstants;
 import org.joda.time.DateTime;
-import org.motechproject.model.DayOfWeek;
+import org.motechproject.commons.date.model.DayOfWeek;
 
 public final class GenerateDateTimeUtil {
 

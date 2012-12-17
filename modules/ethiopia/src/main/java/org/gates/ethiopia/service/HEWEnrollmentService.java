@@ -2,10 +2,9 @@ package org.gates.ethiopia.service;
 
 import java.util.List;
 import java.util.Map;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.motechproject.model.Time;
+import org.motechproject.commons.date.model.Time;
 
 public interface HEWEnrollmentService {
 

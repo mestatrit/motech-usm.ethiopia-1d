@@ -1,6 +1,6 @@
 package org.gates.ethiopia.constants;
 
-import org.motechproject.model.DayOfWeek;
+import org.motechproject.commons.date.model.DayOfWeek;
 
 public final class MotechConstants {
 
@@ -78,6 +78,8 @@ public final class MotechConstants {
     public static final CharSequence REGION_PLACEHOLDER = "[REGION]";
 
     public static final String DEFAULT_EMAIL = "default_email";
+
+    public static final String LAST_SUBMITTED = "last_submitted";
 
     private MotechConstants() {
     }

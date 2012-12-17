@@ -6,11 +6,11 @@ import java.util.Map;
 import org.gates.ethiopia.service.HEWEnrollmentService;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.motechproject.model.Time;
+import org.motechproject.commons.date.model.Time;
+import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.scheduletracking.api.service.EnrollmentRecord;
 import org.motechproject.scheduletracking.api.service.EnrollmentRequest;
 import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
-import org.motechproject.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +30,10 @@ public class HEWEnrollmentServiceImpl implements HEWEnrollmentService {
         EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
         enrollmentRequest.setExternalId(hewId);
         enrollmentRequest.setScheduleName(nameOfSchedule);
-        enrollmentRequest.setReferenceDate(LocalDate.now());
-        enrollmentRequest.setReferenceTime(new Time(DateTime.now().getHourOfDay(), DateTime.now().getMinuteOfHour()));
-        enrollmentRequest.setEnrollmentDate(LocalDate.now());
-        enrollmentRequest.setEnrollmentTime(new Time(DateTime.now().getHourOfDay(), DateTime.now().getMinuteOfHour()));
+        enrollmentRequest.setReferenceDate(date);
+        enrollmentRequest.setReferenceTime(theTime);
+        enrollmentRequest.setEnrollmentDate(date);
+        enrollmentRequest.setEnrollmentTime(theTime);
         enrollmentRequest.setMetadata(metadata);
 
         scheduleTrackingService.enroll(enrollmentRequest);

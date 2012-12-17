@@ -1,7 +1,5 @@
 package org.gates.ethiopia.scheduling;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -78,42 +76,44 @@ public class EmailScheduler {
         schedulerService.safeScheduleRepeatingJob(job);
     }
 
-    @MotechListener(subjects = EventConstants.COMBINE_EMAILS)
+    @MotechListener(subjects = EventConstants.AGGREGATED_EVENT)
     public void handleJob(MotechEvent event) {
-        Map<String, List<CouchEventLog>> emailBuilderMap = new HashMap<String, List<CouchEventLog>>();
-
-        List<CouchEventLog> logs = eventQueryService.getAllEventsBySubject(EventConstants.LATE_EVENT);
-
-        for (CouchEventLog log : logs) {
-
-            DateTime logTime = log.getTimeStamp();
-
-            String region = (String) log.getParameters().get(MotechConstants.REGION);
-
-            if (region == null || region.trim().length() == 0) {
-                region = MotechConstants.DEFAULT_EMAIL;
-            }
-
-            region = region.trim().toLowerCase();
-
-            String previousDays = settingsFacade.getProperty(MotechConstants.PREVIOUS_DAYS_TO_CHECK_FIELD);
-
-            int previousDaysValue = Integer.parseInt(previousDays);
-
-            if (logTime.isAfter(DateTime.now().minusDays(previousDaysValue))) {
-                List<CouchEventLog> couchLogs = emailBuilderMap.get(region);
-                if (couchLogs == null) {
-                    couchLogs = new ArrayList<CouchEventLog>();
-                    couchLogs.add(log);
-                    emailBuilderMap.put(region, couchLogs);
-                } else {
-                    couchLogs.add(log);
-                    emailBuilderMap.put(region, couchLogs);
-                }
-
-            }
-        }
-        constructEmails(emailBuilderMap);
+        
+        logger.warn("Handled aggregated event: " + event.toString());
+//        Map<String, List<CouchEventLog>> emailBuilderMap = new HashMap<String, List<CouchEventLog>>();
+//
+//        List<CouchEventLog> logs = eventQueryService.getAllEventsBySubject(EventConstants.LATE_EVENT);
+//
+//        for (CouchEventLog log : logs) {
+//
+//            DateTime logTime = log.getTimeStamp();
+//
+//            String region = (String) log.getParameters().get(MotechConstants.REGION);
+//
+//            if (region == null || region.trim().length() == 0) {
+//                region = MotechConstants.DEFAULT_EMAIL;
+//            }
+//
+//            region = region.trim().toLowerCase();
+//
+//            String previousDays = settingsFacade.getProperty(MotechConstants.PREVIOUS_DAYS_TO_CHECK_FIELD);
+//
+//            int previousDaysValue = Integer.parseInt(previousDays);
+//
+//            if (logTime.isAfter(DateTime.now().minusDays(previousDaysValue))) {
+//                List<CouchEventLog> couchLogs = emailBuilderMap.get(region);
+//                if (couchLogs == null) {
+//                    couchLogs = new ArrayList<CouchEventLog>();
+//                    couchLogs.add(log);
+//                    emailBuilderMap.put(region, couchLogs);
+//                } else {
+//                    couchLogs.add(log);
+//                    emailBuilderMap.put(region, couchLogs);
+//                }
+//
+//            }
+//        }
+//        constructEmails(emailBuilderMap);
     }
 
     private void constructEmails(Map<String, List<CouchEventLog>> emailBuilderMap) {
@@ -128,7 +128,7 @@ public class EmailScheduler {
         StringBuilder stringBuilder = new StringBuilder("The following facilities have not submitted a report within the last seven days: \n\n");
 
         for (int i = 0; i < logs.size(); i++) {
-            stringBuilder.append((i + 1) + "." + "  Woreda: " + logs.get(i).getParameters().get(MotechConstants.WOREDA) + "   |  Facility: " + logs.get(i).getParameters().get(MotechConstants.FACILITY_NAME) + "\n");
+            stringBuilder.append((i + 1) + "." + "  Woreda: " + logs.get(i).getParameters().get(MotechConstants.WOREDA) + "   |  Facility: " + logs.get(i).getParameters().get(MotechConstants.FACILITY_NAME) + " Last submission date: " + logs.get(i).getParameters().get(MotechConstants.LAST_SUBMITTED) + "\n");
         }      
 
         mailService.sendAggregateEmailReminder(recipient, stringBuilder.toString(), settingsFacade.getProperty(MotechConstants.EMAIL_SUBJECT).replace(MotechConstants.REGION_PLACEHOLDER, region));

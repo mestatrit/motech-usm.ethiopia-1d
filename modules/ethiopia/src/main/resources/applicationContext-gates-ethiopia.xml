@@ -16,15 +16,10 @@
                 <value>classpath:emailSettings.properties</value>
                 <value>classpath:caseConfiguration.properties</value>
                 <value>classpath:regionEmailConfiguration.properties</value>
+                <value>classpath:scheduleSettings.properties</value>
             </list>
         </property>
         <property name="moduleName" value="1B-Ethiopia" />
-    </bean>
-
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/webapp/" />
-        <property name="suffix" value=".jsp" />
-        <property name="viewClass" value="org.gates.ethiopia.web.BundledJspView" />
     </bean>
 
     <util:properties id="emailSettings" location="classpath:emailSettings.properties" />
