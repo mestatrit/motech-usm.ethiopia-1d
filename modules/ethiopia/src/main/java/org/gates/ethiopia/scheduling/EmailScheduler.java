@@ -1,5 +1,9 @@
 package org.gates.ethiopia.scheduling;
 
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -7,6 +11,7 @@ import org.gates.ethiopia.constants.EventConstants;
 import org.gates.ethiopia.constants.MotechConstants;
 import org.gates.ethiopia.service.GatesEthiopiaMailService;
 import org.joda.time.DateTime;
+import org.motechproject.commons.api.json.MotechJsonReader;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.eventlogging.domain.CouchEventLog;
@@ -18,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.google.gson.reflect.TypeToken;
 
 @Component
 public class EmailScheduler {
@@ -25,6 +31,8 @@ public class EmailScheduler {
     private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
 
     private static final long MILLIS_IN_HOUR = 3600000;
+
+    private MotechJsonReader motechJsonReader = new MotechJsonReader();
 
     @Autowired
     private MotechSchedulerService schedulerService;
@@ -76,44 +84,46 @@ public class EmailScheduler {
         schedulerService.safeScheduleRepeatingJob(job);
     }
 
-    @MotechListener(subjects = EventConstants.AGGREGATED_EVENT)
+    //@MotechListener(subjects = EventConstants.AGGREGATED_EVENT)
+    @MotechListener(subjects = EventConstants.COMBINE_EMAILS)
     public void handleJob(MotechEvent event) {
-        
-        logger.warn("Handled aggregated event: " + event.toString());
-//        Map<String, List<CouchEventLog>> emailBuilderMap = new HashMap<String, List<CouchEventLog>>();
-//
-//        List<CouchEventLog> logs = eventQueryService.getAllEventsBySubject(EventConstants.LATE_EVENT);
-//
-//        for (CouchEventLog log : logs) {
-//
-//            DateTime logTime = log.getTimeStamp();
-//
-//            String region = (String) log.getParameters().get(MotechConstants.REGION);
-//
-//            if (region == null || region.trim().length() == 0) {
-//                region = MotechConstants.DEFAULT_EMAIL;
-//            }
-//
-//            region = region.trim().toLowerCase();
-//
-//            String previousDays = settingsFacade.getProperty(MotechConstants.PREVIOUS_DAYS_TO_CHECK_FIELD);
-//
-//            int previousDaysValue = Integer.parseInt(previousDays);
-//
-//            if (logTime.isAfter(DateTime.now().minusDays(previousDaysValue))) {
-//                List<CouchEventLog> couchLogs = emailBuilderMap.get(region);
-//                if (couchLogs == null) {
-//                    couchLogs = new ArrayList<CouchEventLog>();
-//                    couchLogs.add(log);
-//                    emailBuilderMap.put(region, couchLogs);
-//                } else {
-//                    couchLogs.add(log);
-//                    emailBuilderMap.put(region, couchLogs);
-//                }
-//
-//            }
-//        }
-//        constructEmails(emailBuilderMap);
+
+        logger.warn("Handled event: " + event.toString());
+        Map<String, List<CouchEventLog>> emailBuilderMap = new HashMap<String, List<CouchEventLog>>();
+
+        List<CouchEventLog> logs = eventQueryService.getAllEventsBySubject(EventConstants.LATE_EVENT);
+
+        for (CouchEventLog log : logs) {
+
+            DateTime logTime = log.getTimeStamp();
+
+            String region = (String) log.getParameters().get(MotechConstants.REGION);
+
+            if (region == null || region.trim().length() == 0) {
+                region = "No region listed";
+            }
+
+            region = region.trim().toLowerCase();
+
+            String previousDays = settingsFacade.getProperty(MotechConstants.PREVIOUS_DAYS_TO_CHECK_FIELD);
+
+            int previousDaysValue = Integer.parseInt(previousDays);
+
+            if (logTime.isAfter(DateTime.now().minusDays(previousDaysValue))) {
+                List<CouchEventLog> couchLogs = emailBuilderMap.get(region);
+                if (couchLogs == null) {
+                    couchLogs = new ArrayList<CouchEventLog>();
+                    couchLogs.add(log);
+                    emailBuilderMap.put(region, couchLogs);
+                } else {
+                    couchLogs.add(log);
+                    emailBuilderMap.put(region, couchLogs);
+                }
+
+            }
+        }
+        logger.warn("about to construct e-mails");
+        constructEmails(emailBuilderMap);
     }
 
     private void constructEmails(Map<String, List<CouchEventLog>> emailBuilderMap) {
@@ -124,21 +134,45 @@ public class EmailScheduler {
     }
 
     private void buildEmail(String region, List<CouchEventLog> logs) {
-        String recipient = getEmailForRegion(region);
+        List<String> recipients = getEmailForRegion(region);
         StringBuilder stringBuilder = new StringBuilder("The following facilities have not submitted a report within the last seven days: \n\n");
 
         for (int i = 0; i < logs.size(); i++) {
-            stringBuilder.append((i + 1) + "." + "  Woreda: " + logs.get(i).getParameters().get(MotechConstants.WOREDA) + "   |  Facility: " + logs.get(i).getParameters().get(MotechConstants.FACILITY_NAME) + " Last submission date: " + logs.get(i).getParameters().get(MotechConstants.LAST_SUBMITTED) + "\n");
+            logger.warn("Building e-mail...");
+            stringBuilder.append((i + 1) + "." + "  Woreda: " + logs.get(i).getParameters().get(MotechConstants.WOREDA) + "   |  Facility: " + logs.get(i).getParameters().get(MotechConstants.FACILITY_NAME) + " | Last submission date: " + logs.get(i).getParameters().get(MotechConstants.LAST_SUBMITTED) + "\n");
         }      
 
-        mailService.sendAggregateEmailReminder(recipient, stringBuilder.toString(), settingsFacade.getProperty(MotechConstants.EMAIL_SUBJECT).replace(MotechConstants.REGION_PLACEHOLDER, region));
+        mailService.sendAggregateEmailReminder(recipients, stringBuilder.toString(), settingsFacade.getProperty(MotechConstants.EMAIL_SUBJECT).replace(MotechConstants.REGION_PLACEHOLDER, region));
     }
 
-    private String getEmailForRegion(String region) {
+    private List<String> getEmailForRegion(String region) {
+        List<String> emailRecipients = new ArrayList<String>();
+
         if (region == null || region.trim().length() == 0) {
-            return settingsFacade.getProperty(MotechConstants.DEFAULT_EMAIL);
+            emailRecipients.add(settingsFacade.getProperty(MotechConstants.DEFAULT_EMAIL));
+            return emailRecipients;
         }
 
-        return settingsFacade.getProperty(region.trim().toLowerCase());
+        Type type = new TypeToken<List<EmailEntry>>() {
+        }.getType();
+
+        InputStream emailSettingsStream = settingsFacade.getRawConfig(MotechConstants.EMAIL_SETTINGS_FILE_NAME);
+
+        if (emailSettingsStream == null) {
+            logger.warn("No e-mail settings file found");
+            return emailRecipients;
+        }
+
+        List<EmailEntry> emails = (List<EmailEntry>) motechJsonReader.readFromStream(emailSettingsStream, type);
+
+        for (EmailEntry entry : emails) {
+
+            if (entry.getRegion().trim().toLowerCase().equals(region.trim().toLowerCase()) || entry.getRegion().equals("all")) {
+                emailRecipients.add(entry.getEmailAddress());
+            }
+        }
+
+        logger.warn("Returning recipients ..." + " " + emailRecipients.size() );
+        return emailRecipients;
     }
 }

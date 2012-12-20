@@ -81,6 +81,8 @@ public final class MotechConstants {
 
     public static final String LAST_SUBMITTED = "last_submitted";
 
+    public static final String EMAIL_SETTINGS_FILE_NAME = "emails1B.json";
+
     private MotechConstants() {
     }
 

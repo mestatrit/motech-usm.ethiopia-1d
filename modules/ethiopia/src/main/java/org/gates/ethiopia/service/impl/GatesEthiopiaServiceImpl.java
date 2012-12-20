@@ -1,5 +1,6 @@
 package org.gates.ethiopia.service.impl;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import org.gates.ethiopia.constants.EventConstants;
@@ -93,6 +94,19 @@ public class GatesEthiopiaServiceImpl implements GatesEthiopiaMailService {
         logger.info("Sending aggregate e-mail to: " + emailAddress);
         SimpleMailMessage emailReminder = buildEmail(emailAddress, subject, body);
         mailService.send(emailReminder);
+    }
+
+    @Override
+    public void sendAggregateEmailReminder(List<String> recipients, String body, String subject) {
+        
+        if (recipients == null) {
+            return;
+        }
+        
+        for (String recipient : recipients) {
+            sendAggregateEmailReminder(recipient, body, subject);
+        }
+        
     }
 
 }
