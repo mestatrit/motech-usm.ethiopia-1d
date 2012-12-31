@@ -3,6 +3,8 @@ package org.motech.location.repository.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.ektorp.support.TypeDiscriminator;
 import org.motech.location.repository.dao.LocationIdentifierDeserializer;
@@ -11,15 +13,19 @@ import org.motechproject.model.MotechBaseDataObject;
 
 @TypeDiscriminator("doc.type === 'Location'")
 public class Location extends MotechBaseDataObject {
-    
+
     private static final long serialVersionUID = 1L;
+    
+    private List<Location> childNodes = new ArrayList<Location>();
 
     @JsonDeserialize(using = IdentifierDeserializer.class)
     private MotechLocationIdentifier motechId;
-    
+
     @JsonDeserialize(using = LocationIdentifierDeserializer.class)
     private List<LocationIdentifier> identifiers;
-    
+
+    private Map<String, String> attributes;
+
     public List<LocationIdentifier> getEquivalentIdentifiers(LocationIdentifier queryIdentifier) {
         if (this.identifiers.contains(queryIdentifier)) {
             return identifiers;
@@ -27,7 +33,6 @@ public class Location extends MotechBaseDataObject {
         return Collections.emptyList();
     }
 
-    
     public List<LocationIdentifier> getEquivalentIdentifierByType(String identifierType, LocationIdentifier queryIdentifier) {
         List<LocationIdentifier> equivalentIdentifiers = new ArrayList<LocationIdentifier>();
         if (this.identifiers.contains(queryIdentifier)) {
@@ -54,5 +59,25 @@ public class Location extends MotechBaseDataObject {
 
     public void setIdentifiers(List<LocationIdentifier> identifiers) {
         this.identifiers = identifiers;
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
+    }
+
+    public List<Location> getChildNodes() {
+        return childNodes;
+    }
+
+    public void setChildNodes(List<Location> childNodes) {
+        this.childNodes = childNodes;
+    }
+    
+    public void addChildNode(Location childNode) {
+        this.childNodes.add(childNode);
     }
 }
