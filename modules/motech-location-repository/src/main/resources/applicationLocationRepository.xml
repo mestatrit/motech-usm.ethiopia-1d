@@ -28,4 +28,7 @@
     <osgi:service id="locationRepositoryServiceOsgi" auto-export="interfaces" ref="locationRepositoryServiceImpl"
                   interface="org.motech.location.repository.service.LocationRepositoryService"/>
 
+    <osgi:service id="locationIdentifierServiceOsgi" auto-export="interfaces" ref="locationIdentifierServiceImpl"
+                  interface="org.motech.location.repository.service.LocationIdentifierService"/>
+
 </beans>

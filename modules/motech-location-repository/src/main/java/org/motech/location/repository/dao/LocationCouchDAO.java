@@ -8,7 +8,7 @@ import org.ektorp.support.View;
 import org.motech.location.repository.domain.Location;
 import org.motech.location.repository.domain.LocationIdentifier;
 import org.motech.location.repository.domain.MotechLocationIdentifier;
-import org.motechproject.dao.MotechBaseRepository;
+import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;

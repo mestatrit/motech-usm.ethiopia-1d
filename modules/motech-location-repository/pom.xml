@@ -9,7 +9,7 @@
     <groupId>org.motechproject</groupId>
     <packaging>bundle</packaging>
     <artifactId>motech-location-repository</artifactId>
-    <version>0.15-SNAPSHOT</version>
+    <version>0.16</version>
     <name>motech-location-repository</name>
     <url>http://maven.apache.org</url>
     <properties>
@@ -18,7 +18,12 @@
     <dependencies>
         <dependency>
             <groupId>org.motechproject</groupId>
-            <artifactId>motech-platform-common-api</artifactId>
+            <artifactId>motech-platform-commons-couchdb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-commons-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -73,10 +78,9 @@
                             org.motechproject.server.config.service,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
-                            org.springframework.osgi.config,
                             *
                         </Import-Package>
-                        <Embed-Transitive>true</Embed-Transitive>
+                        <Embed-Transitive>false</Embed-Transitive>
                     </instructions>
                 </configuration>
             </plugin>

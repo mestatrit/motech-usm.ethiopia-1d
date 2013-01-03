@@ -8,14 +8,29 @@ public class CustomLocationIdentifier  {
 
     private Map<String, String> identifyingProperties;
     
-    public String getIdentity() {
-        List<String> identifierLinks = 
-        String identity = 
-        return null;
+    public CustomLocationIdentifier(String identifierType, Map<String, String> identifyingProperties) {
+        this.identifierType = identifierType;
+        this.identifyingProperties = identifyingProperties;
     }
     
-    
-    
+    public String getIdentity() {
+        return "identity";
+    }
 
+    public String getIdentifierType() {
+        return identifierType;
+    }
+
+    public void setIdentifierType(String identifierType) {
+        this.identifierType = identifierType;
+    }
+
+    public Map<String, String> getIdentifyingProperties() {
+        return identifyingProperties;
+    }
+
+    public void setIdentifyingProperties(Map<String, String> identifyingProperties) {
+        this.identifyingProperties = identifyingProperties;
+    }
 
 }
