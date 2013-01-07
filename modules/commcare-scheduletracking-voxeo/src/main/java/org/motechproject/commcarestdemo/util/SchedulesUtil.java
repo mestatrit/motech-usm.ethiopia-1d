@@ -5,11 +5,13 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
 //import org.motech.location.repository.domain.CommcareLocationIdentifier;
+import org.motech.location.repository.domain.CustomLocationIdentifier;
 import org.motech.location.repository.domain.Location;
 import org.motech.location.repository.domain.LocationIdentifier;
 //import org.motech.location.repository.domain.MotechLocationIdentifier;
@@ -230,12 +232,19 @@ public class SchedulesUtil {
 
             if (locationService.getLocationById(locationId) == null) {
                 Location location = new Location();
+                Map<String, String> identifyingProperties = new HashMap<String, String>();
+                identifyingProperties.put("facilityName", "USM");
+                identifyingProperties.put("uuid", "280af894-59d6-4d7c-9adb-769f54ab55d3");
+                CustomLocationIdentifier custom = new CustomLocationIdentifier("idtype1", identifyingProperties);
+                List<CustomLocationIdentifier> customIdentifiers = new ArrayList<CustomLocationIdentifier>();
+                customIdentifiers.add(custom);
                 List<LocationIdentifier> locationIdentifiers = new ArrayList<LocationIdentifier>();
                 OpenMRSLocationIdentifier openMrsLocation = new OpenMRSLocationIdentifier();
                 openMrsLocation.setUuid(locationId);
                 openMrsLocation.setFacilityName(facilityName);
                 locationIdentifiers.add(openMrsLocation);
                 location.setIdentifiers(locationIdentifiers);
+                location.setCustomIdentifiers(customIdentifiers);
                 locationService.saveLocation(location);
             }
 
