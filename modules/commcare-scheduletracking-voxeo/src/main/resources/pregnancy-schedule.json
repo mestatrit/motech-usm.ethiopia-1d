@@ -1,0 +1,92 @@
+{
+    "name":"pregnancy",
+    "milestones":[
+        {
+            "name":"visit1",
+            "scheduleWindows":{
+                "earliest":["2 Minutes"],
+                "due":["5 Minutes"],
+                "late":["6 Minutes"],
+                "max":["6 minutes"]
+            },
+            "data":{
+           			"conceptName" : "Visit 1",
+                    "IVRFormat" : "true",
+                    "SMSFormat" : "true",
+                    "language" : "en"
+            },
+            "alerts":[
+            	{
+                   "window" : "due",
+                   "interval" : ["1 Minutes"],
+                   "count" : "1"
+                 },    
+                 {           
+                    "window":"late",
+                    "offset":["0 Minutes"],
+                    "interval":["1 Minutes"],
+                    "count":"1"
+                }
+            ]
+        },
+        {
+            "name":"visit 2",
+            "scheduleWindows":{
+                "earliest":["2 Minutes"],
+                "due":["5 Minutes"],
+                "late":["6 Minutes"],
+                "max":["6 Minutes"]
+            },
+            "data":{
+            		"conceptName" : "Visit 2",
+                    "IVRFormat" : "true",
+                    "SMSFormat" : "true",
+                    "language" : "en"
+            },
+            "alerts":[
+            	{
+                   "window" : "due",
+                   "offset":["0 Minutes"],
+                   "interval" : ["1 minute"],
+                   "count" : "1"
+                 },  
+                {
+                    "window":"late",
+                    "offset":["0 Minutes"],
+                    "interval":["1 Minute"],
+                    "count":"1"
+                }
+            ]
+        },
+        {
+            "name":"visit 3",
+            "scheduleWindows":{
+                "earliest":["2 Minutes"],
+                "due":["5 Minutes"],
+                "late":["6 Minutes"],
+                "max":["6 Minutes"]
+            },
+            "data":{
+            		"conceptName" : "Visit 3",
+                    "IVRFormat" : "true",
+                    "SMSFormat" : "true",
+                    "language" : "en"
+            },
+            "alerts":[
+            	{
+                   "window" : "due",
+                   "offset":["0 Minutes"],
+                   "interval" : ["1 minute"],
+                   "count" : "1"
+                 },  
+                {
+                    "window":"late",
+                    "offset":["0 Minutes"],
+                    "interval":["1 Minute"],
+                    "count":"1"
+                }
+
+            ]
+        }
+    ]
+}

@@ -1135,6 +1135,8 @@
         <module>utils/http-agent/http-agent</module>
 
         <!-- OSGI modules -->
+        <module>modules/motech-provider-repository</module>
+        <module>modules/motech-location-repository</module>
         <module>platform/server-bundle</module>
         <module>modules/admin/admin-bundle</module>
         <module>modules/alerts/api-bundle</module>
