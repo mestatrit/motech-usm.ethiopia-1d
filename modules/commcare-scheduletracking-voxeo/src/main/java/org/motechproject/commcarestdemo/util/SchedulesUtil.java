@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
-//import org.motech.location.repository.domain.CommcareLocationIdentifier;
 import org.motech.location.repository.domain.CustomLocationIdentifier;
 import org.motech.location.repository.domain.Location;
-import org.motech.location.repository.domain.LocationIdentifier;
+import org.motech.location.repository.domain.LocationValidationException;
+import org.motech.location.repository.domain.MotechLocationIdentifier;
 //import org.motech.location.repository.domain.MotechLocationIdentifier;
-import org.motech.location.repository.domain.OpenMRSLocationIdentifier;
+import org.motech.location.repository.service.LocationIdentifierService;
 import org.motech.location.repository.service.LocationRepositoryService;
 import org.motech.provider.repository.domain.CommcareProviderIdentifier;
 import org.motech.provider.repository.domain.MotechIdentifier;
@@ -50,7 +50,10 @@ public class SchedulesUtil {
     @Autowired
     private MRSUserAdapter userAdapter;
 
-    private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
+    @Autowired
+    private LocationIdentifierService identifierService;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     @PostConstruct
     public void init() {
@@ -75,8 +78,7 @@ public class SchedulesUtil {
 
             //scheduleTrackingService.updateSchedule(writer.toString());
 
-            bootstrapProvidersAndLocations("123", "96b15408c06fe7b6efa654f0a9ad84a6", "Bruce");
-            bootstrapProvidersAndLocations("456", "887c0eb8c9d8813f04b642881b43698a", "Russell");            
+            bootstrapProvidersAndLocations("123", "96b15408c06fe7b6efa654f0a9ad84a6", "Bruce");       
 
             //            Location location = new Location();
             //
@@ -204,7 +206,7 @@ public class SchedulesUtil {
 
         saveLocation("id1", "facilityname!");
 
-        if (demoProvider1 == null) {
+        if (demoProvider1 != null) {
             Provider provider = new Provider();
             provider.setMotechId(motechId);
 
@@ -222,7 +224,7 @@ public class SchedulesUtil {
                 facility = facilities.get(0);
             }
 
-            String facilityName = facility.getName();
+            //String facilityName = facility.getName();
             String locationId = facility.getId();
 
             logger.warn("location id: " + locationId);
@@ -230,7 +232,7 @@ public class SchedulesUtil {
             locationIdentities.add(locationId);
 
             if (locationService.getLocationById(locationId) == null) {
-                saveLocation(locationId, facilityName);
+                //saveLocation(locationId, facilityName);
             }
 
             if (userAdapter.getUserByUserName(userName) == null) {
@@ -273,19 +275,77 @@ public class SchedulesUtil {
     private void saveLocation(String locationId, String facilityName) {
         Location location = new Location();
         Map<String, String> identifyingProperties = new HashMap<String, String>();
-        identifyingProperties.put("facilityName", "USM");
-        identifyingProperties.put("uuid", "280af894-59d6-4d7c-9adb-769f54ab55d3");
-        CustomLocationIdentifier custom = new CustomLocationIdentifier("idtype1", identifyingProperties);
+        identifyingProperties.put("one", facilityName);
+        identifyingProperties.put("uuid", locationId);
+        identifyingProperties.put("uniqueId", "280af894-59d6-4d7c-9adb-769f54ab55d3");
+        CustomLocationIdentifier custom = new CustomLocationIdentifier("blah3", identifyingProperties);
         List<CustomLocationIdentifier> customIdentifiers = new ArrayList<CustomLocationIdentifier>();
         customIdentifiers.add(custom);
-        List<LocationIdentifier> locationIdentifiers = new ArrayList<LocationIdentifier>();
-        OpenMRSLocationIdentifier openMrsLocation = new OpenMRSLocationIdentifier();
-        openMrsLocation.setUuid(locationId);
-        openMrsLocation.setFacilityName(facilityName);
-        locationIdentifiers.add(openMrsLocation);
-        location.setIdentifiers(locationIdentifiers);
         location.setCustomIdentifiers(customIdentifiers);
-        locationService.saveLocation(location);
+        //locationService.saveLocation(location);
+
+
+        String identifier = "{\"identifierName\":\"blah3\",\"identifyingProperties\":{\"one\":\"true\",\"two\":\"false\"},\"identifyingComponents\":[\"one\",\"two\",\"three\"]}";
+
+        identifierService.addIdentifierTypeJson(identifier);
+
+        logger.warn("Before");
+        logger.warn("Size: " + identifierService.getAllIdentifierTypes().size());
+
+        try {
+            locationService.saveLocationValidated(location);
+        } catch (LocationValidationException e) {
+            // TODO Auto-generated catch block
+            logger.warn("Exception: " + e.getMessage());
+        }
+        Location location2 = new Location();
+
+        CustomLocationIdentifier custom2 = new CustomLocationIdentifier("blah3", null);
+        List<CustomLocationIdentifier> customIdentifiers2 = new ArrayList<CustomLocationIdentifier>();
+        customIdentifiers2.add(custom2);
+        location2.setCustomIdentifiers(customIdentifiers2);
+
+        try {
+            locationService.saveLocationValidated(location2);
+        } catch (LocationValidationException e) {
+            // TODO Auto-generated catch block
+            logger.warn("Exception: " + e.getMessage());
+        }
+
+        logger.warn("about to save graph");
+        childTest();
+    }
+
+    private void childTest() {
+        Location parent = new Location();
+        parent.setMotechId(new MotechLocationIdentifier("parent"));
+
+        Location firstChild = new Location();
+        firstChild.setMotechId(new MotechLocationIdentifier("2ndtier"));
+
+        List<Location> thirdTierChildren = new ArrayList<Location>();
+
+        Location childOne = new Location();
+        childOne.setMotechId(new MotechLocationIdentifier("childOne"));
+
+        Location childTwo = new Location();
+        childTwo.setMotechId(new MotechLocationIdentifier("childTwo"));
+
+        Location childThree = new Location();
+        childThree.setMotechId(new MotechLocationIdentifier("childThree"));
+        
+        thirdTierChildren.add(childOne);
+        thirdTierChildren.add(childTwo);
+        thirdTierChildren.add(childThree);
+        
+        
+        locationService.saveLocation(parent);
+        try {
+            locationService.addChildLocation(parent,  firstChild);
+            locationService.addChildLocations(firstChild, thirdTierChildren);
+        } catch (LocationValidationException e) {
+            logger.warn("Unable to save child locations");
+        }
     }
 
 }

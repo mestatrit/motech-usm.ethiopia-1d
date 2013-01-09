@@ -14,7 +14,7 @@ public class CustomLocationIdentifier  {
     }
     
     public String getIdentity() {
-        return "identity";
+        return identifyingProperties.get("uniqueId");
     }
 
     public String getIdentifierType() {

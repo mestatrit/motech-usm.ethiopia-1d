@@ -19,14 +19,12 @@ public class LocationIdentifierServiceImpl implements LocationIdentifierService 
 
     @Override
     public List<LocationIdentifierType> getAllIdentifierTypes() {
-        // TODO Auto-generated method stub
-        return null;
+        return locationIdentifierDAO.getAllIdentifierTypes();
     }
 
     @Override
     public LocationIdentifierType getIdentifierTypeByName(String identifierName) {
-        // TODO Auto-generated method stub
-        return null;
+        return locationIdentifierDAO.getIdentifierTypeByName(identifierName);
     }
 
     @Override
@@ -42,7 +40,10 @@ public class LocationIdentifierServiceImpl implements LocationIdentifierService 
 
     @Override
     public void removeIdentifierType(String identifierName) {
-        // TODO Auto-generated method stub
+        LocationIdentifierType type = getIdentifierTypeByName(identifierName);
+        if (type != null) {
+            locationIdentifierDAO.remove(type);
+        }
 
     }
 
