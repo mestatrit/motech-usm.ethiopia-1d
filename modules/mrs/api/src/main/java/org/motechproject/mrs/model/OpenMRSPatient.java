@@ -1,13 +1,15 @@
 package org.motechproject.mrs.model;
 
+import java.util.Objects;
+
 /**
  * Domain to hold patient information
  */
-public class MRSPatient {
+public class OpenMRSPatient {
 
     private String id;
-    private MRSFacility facility;
-    private MRSPerson person;
+    private OpenMRSFacility facility;
+    private OpenMRSPerson person;
     private String motechId;
 
     /**
@@ -15,7 +17,7 @@ public class MRSPatient {
      *
      * @param id Patient ID
      */
-    public MRSPatient(String id) {
+    public OpenMRSPatient(String id) {
         this.id = id;
     }
 
@@ -26,7 +28,7 @@ public class MRSPatient {
      * @param person      Person object containing the personal details of the patient
      * @param mrsFacility Location of the patient
      */
-    public MRSPatient(String motechId, MRSPerson person, MRSFacility mrsFacility) {
+    public OpenMRSPatient(String motechId, OpenMRSPerson person, OpenMRSFacility mrsFacility) {
         this.facility = mrsFacility;
         this.person = person;
         this.motechId = motechId;
@@ -40,7 +42,7 @@ public class MRSPatient {
      * @param person      Person object containing the personal details of the patient
      * @param mrsFacility Location of the patient
      */
-    public MRSPatient(String id, String motechId, MRSPerson person, MRSFacility mrsFacility) {
+    public OpenMRSPatient(String id, String motechId, OpenMRSPerson person, OpenMRSFacility mrsFacility) {
         this(motechId, person, mrsFacility);
         this.id = id;
     }
@@ -49,11 +51,11 @@ public class MRSPatient {
         return id;
     }
 
-    public MRSFacility getFacility() {
+    public OpenMRSFacility getFacility() {
         return facility;
     }
 
-    public MRSPerson getPerson() {
+    public OpenMRSPerson getPerson() {
         return person;
     }
 
@@ -66,23 +68,15 @@ public class MRSPatient {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof MRSPatient)) {
+
+        if (!(o instanceof OpenMRSPatient)) {
             return false;
         }
-        MRSPatient that = (MRSPatient) o;
-        if (facility != null ? !facility.equals(that.facility) : that.facility != null) {
-            return false;
-        }
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
-        }
-        if (motechId != null ? !motechId.equals(that.motechId) : that.motechId != null) {
-            return false;
-        }
-        if (person != null ? !person.equals(that.person) : that.person != null) {
-            return false;
-        }
-        return true;
+
+        OpenMRSPatient that = (OpenMRSPatient) o;
+
+        return Objects.equals(facility, that.facility) && Objects.equals(id, that.id) &&
+                Objects.equals(motechId, that.motechId) && Objects.equals(person, that.person);
     }
 
     @Override

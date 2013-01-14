@@ -1,9 +1,13 @@
 package org.motechproject.mrs.model;
 
+import java.util.Objects;
+
+import org.motechproject.mrs.domain.Facility;
+
 /**
  * Maintains details about the facility
  */
-public class MRSFacility {
+public class OpenMRSFacility implements Facility {
     private String id;
 
     private String name;
@@ -16,7 +20,7 @@ public class MRSFacility {
      * Creates a facility with the given facility id
      * @param id Facility id
      */
-    public MRSFacility(String id) {
+    public OpenMRSFacility(String id) {
         this.id = id;
     }
 
@@ -28,7 +32,7 @@ public class MRSFacility {
      * @param countyDistrict Name of the county/District
      * @param stateProvince Name of the State/Province
      */
-    public MRSFacility(String name, String country, String region, String countyDistrict, String stateProvince) {
+    public OpenMRSFacility(String name, String country, String region, String countyDistrict, String stateProvince) {
         this.name = name;
         this.country = country;
         this.region = region;
@@ -45,7 +49,7 @@ public class MRSFacility {
      * @param countyDistrict Name of the county/District
      * @param stateProvince Name of the State/Province
      */
-    public MRSFacility(String id, String name, String country, String region, String countyDistrict, String stateProvince) {
+    public OpenMRSFacility(String id, String name, String country, String region, String countyDistrict, String stateProvince) {
         this(name, country, region, countyDistrict, stateProvince);
         this.id = id;
     }
@@ -78,35 +82,40 @@ public class MRSFacility {
         this.id = id;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public void setCountyDistrict(String countyDistrict) {
+        this.countyDistrict = countyDistrict;
+    }
+
+    public void setStateProvince(String stateProvince) {
+        this.stateProvince = stateProvince;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof MRSFacility)) {
+        if (!(o instanceof OpenMRSFacility)) {
             return false;
         }
 
-        MRSFacility facility = (MRSFacility) o;
-        if (country != null ? !country.equals(facility.country) : facility.country != null) {
-            return false;
-        }
-        if (countyDistrict != null ? !countyDistrict.equals(facility.countyDistrict) : facility.countyDistrict != null) {
-            return false;
-        }
-        if (id != null ? !id.equals(facility.id) : facility.id != null) {
-            return false;
-        }
-        if (name != null ? !name.equals(facility.name) : facility.name != null) {
-            return false;
-        }
-        if (region != null ? !region.equals(facility.region) : facility.region != null) {
-            return false;
-        }
-        if (stateProvince != null ? !stateProvince.equals(facility.stateProvince) : facility.stateProvince != null) {
-            return false;
-        }
-        return true;
+        OpenMRSFacility facility = (OpenMRSFacility) o;
+
+        return Objects.equals(country, facility.country) && Objects.equals(countyDistrict, facility.countyDistrict) &&
+                Objects.equals(id, facility.id) && Objects.equals(name, facility.name) &&
+                Objects.equals(region, facility.region) && Objects.equals(stateProvince, facility.stateProvince);
     }
 
     @Override

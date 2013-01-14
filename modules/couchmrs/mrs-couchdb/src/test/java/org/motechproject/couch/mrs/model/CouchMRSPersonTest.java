@@ -16,7 +16,7 @@ public class CouchMRSPersonTest {
 
     @Test
     public void shouldCreateCouchMRSPersonWithAttributes() {
-        CouchMRSPerson person1 = init.initializePerson1();
+        CouchPersonImpl person1 = init.initializePerson1();
         assertEquals("FirstName", person1.getFirstName());
         assertEquals("LastName", person1.getLastName());
         assertEquals("female", person1.getGender());
@@ -26,10 +26,10 @@ public class CouchMRSPersonTest {
 
     @Test
     public void shouldHandleNullValueForExternalId() {
-        CouchMRSPerson person2 = new CouchMRSPerson();
+        CouchPersonImpl person2 = new CouchPersonImpl();
         person2.setFirstName("FirstName");
         person2.setLastName("LastName");
-        person2.addAttribute(new Attribute("parity", "G4P3"));
+        person2.addAttribute(new CouchAttribute("parity", "G4P3"));
         assertEquals(null, person2.getExternalId());
     }
 }

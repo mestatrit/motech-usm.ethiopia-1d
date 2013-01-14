@@ -1,19 +1,18 @@
 package org.motechproject.couch.mrs.repository;
 
 import java.util.List;
-
-import org.motechproject.couch.mrs.model.CouchMRSPerson;
+import org.motechproject.couch.mrs.model.CouchPersonImpl;
 import org.motechproject.couch.mrs.model.MRSCouchException;
 
 public interface AllCouchMRSPersons {
 
-    List<CouchMRSPerson> findByExternalId(String externalId);
+    List<CouchPersonImpl> findByExternalId(String externalId);
 
-    void addPerson(CouchMRSPerson person) throws MRSCouchException;
+    void addPerson(CouchPersonImpl person) throws MRSCouchException;
 
-    void update(CouchMRSPerson person);
+    void update(CouchPersonImpl person);
 
-    void remove(CouchMRSPerson person);
+    void remove(CouchPersonImpl person);
 
-    List<CouchMRSPerson> findAllPersons();
+    List<CouchPersonImpl> findAllPersons();
 }

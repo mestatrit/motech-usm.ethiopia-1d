@@ -1,9 +1,10 @@
 package org.motechproject.openmrs.helper;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.motechproject.mrs.model.Attribute;
-import org.motechproject.mrs.model.MRSPatient;
-import org.motechproject.mrs.model.MRSPerson;
+import org.motechproject.mrs.domain.Attribute;
+import org.motechproject.mrs.model.OpenMRSAttribute;
+import org.motechproject.mrs.model.OpenMRSPatient;
+import org.motechproject.mrs.model.OpenMRSPerson;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -25,23 +26,23 @@ import static org.hamcrest.Matchers.equalTo;
 
 @Component
 public class PatientHelper {
-    public Patient buildOpenMrsPatient(MRSPatient patient,
+    public Patient buildOpenMrsPatient(OpenMRSPatient patient,
                                        PatientIdentifierType patientIdentifierType, Location location,
                                        List<PersonAttributeType> allPersonAttributeTypes) {
 
         final Patient openMRSPatient = new Patient(createPersonWithNames(patient));
         openMRSPatient.addIdentifier(new PatientIdentifier(patient.getMotechId(), patientIdentifierType, location));
         openMRSPatient.setGender(patient.getPerson().getGender());
-        openMRSPatient.setBirthdate(patient.getPerson().getDateOfBirth());
+        openMRSPatient.setBirthdate(patient.getPerson().getDateOfBirth().toDate());
         openMRSPatient.setBirthdateEstimated(patient.getPerson().getBirthDateEstimated());
         openMRSPatient.setDead(patient.getPerson().isDead());
-        openMRSPatient.setDeathDate(patient.getPerson().deathDate());
+        openMRSPatient.setDeathDate(patient.getPerson().deathDate().toDate());
         setPatientAddress(openMRSPatient, patient.getPerson().getAddress());
         setPersonAttributes(patient, openMRSPatient, allPersonAttributeTypes);
         return openMRSPatient;
     }
 
-    private Person createPersonWithNames(MRSPatient patient) {
+    private Person createPersonWithNames(OpenMRSPatient patient) {
         final Person person = new Person();
         for (PersonName name : getAllNames(patient)) {
             person.addName(name);
@@ -49,9 +50,9 @@ public class PatientHelper {
         return person;
     }
 
-    private List<PersonName> getAllNames(MRSPatient patient) {
+    private List<PersonName> getAllNames(OpenMRSPatient patient) {
         final List<PersonName> personNames = new ArrayList<PersonName>();
-        MRSPerson mrsPerson = patient.getPerson();
+        OpenMRSPerson mrsPerson = patient.getPerson();
         personNames.add(new PersonName(mrsPerson.getFirstName(), mrsPerson.getMiddleName(), mrsPerson.getLastName()));
         return personNames;
     }
@@ -64,14 +65,14 @@ public class PatientHelper {
         }
     }
 
-    private void setPersonAttributes(MRSPatient patient, Patient openMRSPatient,
+    private void setPersonAttributes(OpenMRSPatient patient, Patient openMRSPatient,
                                      List<PersonAttributeType> allPersonAttributeTypes) {
-        MRSPerson mrsPerson = patient.getPerson();
+        OpenMRSPerson mrsPerson = patient.getPerson();
         if (CollectionUtils.isNotEmpty(mrsPerson.getAttributes())) {
             for (Attribute attribute : mrsPerson.getAttributes()) {
                 PersonAttributeType attributeType = (PersonAttributeType) selectUnique(allPersonAttributeTypes,
-                        having(on(PersonAttributeType.class).getName(), equalTo(attribute.name())));
-                openMRSPatient.addAttribute(new PersonAttribute(attributeType, attribute.value()));
+                        having(on(PersonAttributeType.class).getName(), equalTo(attribute.getName())));
+                openMRSPatient.addAttribute(new PersonAttribute(attributeType, attribute.getValue()));
             }
         }
     }

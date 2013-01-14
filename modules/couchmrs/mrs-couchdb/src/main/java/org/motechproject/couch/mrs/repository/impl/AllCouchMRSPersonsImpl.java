@@ -1,4 +1,4 @@
-package org.motechproject.couch.mrs.repository;
+package org.motechproject.couch.mrs.repository.impl;
 
 import java.util.Collections;
 import java.util.List;
@@ -6,34 +6,35 @@ import java.util.List;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
-import org.motechproject.couch.mrs.model.CouchMRSPerson;
+import org.motechproject.couch.mrs.model.CouchPersonImpl;
 import org.motechproject.couch.mrs.model.MRSCouchException;
+import org.motechproject.couch.mrs.repository.AllCouchMRSPersons;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AllCouchMRSPersonsImpl extends MotechBaseRepository<CouchMRSPerson> implements AllCouchMRSPersons {
+public class AllCouchMRSPersonsImpl extends MotechBaseRepository<CouchPersonImpl> implements AllCouchMRSPersons {
 
     @Autowired
     protected AllCouchMRSPersonsImpl(@Qualifier("couchMRSDatabaseConnector") CouchDbConnector db) {
-        super(CouchMRSPerson.class, db);
+        super(CouchPersonImpl.class, db);
         initStandardDesignDocument();
     }
 
     @Override
-    @View(name = "by_externalId", map = "function(doc) { if (doc.type ==='MRSPerson') { emit(doc.externalId, doc._id); }}")
-    public List<CouchMRSPerson> findByExternalId(String externalId) {
+    @View(name = "by_externalId", map = "function(doc) { if (doc.type ==='Person') { emit(doc.externalId, doc._id); }}")
+    public List<CouchPersonImpl> findByExternalId(String externalId) {
         if (externalId == null) {
             return null;
         }
         ViewQuery viewQuery = createQuery("by_externalId").key(externalId).includeDocs(true);
-        return db.queryView(viewQuery, CouchMRSPerson.class);
+        return db.queryView(viewQuery, CouchPersonImpl.class);
     }
 
     @Override
-    public void addPerson(CouchMRSPerson person) throws MRSCouchException {
+    public void addPerson(CouchPersonImpl person) throws MRSCouchException {
         if (person.getExternalId() == null) {
             throw new NullPointerException("External ID cannot be null.");
         }
@@ -42,28 +43,28 @@ public class AllCouchMRSPersonsImpl extends MotechBaseRepository<CouchMRSPerson>
             return;
         }
         try {
-            super.add((CouchMRSPerson) person);
+            super.add(person);
         } catch (IllegalArgumentException e) {
             throw new MRSCouchException(e.getMessage(), e);
         }
     }
 
     @Override
-    public void update(CouchMRSPerson person) {
-        super.update((CouchMRSPerson) person);
+    public void update(CouchPersonImpl person) {
+        super.update(person);
     }
 
     @Override
-    public void remove(CouchMRSPerson person) {
-        super.remove((CouchMRSPerson) person);
+    public void remove(CouchPersonImpl person) {
+        super.remove(person);
     }
 
     @Override
-    @View(name = "findAllPersons", map = "function(doc) {if (doc.type == 'MRSPerson') {emit(null, doc._id);}}")
-    public List<CouchMRSPerson> findAllPersons() {
-        List<CouchMRSPerson> ret = queryView("findAllPersons");
+    @View(name = "findAllPersons", map = "function(doc) {if (doc.type == 'Person') {emit(null, doc._id);}}")
+    public List<CouchPersonImpl> findAllPersons() {
+        List<CouchPersonImpl> ret = queryView("findAllPersons");
         if (null == ret) {
-            ret = Collections.<CouchMRSPerson> emptyList();
+            ret = Collections.<CouchPersonImpl> emptyList();
         }
         return ret;
     }

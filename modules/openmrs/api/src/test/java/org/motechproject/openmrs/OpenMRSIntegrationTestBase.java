@@ -1,15 +1,16 @@
 package org.motechproject.openmrs;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.motechproject.mrs.exception.UserAlreadyExistsException;
-import org.motechproject.mrs.model.MRSFacility;
-import org.motechproject.mrs.model.MRSPatient;
-import org.motechproject.mrs.model.MRSPerson;
+import org.motechproject.mrs.model.OpenMRSFacility;
+import org.motechproject.mrs.model.OpenMRSPatient;
+import org.motechproject.mrs.model.OpenMRSPerson;
 import org.motechproject.mrs.model.MRSUser;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
-import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.services.FacilityAdapter;
+import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.mrs.services.MRSUserAdapter;
 import org.motechproject.openmrs.security.OpenMRSSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,10 @@ public class OpenMRSIntegrationTestBase {
     protected MRSUserAdapter userAdapter;
 
     @Autowired
-    protected MRSPatientAdapter patientAdapter;
+    protected PatientAdapter patientAdapter;
 
     @Autowired
-    protected MRSFacilityAdapter facilityAdapter;
+    protected FacilityAdapter facilityAdapter;
 
     boolean doOnce = false;
 
@@ -59,7 +60,7 @@ public class OpenMRSIntegrationTestBase {
         openMRSSession.authenticate();
     }
 
-    protected MRSPatient createPatient(MRSFacility facility) {
+    protected OpenMRSPatient createPatient(OpenMRSFacility facility) {
         final String first = "AlanTest";
         final String middle = "Wilkinson";
         final String last = "no";
@@ -69,9 +70,9 @@ public class OpenMRSIntegrationTestBase {
         Boolean birthDateEstimated = true;
         String patientSystemId = newGUID("10000045555");
 
-        MRSPerson mrsPerson = new MRSPerson().firstName(first).lastName(last).middleName(middle).preferredName("prefName").
-                birthDateEstimated(birthDateEstimated).dateOfBirth(birthDate).address(address1).gender(gender);
-        final MRSPatient patient = new MRSPatient(patientSystemId, mrsPerson, facility);
+        OpenMRSPerson mrsPerson = new OpenMRSPerson().firstName(first).lastName(last).middleName(middle).preferredName("prefName").
+                birthDateEstimated(birthDateEstimated).dateOfBirth(new DateTime(birthDate)).address(address1).gender(gender);
+        final OpenMRSPatient patient = new OpenMRSPatient(patientSystemId, mrsPerson, facility);
         return patientAdapter.savePatient(patient);
     }
 

@@ -10,12 +10,12 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.mrs.exception.PatientNotFoundException;
-import org.motechproject.mrs.model.Attribute;
+import org.motechproject.mrs.model.OpenMRSAttribute;
 import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
-import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.services.FacilityAdapter;
+import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.openmrs.ws.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -24,16 +24,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public abstract class AbstractPatientAdapterIT {
 
     @Autowired
-    private MRSFacilityAdapter facilityAdapter;
+    private FacilityAdapter facilityAdapter;
 
     @Autowired
-    private MRSPatientAdapter patientAdapter;
+    private PatientAdapter patientAdapter;
 
     @Test
     public void shouldCreatePatient() {
         MRSPerson person = new MRSPerson().firstName("John").lastName("Smith").address("10 Fifth Avenue")
                 .birthDateEstimated(false).gender("M").preferredName("Jonathan");
-        Attribute attr = new Attribute("Birthplace", "Motech");
+        OpenMRSAttribute attr = new OpenMRSAttribute("Birthplace", "Motech");
         MRSFacility facility = facilityAdapter.getFacilities("Clinic 1").get(0);
         MRSPatient patient = new MRSPatient("600", person, facility);
 

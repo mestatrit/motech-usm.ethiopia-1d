@@ -5,8 +5,8 @@ import ch.lambdaj.function.matcher.LambdaJMatcher;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.motechproject.mrs.model.MRSFacility;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
+import org.motechproject.mrs.model.OpenMRSFacility;
+import org.motechproject.mrs.services.FacilityAdapter;
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import static ch.lambdaj.Lambda.on;
  * Manages OpenMRS Facilities
  */
 @Service
-public class OpenMRSFacilityAdapter implements MRSFacilityAdapter {
+public class OpenMRSFacilityAdapter implements FacilityAdapter {
 
     @Autowired
     private LocationService locationService;
@@ -34,7 +34,7 @@ public class OpenMRSFacilityAdapter implements MRSFacilityAdapter {
      * @return The saved Facility
      */
     @Override
-    public MRSFacility saveFacility(final MRSFacility facility) {
+    public OpenMRSFacility saveFacility(final OpenMRSFacility facility) {
         String facilityId = facility.getId();
         Location location = new Location();
         if (facilityId != null) {
@@ -56,7 +56,7 @@ public class OpenMRSFacilityAdapter implements MRSFacilityAdapter {
         return convertLocationToFacility(savedLocation);
     }
 
-    private LambdaJMatcher<Location> locationMatcher(final MRSFacility facility) {
+    private LambdaJMatcher<Location> locationMatcher(final OpenMRSFacility facility) {
         return new LambdaJMatcher<Location>() {
             @Override
             public boolean matches(Object o) {
@@ -77,9 +77,9 @@ public class OpenMRSFacilityAdapter implements MRSFacilityAdapter {
      * @return List of all Facilities
      */
     @Override
-    public List<MRSFacility> getFacilities() {
+    public List<OpenMRSFacility> getFacilities() {
         List<Location> locations = locationService.getAllLocations();
-        List<MRSFacility> facilities = new ArrayList<MRSFacility>();
+        List<OpenMRSFacility> facilities = new ArrayList<OpenMRSFacility>();
         for (Location location : locations) {
             facilities.add(convertLocationToFacility(location));
         }
@@ -93,9 +93,9 @@ public class OpenMRSFacilityAdapter implements MRSFacilityAdapter {
      * @return List of matches Facilities, else empty list
      */
     @Override
-    public List<MRSFacility> getFacilities(String locationName) {
+    public List<OpenMRSFacility> getFacilities(String locationName) {
         final List<Location> locations = locationService.getLocations(locationName);
-        final ArrayList<MRSFacility> facilities = new ArrayList<MRSFacility>();
+        final ArrayList<OpenMRSFacility> facilities = new ArrayList<OpenMRSFacility>();
         for (Location location : locations) {
             facilities.add(convertLocationToFacility(location));
         }
@@ -109,7 +109,7 @@ public class OpenMRSFacilityAdapter implements MRSFacilityAdapter {
      * @return Facility Object if found, else null
      */
     @Override
-    public MRSFacility getFacility(String facilityId) {
+    public OpenMRSFacility getFacility(String facilityId) {
         if (StringUtils.isEmpty(facilityId)) {
             return null;
         }
@@ -121,8 +121,8 @@ public class OpenMRSFacilityAdapter implements MRSFacilityAdapter {
         return locationService.getLocation(Integer.parseInt(facilityId));
     }
 
-    MRSFacility convertLocationToFacility(Location savedLocation) {
-        return new MRSFacility(String.valueOf(savedLocation.getId()), savedLocation.getName(), savedLocation.getCountry(),
+    OpenMRSFacility convertLocationToFacility(Location savedLocation) {
+        return new OpenMRSFacility(String.valueOf(savedLocation.getId()), savedLocation.getName(), savedLocation.getCountry(),
                 savedLocation.getAddress6(), savedLocation.getCountyDistrict(), savedLocation.getStateProvince());
     }
 }

@@ -18,8 +18,8 @@ import org.motechproject.mrs.model.MRSObservation;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSUser;
 import org.motechproject.mrs.services.MRSEncounterAdapter;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
-import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.services.FacilityAdapter;
+import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.mrs.services.MRSUserAdapter;
 import org.motechproject.openmrs.ws.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +31,13 @@ public abstract class AbstractEncounterIT {
     private MRSUserAdapter userAdapter;
 
     @Autowired
-    private MRSFacilityAdapter facilityAdapter;
+    private FacilityAdapter facilityAdapter;
 
     @Autowired
     private MRSEncounterAdapter encounterAdapter;
 
     @Autowired
-    private MRSPatientAdapter patientAdapter;
+    private PatientAdapter patientAdapter;
 
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 

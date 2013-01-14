@@ -10,7 +10,7 @@ import org.motechproject.mrs.exception.ObservationNotFoundException;
 import org.motechproject.mrs.model.MRSObservation;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.services.MRSObservationAdapter;
-import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.openmrs.ws.HttpException;
 import org.motechproject.openmrs.ws.resource.ObservationResource;
 import org.motechproject.openmrs.ws.resource.model.Observation;
@@ -24,11 +24,11 @@ import org.springframework.stereotype.Component;
 public class MRSObservationAdapterImpl implements MRSObservationAdapter {
     private static final Logger LOGGER = Logger.getLogger(MRSObservationAdapterImpl.class);
 
-    private final MRSPatientAdapter patientAdapter;
+    private final PatientAdapter patientAdapter;
     private final ObservationResource obsResource;
 
     @Autowired
-    public MRSObservationAdapterImpl(ObservationResource obsResource, MRSPatientAdapter patientAdapter) {
+    public MRSObservationAdapterImpl(ObservationResource obsResource, PatientAdapter patientAdapter) {
         this.obsResource = obsResource;
         this.patientAdapter = patientAdapter;
     }

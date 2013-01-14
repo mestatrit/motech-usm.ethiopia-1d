@@ -15,11 +15,11 @@ public class MRSEncounterTest {
     public void shouldUpdateFromExistingEncounter() {
         final String encounterTpye = "encounterTpye";
         final Set observations = mock(Set.class);
-        final MRSPatient patient = mock(MRSPatient.class);
+        final OpenMRSPatient patient = mock(OpenMRSPatient.class);
         final Date date = mock(Date.class);
-        final MRSFacility facility = mock(MRSFacility.class);
+        final OpenMRSFacility facility = mock(OpenMRSFacility.class);
         final MRSUser creator = mock(MRSUser.class);
-        final MRSPerson provider = mock(MRSPerson.class);
+        final OpenMRSPerson provider = mock(OpenMRSPerson.class);
         MRSEncounter fromEncounter = new MRSEncounter.MRSEncounterBuilder().withId("id").withProvider(provider).withCreator(creator)
                 .withFacility(facility).withDate(date).withPatient(patient).withObservations(observations)
                 .withEncounterType(encounterTpye).build();

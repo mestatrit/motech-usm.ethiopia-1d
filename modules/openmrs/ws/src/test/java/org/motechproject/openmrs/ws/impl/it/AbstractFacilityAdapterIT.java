@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.mrs.model.MRSFacility;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
+import org.motechproject.mrs.services.FacilityAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public abstract class AbstractFacilityAdapterIT {
 
     @Autowired
-    private MRSFacilityAdapter facilityAdapter;
+    private FacilityAdapter facilityAdapter;
 
     @Test
     public void shouldSaveFacility() {

@@ -2,10 +2,10 @@ package org.motechproject.openmrs.services;
 
 import org.motechproject.mrs.model.MRSEncounter;
 import org.motechproject.mrs.model.MRSEncounter.MRSEncounterBuilder;
-import org.motechproject.mrs.model.MRSFacility;
+import org.motechproject.mrs.model.OpenMRSFacility;
 import org.motechproject.mrs.model.MRSObservation;
-import org.motechproject.mrs.model.MRSPatient;
-import org.motechproject.mrs.model.MRSPerson;
+import org.motechproject.mrs.model.OpenMRSPatient;
+import org.motechproject.mrs.model.OpenMRSPerson;
 import org.motechproject.mrs.model.MRSUser;
 import org.motechproject.mrs.services.MRSEncounterAdapter;
 import org.openmrs.Encounter;
@@ -105,11 +105,11 @@ public class OpenMRSEncounterAdapter implements MRSEncounterAdapter {
         String id = Integer.toString(openMrsEncounter.getEncounterId());
         String encounterType = openMrsEncounter.getEncounterType().getName();
         Date date = openMrsEncounter.getEncounterDatetime();
-        MRSFacility facility = openMRSFacilityAdapter.convertLocationToFacility(openMrsEncounter.getLocation());
-        MRSPatient patient = openMRSPatientAdapter.getMrsPatient(openMrsEncounter.getPatient());
+        OpenMRSFacility facility = openMRSFacilityAdapter.convertLocationToFacility(openMrsEncounter.getLocation());
+        OpenMRSPatient patient = openMRSPatientAdapter.getMrsPatient(openMrsEncounter.getPatient());
         Set<MRSObservation> observations = openMRSObservationAdapter.convertOpenMRSToMRSObservations(openMrsEncounter.getObs());
         MRSUser creator = new MRSUser().systemId(openMrsEncounter.getCreator().getSystemId()).id(openMrsEncounter.getCreator().getId().toString());
-        MRSPerson provider = new MRSPerson().id(String.valueOf(openMrsEncounter.getProvider().getId()));
+        OpenMRSPerson provider = new OpenMRSPerson().id(String.valueOf(openMrsEncounter.getProvider().getId()));
         return new MRSEncounterBuilder().withId(id).withProvider(provider).withCreator(creator).withFacility(facility)
                 .withDate(date).withPatient(patient).withObservations(observations).withEncounterType(encounterType).build();
     }

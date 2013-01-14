@@ -3,12 +3,13 @@ package org.motechproject.openmrs.services;
 import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.mrs.domain.Attribute;
 import org.motechproject.mrs.exception.PatientNotFoundException;
-import org.motechproject.mrs.model.Attribute;
-import org.motechproject.mrs.model.MRSFacility;
-import org.motechproject.mrs.model.MRSPatient;
-import org.motechproject.mrs.model.MRSPerson;
-import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.model.OpenMRSAttribute;
+import org.motechproject.mrs.model.OpenMRSFacility;
+import org.motechproject.mrs.model.OpenMRSPatient;
+import org.motechproject.mrs.model.OpenMRSPerson;
+import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.openmrs.IdentifierType;
 import org.motechproject.openmrs.helper.PatientHelper;
 import org.openmrs.Concept;
@@ -38,7 +39,7 @@ import static ch.lambdaj.Lambda.convert;
  * Manages Patients in OpenMRS
  */
 @Service
-public class OpenMRSPatientAdapter implements MRSPatientAdapter {
+public class OpenMRSPatientAdapter implements PatientAdapter {
 
     @Autowired
     private PatientService patientService;
@@ -65,7 +66,7 @@ public class OpenMRSPatientAdapter implements MRSPatientAdapter {
      * @return Patient object if found, else null
      */
     @Override
-    public MRSPatient getPatient(String patientId) {
+    public OpenMRSPatient getPatient(String patientId) {
         org.openmrs.Patient openMrsPatient = getOpenMrsPatient(patientId);
         return (openMrsPatient == null) ? null : getMrsPatient(openMrsPatient);
     }
@@ -89,7 +90,7 @@ public class OpenMRSPatientAdapter implements MRSPatientAdapter {
      * @return Patient object if found, else null
      */
     @Override
-    public MRSPatient getPatientByMotechId(String motechId) {
+    public OpenMRSPatient getPatientByMotechId(String motechId) {
         final Patient patient = getOpenmrsPatientByMotechId(motechId);
         return (patient != null) ? getMrsPatient(patient) : null;
     }
@@ -101,7 +102,7 @@ public class OpenMRSPatientAdapter implements MRSPatientAdapter {
      * @return saved instance of Patient
      */
     @Override
-    public MRSPatient savePatient(MRSPatient patient) {
+    public OpenMRSPatient savePatient(OpenMRSPatient patient) {
         Patient existingOpenMrsPatient = getOpenmrsPatientByMotechId(patient.getMotechId());
         if (existingOpenMrsPatient != null) {
             return updatePatient(patient, existingOpenMrsPatient);
@@ -120,23 +121,23 @@ public class OpenMRSPatientAdapter implements MRSPatientAdapter {
      * @return The updated Patient object if found, else null
      */
     @Override
-    public MRSPatient updatePatient(MRSPatient patient) {
+    public OpenMRSPatient updatePatient(OpenMRSPatient patient) {
         return updatePatient(patient, getOpenmrsPatientByMotechId(patient.getMotechId()));
     }
 
-    MRSPatient updatePatient(MRSPatient fromMRSPatient, Patient openMrsPatient) {
-        MRSPerson person = fromMRSPatient.getPerson();
+    OpenMRSPatient updatePatient(OpenMRSPatient fromMRSPatient, Patient openMrsPatient) {
+        OpenMRSPerson person = fromMRSPatient.getPerson();
         updatePersonName(openMrsPatient, person);
-        openMrsPatient.setBirthdate(person.getDateOfBirth());
+        openMrsPatient.setBirthdate(person.getDateOfBirth().toDate());
         openMrsPatient.setBirthdateEstimated(person.getBirthDateEstimated());
         openMrsPatient.setGender(person.getGender());
 
         for (Attribute attribute : person.getAttributes()) {
-            PersonAttribute personAttribute = openMrsPatient.getAttribute(attribute.name());
+            PersonAttribute personAttribute = openMrsPatient.getAttribute(attribute.getName());
             if (personAttribute != null) {
                 openMrsPatient.removeAttribute(personAttribute);
             }
-            openMrsPatient.addAttribute(new PersonAttribute(personService.getPersonAttributeTypeByName(attribute.name()), attribute.value()));
+            openMrsPatient.addAttribute(new PersonAttribute(personService.getPersonAttributeTypeByName(attribute.getName()), attribute.getValue()));
         }
         Set<PersonAddress> addresses = openMrsPatient.getAddresses();
         if (!addresses.isEmpty()) {
@@ -150,12 +151,12 @@ public class OpenMRSPatientAdapter implements MRSPatientAdapter {
         }
         openMrsPatient.getPatientIdentifier().setLocation(facilityAdapter.getLocation(fromMRSPatient.getFacility().getId()));
         openMrsPatient.setDead(person.isDead());
-        openMrsPatient.setDeathDate(person.deathDate());
+        openMrsPatient.setDeathDate(person.deathDate().toDate());
 
         return getMrsPatient(patientService.savePatient(openMrsPatient));
     }
 
-    private void updatePersonName(Patient openMrsPatient, MRSPerson person) {
+    private void updatePersonName(Patient openMrsPatient, OpenMRSPerson person) {
         if (StringUtils.isNotEmpty(person.getPreferredName())) {
             if (openMrsPatient.getNames().size() == 2) {
                 for (PersonName name : openMrsPatient.getNames()) {
@@ -188,12 +189,12 @@ public class OpenMRSPatientAdapter implements MRSPatientAdapter {
         return patientService.getPatientIdentifierTypeByName(identifierType.getName());
     }
 
-    MRSPatient getMrsPatient(org.openmrs.Patient patient) {
+    OpenMRSPatient getMrsPatient(org.openmrs.Patient patient) {
         final PatientIdentifier patientIdentifier = patient.getPatientIdentifier();
-        MRSFacility mrsFacility = (patientIdentifier != null) ? facilityAdapter.convertLocationToFacility(patientIdentifier.getLocation()) : null;
+        OpenMRSFacility mrsFacility = (patientIdentifier != null) ? facilityAdapter.convertLocationToFacility(patientIdentifier.getLocation()) : null;
         String motechId = (patientIdentifier != null) ? patientIdentifier.getIdentifier() : null;
-        MRSPerson mrsPerson = personAdapter.openMRSToMRSPerson(patient);
-        return new MRSPatient(String.valueOf(patient.getId()), motechId, mrsPerson, mrsFacility);
+        OpenMRSPerson mrsPerson = personAdapter.openMRSToMRSPerson(patient);
+        return new OpenMRSPatient(String.valueOf(patient.getId()), motechId, mrsPerson, mrsFacility);
     }
 
     org.openmrs.Patient getOpenMrsPatient(String patientId) {
@@ -208,17 +209,17 @@ public class OpenMRSPatientAdapter implements MRSPatientAdapter {
      * @return Matched patients for the given search criteria [if both parameters are null, will return all the patients]
      */
     @Override
-    public List<MRSPatient> search(String name, String motechId) {
-        List<MRSPatient> patients = convert(patientService.getPatients(name, motechId, Arrays.asList(patientService.getPatientIdentifierTypeByName(IdentifierType.IDENTIFIER_MOTECH_ID.getName())), false),
-                new Converter<Patient, MRSPatient>() {
+    public List<OpenMRSPatient> search(String name, String motechId) {
+        List<OpenMRSPatient> patients = convert(patientService.getPatients(name, motechId, Arrays.asList(patientService.getPatientIdentifierTypeByName(IdentifierType.IDENTIFIER_MOTECH_ID.getName())), false),
+                new Converter<Patient, OpenMRSPatient>() {
                     @Override
-                    public MRSPatient convert(Patient patient) {
+                    public OpenMRSPatient convert(Patient patient) {
                         return getMrsPatient(patient);
                     }
                 });
-        Collections.sort(patients, new Comparator<MRSPatient>() {
+        Collections.sort(patients, new Comparator<OpenMRSPatient>() {
             @Override
-            public int compare(MRSPatient personToBeCompared1, MRSPatient personToBeCompared2) {
+            public int compare(OpenMRSPatient personToBeCompared1, OpenMRSPatient personToBeCompared2) {
                 if (personToBeCompared1.getPerson().getFirstName() == null && personToBeCompared2.getPerson().getFirstName() == null) {
                     return personToBeCompared1.getMotechId().compareTo(personToBeCompared2.getMotechId());
                 } else {

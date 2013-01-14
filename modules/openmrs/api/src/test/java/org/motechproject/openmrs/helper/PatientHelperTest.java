@@ -1,12 +1,14 @@
 package org.motechproject.openmrs.helper;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.mrs.model.Attribute;
-import org.motechproject.mrs.model.MRSFacility;
-import org.motechproject.mrs.model.MRSPatient;
-import org.motechproject.mrs.model.MRSPerson;
+import org.motechproject.mrs.domain.Attribute;
+import org.motechproject.mrs.model.OpenMRSAttribute;
+import org.motechproject.mrs.model.OpenMRSFacility;
+import org.motechproject.mrs.model.OpenMRSPatient;
+import org.motechproject.mrs.model.OpenMRSPerson;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
@@ -40,15 +42,15 @@ public class PatientHelperTest {
         final Boolean dead = true;
         final String gender = "male";
         final String address = "a good street in ghana";
-        final MRSFacility facility = new MRSFacility("1000", "name", "country", "region", "district", "province");
+        final OpenMRSFacility facility = new OpenMRSFacility("1000", "name", "country", "region", "district", "province");
         final String attributeName1 = "name1";
         final String attributeValue1 = "value1";
-        final List<Attribute> patientAttributes = Arrays.asList(new Attribute(attributeName1, attributeValue1));
+        final List<Attribute> patientAttributes = Arrays.asList(new OpenMRSAttribute(attributeName1, attributeValue1));
         final String patientIdFromGenerator = "1";
         Boolean birthDateEstimated = true;
-        MRSPerson mrsPerson = new MRSPerson().firstName(first).middleName(middle).lastName(last).preferredName(preferred).birthDateEstimated(birthDateEstimated)
-                .dateOfBirth(birthDate).gender(gender).address(address).attributes(patientAttributes).deathDate(deathDate).dead(dead);
-        MRSPatient patient1 = new MRSPatient(patientIdFromGenerator, mrsPerson,facility);
+        OpenMRSPerson mrsPerson = new OpenMRSPerson().firstName(first).middleName(middle).lastName(last).preferredName(preferred).birthDateEstimated(birthDateEstimated)
+                .dateOfBirth(new DateTime(birthDate)).gender(gender).address(address).attributes(patientAttributes).deathDate(deathDate).dead(dead);
+        OpenMRSPatient patient1 = new OpenMRSPatient(patientIdFromGenerator, mrsPerson,facility);
         final String motechId = "1000";
         final PatientIdentifierType patientIndentifierType = new PatientIdentifierType(2000);
         final Location location = new Location(3000);
@@ -70,7 +72,7 @@ public class PatientHelperTest {
         assertThat(returnedPatient.getDeathDate(), is(equalTo(deathDate)));
         assertThat(returnedPatient.isDead(), is(equalTo(dead)));
         String motechId1 = "";
-        MRSPatient patient2 = new MRSPatient(motechId1, mrsPerson,facility);
+        OpenMRSPatient patient2 = new OpenMRSPatient(motechId1, mrsPerson,facility);
 
         returnedPatient = patientHelper.buildOpenMrsPatient(patient2, patientIndentifierType, location, allPersonAttributeTypes);
 

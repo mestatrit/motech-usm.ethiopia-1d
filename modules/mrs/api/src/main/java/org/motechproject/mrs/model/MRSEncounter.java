@@ -8,12 +8,12 @@ import java.util.Set;
  */
 public class MRSEncounter {
     private String id;
-    private MRSPerson provider;
+    private OpenMRSPerson provider;
     private MRSUser creator;
-    private MRSFacility facility;
+    private OpenMRSFacility facility;
     private Date date;
     private Set<MRSObservation> observations;
-    private MRSPatient patient;
+    private OpenMRSPatient patient;
     private String encounterType;
 
     public MRSEncounter() {
@@ -30,7 +30,7 @@ public class MRSEncounter {
      * @param observations  Observations collected during the encounter
      * @param encounterType Type of the encounter.
      */
-    private MRSEncounter(MRSPerson provider, MRSUser creator, MRSFacility facility, Date date, MRSPatient patient, Set<MRSObservation> observations, String encounterType) {
+    private MRSEncounter(OpenMRSPerson provider, MRSUser creator, OpenMRSFacility facility, Date date, OpenMRSPatient patient, Set<MRSObservation> observations, String encounterType) {
         this.creator = creator;
         this.provider = provider;
         this.facility = facility;
@@ -44,11 +44,11 @@ public class MRSEncounter {
         return creator;
     }
 
-    public MRSPerson getProvider() {
+    public OpenMRSPerson getProvider() {
         return provider;
     }
 
-    public MRSFacility getFacility() {
+    public OpenMRSFacility getFacility() {
         return facility;
     }
 
@@ -56,7 +56,7 @@ public class MRSEncounter {
         return date;
     }
 
-    public MRSPatient getPatient() {
+    public OpenMRSPatient getPatient() {
         return patient;
     }
 
@@ -83,16 +83,16 @@ public class MRSEncounter {
     }
 
     public static class MRSEncounterBuilder {
-        private MRSPerson provider;
+        private OpenMRSPerson provider;
         private MRSUser creator;
-        private MRSFacility facility;
+        private OpenMRSFacility facility;
         private Date date;
-        private MRSPatient patient;
+        private OpenMRSPatient patient;
         private Set<MRSObservation> observations;
         private String encounterType;
         private String id;
 
-        public MRSEncounterBuilder withProvider(MRSPerson provider) {
+        public MRSEncounterBuilder withProvider(OpenMRSPerson provider) {
             this.provider = provider;
             return this;
         }
@@ -102,7 +102,7 @@ public class MRSEncounter {
             return this;
         }
 
-        public MRSEncounterBuilder withFacility(MRSFacility facility) {
+        public MRSEncounterBuilder withFacility(OpenMRSFacility facility) {
             this.facility = facility;
             return this;
         }
@@ -112,7 +112,7 @@ public class MRSEncounter {
             return this;
         }
 
-        public MRSEncounterBuilder withPatient(MRSPatient patient) {
+        public MRSEncounterBuilder withPatient(OpenMRSPatient patient) {
             this.patient = patient;
             return this;
         }
@@ -133,7 +133,7 @@ public class MRSEncounter {
         }
 
         public MRSEncounterBuilder withProviderId(String providerId) {
-            this.provider = new MRSPerson().id(providerId);
+            this.provider = new OpenMRSPerson().id(providerId);
             return this;
         }
 
@@ -143,12 +143,12 @@ public class MRSEncounter {
         }
 
         public MRSEncounterBuilder withFacilityId(String facilityId) {
-            this.facility = new MRSFacility(facilityId);
+            this.facility = new OpenMRSFacility(facilityId);
             return this;
         }
 
         public MRSEncounterBuilder withPatientId(String patientId) {
-            this.patient = new MRSPatient(patientId);
+            this.patient = new OpenMRSPatient(patientId);
             return this;
         }
 

@@ -2,7 +2,7 @@ package org.motechproject.openmrs.services;
 
 import org.junit.Test;
 import org.motechproject.mrs.model.MRSFacility;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
+import org.motechproject.mrs.services.FacilityAdapter;
 import org.motechproject.openmrs.OpenMRSIntegrationTestBase;
 import org.openmrs.api.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class OpenMRSFacilityAdapterIT extends OpenMRSIntegrationTestBase {
     @Autowired
-    MRSFacilityAdapter mrsFacilityAdapter;
+    FacilityAdapter mrsFacilityAdapter;
 
     @Autowired
     LocationService mrsLocationService;

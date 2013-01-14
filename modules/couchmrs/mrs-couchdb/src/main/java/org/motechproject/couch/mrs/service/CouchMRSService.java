@@ -1,10 +1,9 @@
 package org.motechproject.couch.mrs.service;
 
 import java.util.List;
-
 import org.joda.time.DateTime;
-import org.motechproject.couch.mrs.model.CouchMRSPerson;
-import org.motechproject.couch.mrs.model.Attribute;
+import org.motechproject.couch.mrs.model.CouchPersonImpl;
+import org.motechproject.mrs.domain.Attribute;
 import org.motechproject.couch.mrs.model.MRSCouchException;
 
 /**
@@ -13,18 +12,18 @@ import org.motechproject.couch.mrs.model.MRSCouchException;
  */
 public interface CouchMRSService {
 
-    void addPerson(CouchMRSPerson person) throws MRSCouchException;
+    void addPerson(CouchPersonImpl person) throws MRSCouchException;
 
     void addPerson(String externalId, String firstName, String lastName, DateTime dateOfBirth, String gender,
             String address, List<Attribute> attributes) throws MRSCouchException;
 
-    void updatePerson(CouchMRSPerson person);
+    void updatePerson(CouchPersonImpl person);
 
-    void removePerson(CouchMRSPerson person);
+    void removePerson(CouchPersonImpl person);
 
-    List<CouchMRSPerson> findAllCouchMRSPersons();
+    List<CouchPersonImpl> findAllCouchMRSPersons();
 
-    List<CouchMRSPerson> findByExternalId(String externalId);
+    List<CouchPersonImpl> findByExternalId(String externalId);
 
     void removeAll();
 

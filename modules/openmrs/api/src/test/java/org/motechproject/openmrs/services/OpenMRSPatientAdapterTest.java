@@ -9,7 +9,7 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.motechproject.mrs.exception.PatientNotFoundException;
-import org.motechproject.mrs.model.Attribute;
+import org.motechproject.mrs.model.OpenMRSAttribute;
 import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
@@ -296,8 +296,8 @@ public class OpenMRSPatientAdapterTest {
         final String nhisExpiryDateString = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         final MRSPerson person = new MRSPerson().firstName(firstName).middleName(middleName).lastName(lastName)
                 .gender(gender).address(address).dateOfBirth(dateOfBirth).birthDateEstimated(estimatedDate).preferredName(preferredName)
-                .addAttribute(new Attribute(nhisNumberAttribute, nhisNumber)).addAttribute(new Attribute(nhisExpirationDateAttribute,
-                        nhisExpiryDateString)).addAttribute(new Attribute(insuredAttribute, String.valueOf(insured)));
+                .addAttribute(new OpenMRSAttribute(nhisNumberAttribute, nhisNumber)).addAttribute(new OpenMRSAttribute(nhisExpirationDateAttribute,
+                        nhisExpiryDateString)).addAttribute(new OpenMRSAttribute(insuredAttribute, String.valueOf(insured)));
         String newFacilityId = "60";
         final MRSFacility mrsFacility = new MRSFacility(newFacilityId);
         Location location = location(facilityName, facilityCountry, facilityRegion, facilityDistrict, facilitySubDistrict);

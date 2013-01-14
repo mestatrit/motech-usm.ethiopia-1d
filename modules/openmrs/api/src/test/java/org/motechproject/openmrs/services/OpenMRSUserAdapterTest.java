@@ -6,7 +6,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.motechproject.mrs.exception.MRSException;
 import org.motechproject.mrs.exception.UserAlreadyExistsException;
-import org.motechproject.mrs.model.Attribute;
+import org.motechproject.mrs.model.OpenMRSAttribute;
 import org.motechproject.mrs.model.MRSPerson;
 import org.motechproject.mrs.model.MRSUser;
 import org.motechproject.openmrs.builder.UserBuilder;
@@ -77,9 +77,9 @@ public class OpenMRSUserAdapterTest {
     @Test(expected = UserAlreadyExistsException.class)
     public void shouldThrowUserAlreadyExistsExceptionIfUserAlreadyExist() throws UserAlreadyExistsException {
         String userName = "userName";
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<OpenMRSAttribute> attributes = new ArrayList<OpenMRSAttribute>();
         String email = "test@gmail.com";
-        attributes.add(new Attribute("Email", email));
+        attributes.add(new OpenMRSAttribute("Email", email));
         MRSUser mrsUser = new MRSUser().userName(userName);
         mrsUser.systemId("1");
         MRSPerson mrsPerson = new MRSPerson();
@@ -289,9 +289,9 @@ public class OpenMRSUserAdapterTest {
         MRSUser mrsUser = new MRSUser();
         MRSPerson mrsPerson = new MRSPerson().firstName(firstName)
                 .middleName(middleName)
-                .lastName(lastName).addAttribute(new Attribute("Phone Number", phoneNumber))
-                .addAttribute(new Attribute("Staff Type", staffType))
-                .addAttribute(new Attribute("Email", email));
+                .lastName(lastName).addAttribute(new OpenMRSAttribute("Phone Number", phoneNumber))
+                .addAttribute(new OpenMRSAttribute("Staff Type", staffType))
+                .addAttribute(new OpenMRSAttribute("Email", email));
 
         mrsUser.id(id).person(mrsPerson)
                 .systemId(systemId);
@@ -330,7 +330,7 @@ public class OpenMRSUserAdapterTest {
         User openMRSUser = new UserBuilder().userId(12).person(person).roles(new HashSet<Role>(asList(new Role("provider")))).systemId("123").username("userName")
                 .build();
         MRSPerson mrsPerson = new MRSPerson().firstName("givenName").middleName("middleName").lastName("familyName").
-                addAttribute(new Attribute(PERSON_ATTRIBUTE_TYPE_STAFF_TYPE,"staffType")).addAttribute(new Attribute(PERSON_ATTRIBUTE_TYPE_PHONE_NUMBER,"10101010")).addAttribute(new Attribute(PERSON_ATTRIBUTE_TYPE_EMAIL,"aa@uu.com"));
+                addAttribute(new OpenMRSAttribute(PERSON_ATTRIBUTE_TYPE_STAFF_TYPE,"staffType")).addAttribute(new OpenMRSAttribute(PERSON_ATTRIBUTE_TYPE_PHONE_NUMBER,"10101010")).addAttribute(new OpenMRSAttribute(PERSON_ATTRIBUTE_TYPE_EMAIL,"aa@uu.com"));
         when(mockPersonAdapter.openMRSToMRSPerson(person)).thenReturn(mrsPerson);
         MRSUser mrsUser = openMrsUserAdapter.openMrsToMrsUser(openMRSUser);
         assertUserAndMRSUser(openMRSUser, mrsUser);
@@ -345,8 +345,8 @@ public class OpenMRSUserAdapterTest {
         PersonAttributeType emailAttributeType = personAttributeType(PERSON_ATTRIBUTE_TYPE_EMAIL);
 
         MRSPerson mrsPerson = new MRSPerson().firstName("firstName").middleName("middleName").
-                lastName("lastName").addAttribute(new Attribute(PERSON_ATTRIBUTE_TYPE_EMAIL, "email")).
-                addAttribute(new Attribute(PERSON_ATTRIBUTE_TYPE_PHONE_NUMBER, "12345")).addAttribute(new Attribute(PERSON_ATTRIBUTE_TYPE_STAFF_TYPE, "provider"));
+                lastName("lastName").addAttribute(new OpenMRSAttribute(PERSON_ATTRIBUTE_TYPE_EMAIL, "email")).
+                addAttribute(new OpenMRSAttribute(PERSON_ATTRIBUTE_TYPE_PHONE_NUMBER, "12345")).addAttribute(new OpenMRSAttribute(PERSON_ATTRIBUTE_TYPE_STAFF_TYPE, "provider"));
 
         MRSUser mrsUser = new MRSUser().securityRole(securityRole).userName("userName").person(mrsPerson).systemId("123");
 

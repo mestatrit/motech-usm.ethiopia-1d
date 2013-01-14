@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 import org.motechproject.mrs.model.MRSFacility;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
+import org.motechproject.mrs.services.FacilityAdapter;
 import org.motechproject.openmrs.ws.HttpException;
 import org.motechproject.openmrs.ws.resource.LocationResource;
 import org.motechproject.openmrs.ws.resource.model.Location;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("facilityAdapter")
-public class MRSFacilityAdapterImpl implements MRSFacilityAdapter {
+public class MRSFacilityAdapterImpl implements FacilityAdapter {
     private static final Logger LOGGER = Logger.getLogger(MRSFacilityAdapterImpl.class);
 
     private final LocationResource locationResource;

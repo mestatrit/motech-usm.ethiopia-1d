@@ -18,7 +18,7 @@ import org.motechproject.mrs.model.MRSObservation;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
 import org.motechproject.mrs.services.MRSEncounterAdapter;
-import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.openmrs.ws.HttpException;
 import org.motechproject.openmrs.ws.resource.EncounterResource;
 import org.motechproject.openmrs.ws.resource.model.Concept;
@@ -40,13 +40,13 @@ import org.springframework.stereotype.Component;
 public class MRSEncounterAdapterImpl implements MRSEncounterAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(MRSEncounterAdapterImpl.class);
 
-    private final MRSPatientAdapter patientAdapter;
+    private final PatientAdapter patientAdapter;
     private final MRSPersonAdapterImpl personAdapter;
     private final MRSConceptAdapterImpl conceptAdapter;
     private final EncounterResource encounterResource;
 
     @Autowired
-    public MRSEncounterAdapterImpl(EncounterResource encounterResource, MRSPatientAdapter patientAdapter,
+    public MRSEncounterAdapterImpl(EncounterResource encounterResource, PatientAdapter patientAdapter,
             MRSPersonAdapterImpl personAdapter, MRSConceptAdapterImpl conceptAdapter) {
         this.encounterResource = encounterResource;
         this.patientAdapter = patientAdapter;

@@ -18,6 +18,12 @@
         <constructor-arg value="couchdb.properties" />
     </bean>
 
+    <bean id="couchProviderDatabaseConnector" factory-bean="couchMRSSettings"
+        factory-method="getConnector">
+        <constructor-arg value="motech-provider-repository" />
+        <constructor-arg value="couchdb.properties" />
+    </bean>
+
     <context:annotation-config />
     <context:component-scan base-package="org.motechproject.couch.mrs" />
 

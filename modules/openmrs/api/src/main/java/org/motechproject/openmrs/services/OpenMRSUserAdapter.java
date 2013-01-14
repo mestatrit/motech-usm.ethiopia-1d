@@ -1,9 +1,10 @@
 package org.motechproject.openmrs.services;
 
+import org.motechproject.mrs.domain.Attribute;
 import org.motechproject.mrs.exception.MRSException;
 import org.motechproject.mrs.exception.UserAlreadyExistsException;
-import org.motechproject.mrs.model.Attribute;
-import org.motechproject.mrs.model.MRSPerson;
+import org.motechproject.mrs.model.OpenMRSAttribute;
+import org.motechproject.mrs.model.OpenMRSPerson;
 import org.motechproject.mrs.model.MRSUser;
 import org.motechproject.mrs.model.Password;
 import org.motechproject.mrs.services.MRSUserAdapter;
@@ -103,7 +104,7 @@ public class OpenMRSUserAdapter implements MRSUserAdapter {
         }
         return (!isSystemAdmin(openMrsUser.getSystemId())) ? openMrsToMrsUser(openMrsUser)
                 : new MRSUser().systemId(openMrsUser.getSystemId()).id(Integer.toString(openMrsUser.getId()))
-                .person(new MRSPerson().id(Integer.toString(openMrsUser.getPerson().getId())));
+                .person(new OpenMRSPerson().id(Integer.toString(openMrsUser.getPerson().getId())));
     }
 
     org.openmrs.User getOpenMrsUserByUserName(String userName) {
@@ -134,7 +135,7 @@ public class OpenMRSUserAdapter implements MRSUserAdapter {
 
     MRSUser openMrsToMrsUser(org.openmrs.User openMRSUser) {
         MRSUser mrsUser = new MRSUser();
-        MRSPerson mrsPerson = openMRSPersonAdapter.openMRSToMRSPerson(openMRSUser.getPerson());
+        OpenMRSPerson mrsPerson = openMRSPersonAdapter.openMRSToMRSPerson(openMRSUser.getPerson());
 
         mrsUser.id(Integer.toString(openMRSUser.getId())).systemId(openMRSUser.getSystemId()).userName(openMRSUser.getUsername()).person(mrsPerson).
                 securityRole(getRoleFromOpenMRSUser(openMRSUser.getRoles()));
@@ -167,14 +168,14 @@ public class OpenMRSUserAdapter implements MRSUserAdapter {
         Person person = user.getPerson();
         clearAttributes(user);
 
-        MRSPerson mrsPerson = mrsUser.getPerson();
+        OpenMRSPerson mrsPerson = mrsUser.getPerson();
         PersonName personName = new PersonName(mrsPerson.getFirstName(), mrsPerson.getMiddleName(), mrsPerson.getLastName());
         person.addName(personName);
         person.setGender(PERSON_UNKNOWN_GENDER);
 
         for (Attribute attribute : mrsPerson.getAttributes()) {
-            PersonAttributeType attributeType = personService.getPersonAttributeTypeByName(attribute.name());
-            person.addAttribute(new PersonAttribute(attributeType, attribute.value()));
+            PersonAttributeType attributeType = personService.getPersonAttributeTypeByName(attribute.getName());
+            person.addAttribute(new PersonAttribute(attributeType, attribute.getValue()));
         }
 
         Role role = userService.getRole(mrsUser.getSecurityRole());

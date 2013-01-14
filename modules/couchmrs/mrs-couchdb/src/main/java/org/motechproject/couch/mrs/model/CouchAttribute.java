@@ -1,14 +1,14 @@
 package org.motechproject.couch.mrs.model;
 
-import java.io.Serializable;
 import org.apache.commons.lang.ObjectUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.mrs.domain.Attribute;
 
 /**
  * Used for storing user attributes in property => value format
  */
 
-public class Attribute implements Serializable {
+public class CouchAttribute implements Attribute {
 
     private static final long serialVersionUID = -220219868470497301L;
 
@@ -20,15 +20,18 @@ public class Attribute implements Serializable {
 
     /**
      * Creates an attribute with the given name (property) and value
-     * @param name Property of the information
-     * @param value Value for the property
+     * 
+     * @param name
+     *            Property of the information
+     * @param value
+     *            Value for the property
      */
-    public Attribute(String name, String value) {
+    public CouchAttribute(String name, String value) {
         this.name = name;
         this.value = value;
     }
 
-    public Attribute() {
+    public CouchAttribute() {
     }
 
     public String getName() {
@@ -48,10 +51,10 @@ public class Attribute implements Serializable {
             return false;
         }
         Attribute a = (Attribute) o;
-        if (!ObjectUtils.equals(name, a.name)) {
+        if (!ObjectUtils.equals(name, a.getName())) {
             return false;
         }
-        if (!ObjectUtils.equals(value, a.value)) {
+        if (!ObjectUtils.equals(value, a.getValue())) {
             return false;
         }
         return true;
@@ -63,5 +66,15 @@ public class Attribute implements Serializable {
         hash = hash * 31 + ObjectUtils.hashCode(name);
         hash = hash * 31 + ObjectUtils.hashCode(value);
         return hash;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void setValue(String value) {
+        this.value = value;
     }
 }

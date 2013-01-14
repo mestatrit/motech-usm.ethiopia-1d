@@ -1,7 +1,7 @@
 package org.motechproject.mrs.services;
 
 import org.motechproject.mrs.exception.PatientNotFoundException;
-import org.motechproject.mrs.model.MRSPatient;
+import org.motechproject.mrs.model.OpenMRSPatient;
 
 import java.util.Date;
 import java.util.List;
@@ -13,14 +13,14 @@ import java.util.List;
 /**
  * Interface for handling Patients
  */
-public interface MRSPatientAdapter {
+public interface PatientAdapter {
     /**
      * Saves a patient to the MRS system
      *
      * @param patient Object to be saved
      * @return Saved instance of the patient
      */
-    MRSPatient savePatient(MRSPatient patient);
+    OpenMRSPatient savePatient(OpenMRSPatient patient);
 
     /**
      * Finds a patient by Motech id and updates the patient's details in the MRS system
@@ -28,7 +28,7 @@ public interface MRSPatientAdapter {
      * @param patient Patient instance with updated values (MOTECH identifier cannot be changed)
      * @return The MOTECH identifier of the updated patient if successfully updated
      */
-    MRSPatient updatePatient(MRSPatient patient);
+    OpenMRSPatient updatePatient(OpenMRSPatient patient);
 
     /**
      * Fetches a patient by the given patient id
@@ -36,7 +36,7 @@ public interface MRSPatientAdapter {
      * @param patientId Value to be used to find a patient
      * @return Patient with the given patient id if exists
      */
-    MRSPatient getPatient(String patientId);
+    OpenMRSPatient getPatient(String patientId);
 
     /**
      * Fetches a patient by MOTECH id
@@ -44,7 +44,7 @@ public interface MRSPatientAdapter {
      * @param motechId Value to be used to find a patient
      * @return Patient with the given MOTECH id if exists
      */
-    MRSPatient getPatientByMotechId(String motechId);
+    OpenMRSPatient getPatientByMotechId(String motechId);
 
     /**
      * Searches for patients in the MRS system by patient's name and MOTECH id
@@ -53,7 +53,7 @@ public interface MRSPatientAdapter {
      * @param motechId Motech id of the patient to be searched for
      * @return List of matched Patients
      */
-    List<MRSPatient> search(String name, String motechId);
+    List<OpenMRSPatient> search(String name, String motechId);
 
     /**
      * Gets the age of a patient by MOTECH id

@@ -12,8 +12,8 @@ import org.motechproject.mrs.exception.PatientNotFoundException;
 import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
-import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.services.FacilityAdapter;
+import org.motechproject.mrs.services.PatientAdapter;
 import org.motechproject.openmrs.ws.HttpException;
 import org.motechproject.openmrs.ws.resource.PatientResource;
 import org.motechproject.openmrs.ws.resource.model.Identifier;
@@ -29,17 +29,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("patientAdapter")
-public class MRSPatientAdapterImpl implements MRSPatientAdapter {
+public class MRSPatientAdapterImpl implements PatientAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(MRSPatientAdapterImpl.class);
 
     private final PatientResource patientResource;
     private final MRSPersonAdapterImpl personAdapter;
-    private final MRSFacilityAdapter facilityAdapter;
+    private final FacilityAdapter facilityAdapter;
 
     @Autowired
     public MRSPatientAdapterImpl(PatientResource patientResource, MRSPersonAdapterImpl personAdapter,
-            MRSFacilityAdapter facilityAdapter) {
+            FacilityAdapter facilityAdapter) {
         this.patientResource = patientResource;
         this.personAdapter = personAdapter;
         this.facilityAdapter = facilityAdapter;

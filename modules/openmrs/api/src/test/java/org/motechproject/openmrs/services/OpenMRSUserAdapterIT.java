@@ -2,7 +2,7 @@ package org.motechproject.openmrs.services;
 
 import org.junit.Test;
 import org.motechproject.mrs.exception.UserAlreadyExistsException;
-import org.motechproject.mrs.model.Attribute;
+import org.motechproject.mrs.model.OpenMRSAttribute;
 import org.motechproject.mrs.model.MRSPerson;
 import org.motechproject.mrs.model.MRSUser;
 import org.motechproject.mrs.services.MRSUserAdapter;
@@ -40,7 +40,7 @@ public class OpenMRSUserAdapterIT extends OpenMRSIntegrationTestBase {
         String phoneNumber = "0987654321";
 
         person.firstName(firstName).middleName(middleName).lastName(lastName).address(address)
-                .addAttribute(new Attribute("Email", email)).addAttribute(new Attribute("Phone Number", phoneNumber));
+                .addAttribute(new OpenMRSAttribute("Email", email)).addAttribute(new OpenMRSAttribute("Phone Number", phoneNumber));
         mrsUser.person(person).userName(email).securityRole(securityRole);
         final Map userData = mrsUserAdapter.saveUser(mrsUser);
 
@@ -52,8 +52,8 @@ public class OpenMRSUserAdapterIT extends OpenMRSIntegrationTestBase {
         assertEquals(lastName, user.getPerson().getLastName());
         assertEquals(securityRole, user.getSecurityRole());
 
-        Attribute actualEmail = selectUnique(user.getPerson().getAttributes(), having(on(Attribute.class).name(), equalTo("Email")));
-        Attribute actualPhone = selectUnique(user.getPerson().getAttributes(), having(on(Attribute.class).name(), equalTo("Phone Number")));
+        OpenMRSAttribute actualEmail = selectUnique(user.getPerson().getAttributes(), having(on(OpenMRSAttribute.class).name(), equalTo("Email")));
+        OpenMRSAttribute actualPhone = selectUnique(user.getPerson().getAttributes(), having(on(OpenMRSAttribute.class).name(), equalTo("Phone Number")));
 
         assertEquals(email, actualEmail.value());
         assertEquals(email, user.getUserName());

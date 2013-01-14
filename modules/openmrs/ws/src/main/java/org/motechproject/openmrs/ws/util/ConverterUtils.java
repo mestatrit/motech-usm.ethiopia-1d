@@ -40,7 +40,7 @@ public final class ConverterUtils {
             int index = display.indexOf('=');
             String name = display.substring(0, index).trim();
 
-            converted.addAttribute(new org.motechproject.mrs.model.Attribute(name, attr.getValue()));
+            converted.addAttribute(new org.motechproject.mrs.model.OpenMRSAttribute(name, attr.getValue()));
         }
 
         return converted;

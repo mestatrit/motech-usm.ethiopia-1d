@@ -2,7 +2,7 @@ package org.motechproject.openmrs.services;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
-import org.motechproject.mrs.model.Attribute;
+import org.motechproject.mrs.model.OpenMRSAttribute;
 import org.motechproject.mrs.model.MRSFacility;
 import org.motechproject.mrs.model.MRSPatient;
 import org.motechproject.mrs.model.MRSPerson;
@@ -70,7 +70,7 @@ public class OpenMRSPatientAdapterIT extends OpenMRSIntegrationTestBase {
 
         final String updatedMiddleName = "new middle name";
         MRSPerson mrsPersonUpdated = new MRSPerson().firstName(first).middleName(updatedMiddleName).lastName(last).dateOfBirth(birthDate).birthDateEstimated(birthDateEstimated)
-                .gender(gender).address("address changed").addAttribute(new Attribute("Insured", "true")).addAttribute(new Attribute("NHIS Number", "123465"));
+                .gender(gender).address("address changed").addAttribute(new OpenMRSAttribute("Insured", "true")).addAttribute(new OpenMRSAttribute("NHIS Number", "123465"));
 
         final MRSFacility changedFacility = facilityAdapter.saveFacility(new MRSFacility("name", "country", "region", null, null));
         final MRSPatient patientToBeUpdated = new MRSPatient(savedPatient.getId(), "1234567", mrsPersonUpdated, changedFacility);
@@ -84,7 +84,7 @@ public class OpenMRSPatientAdapterIT extends OpenMRSIntegrationTestBase {
         final MRSFacility savedFacility = facilityAdapter.saveFacility(new MRSFacility("name", "country", "region", "district", "province"));
 
         MRSPerson mrsPerson = new MRSPerson().firstName(first).middleName(middle).lastName(last).dateOfBirth(birthDate).birthDateEstimated(birthDateEstimated)
-                .gender(gender).address(address1).addAttribute(new Attribute("Insured", "true"));
+                .gender(gender).address(address1).addAttribute(new OpenMRSAttribute("Insured", "true"));
         final MRSPatient patient = new MRSPatient(motechId, mrsPerson, savedFacility);
         return patientAdapter.savePatient(patient);
     }

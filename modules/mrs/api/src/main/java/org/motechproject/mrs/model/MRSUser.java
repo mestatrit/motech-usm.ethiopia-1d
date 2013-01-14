@@ -10,7 +10,7 @@ public class MRSUser {
     private String systemId;
     private String securityRole;
     private String userName;
-    private MRSPerson person;
+    private OpenMRSPerson person;
 
     /**
      * Creates a MRS User
@@ -53,11 +53,11 @@ public class MRSUser {
         return this;
     }
 
-    public MRSPerson getPerson() {
+    public OpenMRSPerson getPerson() {
         return person;
     }
 
-    public MRSUser person(MRSPerson person) {
+    public MRSUser person(OpenMRSPerson person) {
         this.person = person;
         return this;
     }

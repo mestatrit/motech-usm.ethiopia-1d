@@ -11,7 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.motechproject.couch.mrs.model.CouchMRSPerson;
+import org.motechproject.couch.mrs.model.CouchPersonImpl;
 import org.motechproject.couch.mrs.model.Initializer;
 import org.motechproject.couch.mrs.model.MRSCouchException;
 import org.motechproject.testing.utils.SpringIntegrationTest;
@@ -40,29 +40,29 @@ public class CouchMRSServiceIT extends SpringIntegrationTest {
 
     @Test
     public void shouldSaveAPersonAndRetrieveByExternalId() {
-        CouchMRSPerson person1 = init.initializePerson1();
+        CouchPersonImpl person1 = init.initializePerson1();
         try {
             couchMRSService.addPerson(person1.getExternalId(), person1.getFirstName(), person1.getLastName(),
                     person1.getDateOfBirth(), person1.getGender(), person1.getAddress(), person1.getAttributes());
         } catch (MRSCouchException e) {
             e.printStackTrace();
         }
-        List<CouchMRSPerson> personsRetrieved = couchMRSService.findByExternalId(person1.getExternalId());
+        List<CouchPersonImpl> personsRetrieved = couchMRSService.findByExternalId(person1.getExternalId());
         assertEquals(person1, personsRetrieved.get(0));
     }
 
     @Test
     public void shouldHandleNullFirstAndLastName() throws MRSCouchException {
-        CouchMRSPerson person2 = new CouchMRSPerson();
+        CouchPersonImpl person2 = new CouchPersonImpl();
         person2.setExternalId("externalid");
         couchMRSService.addPerson(person2.getExternalId(), null, null, null, null, null, null);
-        List<CouchMRSPerson> personsRetrieved = couchMRSService.findByExternalId(person2.getExternalId());
+        List<CouchPersonImpl> personsRetrieved = couchMRSService.findByExternalId(person2.getExternalId());
         assertEquals(person2, personsRetrieved.get(0));
     }
 
     @Test
     public void shouldThrowExceptionIfNullExternalId() throws MRSCouchException {
-        CouchMRSPerson person3 = new CouchMRSPerson();
+        CouchPersonImpl person3 = new CouchPersonImpl();
         assertNull(person3.getExternalId());
         boolean thrown = false;
         try {
@@ -75,31 +75,31 @@ public class CouchMRSServiceIT extends SpringIntegrationTest {
 
     @Test
     public void shouldUpdatePerson() throws MRSCouchException {
-        CouchMRSPerson person = init.initializeSecondPerson();
+        CouchPersonImpl person = init.initializeSecondPerson();
         couchMRSService.addPerson(person);
         assertTrue(person.getFirstName().matches("AName"));
         person.setFirstName("ANewName");
         couchMRSService.updatePerson(person);
-        List<CouchMRSPerson> personsRetrieved = couchMRSService.findByExternalId(person.getExternalId());
+        List<CouchPersonImpl> personsRetrieved = couchMRSService.findByExternalId(person.getExternalId());
         assertTrue(personsRetrieved.get(0).getFirstName().matches("ANewName"));
     }
 
     @Test
     public void shouldUpdatePersonIfExistsInDB() throws MRSCouchException {
-        CouchMRSPerson person = init.initializeSecondPerson();
+        CouchPersonImpl person = init.initializeSecondPerson();
         couchMRSService.addPerson(person);
         assertTrue(person.getFirstName().matches("AName"));
         assertTrue(person.getExternalId().matches("externalId"));
         person.setFirstName("ANewName");
         couchMRSService.addPerson(person);
-        List<CouchMRSPerson> personsRetrieved = couchMRSService.findByExternalId(person.getExternalId());
+        List<CouchPersonImpl> personsRetrieved = couchMRSService.findByExternalId(person.getExternalId());
         assertTrue(personsRetrieved.get(0).getFirstName().matches("ANewName"));
         assertTrue(person.getExternalId().matches("externalId"));
     }
 
     @Test
     public void shouldNotAllowUpdatesToExternalID() throws MRSCouchException {
-        CouchMRSPerson person = init.initializeSecondPerson();
+        CouchPersonImpl person = init.initializeSecondPerson();
         couchMRSService.addPerson(person);
         assertTrue(person.getFirstName().matches("AName"));
         assertTrue(person.getExternalId().matches("externalId"));
@@ -116,23 +116,23 @@ public class CouchMRSServiceIT extends SpringIntegrationTest {
 
     @Test
     public void shouldRemovePerson() throws MRSCouchException {
-        CouchMRSPerson person = init.initializeSecondPerson();
+        CouchPersonImpl person = init.initializeSecondPerson();
         couchMRSService.addPerson(person);
-        List<CouchMRSPerson> personsRetrieved = couchMRSService.findByExternalId(person.getExternalId());
+        List<CouchPersonImpl> personsRetrieved = couchMRSService.findByExternalId(person.getExternalId());
         couchMRSService.removePerson(personsRetrieved.get(0));
-        List<CouchMRSPerson> shouldBeEmpty = couchMRSService.findByExternalId(person.getExternalId());
+        List<CouchPersonImpl> shouldBeEmpty = couchMRSService.findByExternalId(person.getExternalId());
         assertTrue(shouldBeEmpty.isEmpty());
     }
 
     @Test
     public void shouldFindThreePersonsWhenFindAll() throws MRSCouchException {
-        CouchMRSPerson first = init.initializePerson1();
+        CouchPersonImpl first = init.initializePerson1();
         couchMRSService.addPerson(first);
-        CouchMRSPerson second = init.initializeSecondPerson();
+        CouchPersonImpl second = init.initializeSecondPerson();
         couchMRSService.addPerson(second);
-        CouchMRSPerson third = init.initializeThirdPerson();
+        CouchPersonImpl third = init.initializeThirdPerson();
         couchMRSService.addPerson(third);
-        List<CouchMRSPerson> allPersons = couchMRSService.findAllCouchMRSPersons();
+        List<CouchPersonImpl> allPersons = couchMRSService.findAllCouchMRSPersons();
         assertEquals(3, allPersons.size());
         assertEquals(first, allPersons.get(0));
         assertEquals(second, allPersons.get(1));
@@ -141,7 +141,7 @@ public class CouchMRSServiceIT extends SpringIntegrationTest {
 
     @Test
     public void sizeShouldBeZeroWhenFindAllNoPersons() {
-        List<CouchMRSPerson> allPersons = couchMRSService.findAllCouchMRSPersons();
+        List<CouchPersonImpl> allPersons = couchMRSService.findAllCouchMRSPersons();
         assertTrue(allPersons.isEmpty());
     }
 

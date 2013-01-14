@@ -66,7 +66,7 @@ public class MRSPersonAdapterImpl {
     }
 
     void saveAttributesForPerson(MRSPerson person) {
-        for (org.motechproject.mrs.model.Attribute attribute : person.getAttributes()) {
+        for (org.motechproject.mrs.model.OpenMRSAttribute attribute : person.getAttributes()) {
             Attribute attr = new Attribute();
             attr.setValue(attribute.value());
             attr.setAttributeType(getAttributeTypeUuid(attribute.name()));
