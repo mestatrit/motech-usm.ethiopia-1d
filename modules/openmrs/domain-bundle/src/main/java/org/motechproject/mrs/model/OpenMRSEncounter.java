@@ -2,7 +2,6 @@ package org.motechproject.mrs.model;
 
 import java.util.Date;
 import java.util.Set;
-
 import org.joda.time.DateTime;
 import org.motechproject.mrs.domain.Encounter;
 import org.motechproject.mrs.domain.Facility;
