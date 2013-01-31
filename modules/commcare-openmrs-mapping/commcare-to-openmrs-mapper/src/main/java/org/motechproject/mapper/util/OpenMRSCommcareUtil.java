@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
+
 import org.motechproject.commcare.domain.CaseInfo;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
@@ -13,11 +16,9 @@ import org.motechproject.mrs.domain.Encounter;
 import org.motechproject.mrs.domain.Facility;
 import org.motechproject.mrs.domain.Patient;
 import org.motechproject.mrs.domain.Person;
-import org.motechproject.mrs.domain.Provider;
 import org.motechproject.mrs.domain.User;
 import org.motechproject.mrs.exception.MRSException;
 import org.motechproject.mrs.model.OpenMRSEncounter.MRSEncounterBuilder;
-import org.motechproject.mrs.model.OpenMRSFacility;
 import org.motechproject.mrs.model.OpenMRSObservation;
 import org.motechproject.mrs.model.OpenMRSPatient;
 import org.motechproject.mrs.model.OpenMRSProvider;
@@ -49,6 +50,11 @@ public class OpenMRSCommcareUtil {
 
     @Autowired
     private PatientAdapter mrsPatientAdapter;
+
+    @PostConstruct
+    public void test() {
+        User user = mrsUserAdapter.getUserByUserName("Unknown");
+    }
 
     public Person findProvider(String providerName) {
 
@@ -95,7 +101,7 @@ public class OpenMRSCommcareUtil {
         OpenMRSProvider provider = new OpenMRSProvider();
         provider.setPerson(providerPerson);
         provider.setProviderId(providerPerson.getPersonId());
-        
+
 
         logger.info("Using provider: " + provider);
 
@@ -129,41 +135,41 @@ public class OpenMRSCommcareUtil {
 
         return motechId;
     }
-    
+
     public String getFacility(CommcareForm form) {
         return "Unknown Location";
     }
-    
-//    public String getFacility(CommcareForm form) {
-//        String facilityName = null;
-//        String userId = form.getMetadata().get("userID");
-//        logger.info("User id is: " + userId);
-//        CommcareProviderIdentifier commcareId = new CommcareProviderIdentifier();
-//        commcareId.setUserId(userId);
-//        Provider provider = providerService.getProviderByIdentifier(commcareId);
-//        if (provider != null && provider.getLocationIdentities() != null) {
-//            List<String> locationIds = provider.getLocationIdentities();
-//            if (locationIds.size() > 0) {
-//                String locationId = locationIds.get(0);
-//                Location location = locationService.getLocationById(locationId);
-//                List<LocationIdentifier> identifiers = location.getIdentifiers();
-//                if (identifiers == null) {
-//                    return null;
-//                }
-//                for (LocationIdentifier locId : identifiers) {
-//                    if("openmrs_location_id".equals(locId.getIdentifierName())) {
-//                        OpenMRSLocationIdentifier openMrsLoc = (OpenMRSLocationIdentifier) locId;
-//                        facilityName = openMrsLoc.getFacilityName();
-//                        logger.info("Using : " + facilityName);
-//                        return facilityName;
-//                    }
-//                }
-//            } else {
-//                logger.warn("NO LOCATIONS FOUND FOR PROVIDER");
-//            }
-//        } else {
-//            logger.warn("NO PROVIDER FOUND");
-//        }
-//        return null;
-//    }
+
+    //    public String getFacility(CommcareForm form) {
+    //        String facilityName = null;
+    //        String userId = form.getMetadata().get("userID");
+    //        logger.info("User id is: " + userId);
+    //        CommcareProviderIdentifier commcareId = new CommcareProviderIdentifier();
+    //        commcareId.setUserId(userId);
+    //        Provider provider = providerService.getProviderByIdentifier(commcareId);
+    //        if (provider != null && provider.getLocationIdentities() != null) {
+    //            List<String> locationIds = provider.getLocationIdentities();
+    //            if (locationIds.size() > 0) {
+    //                String locationId = locationIds.get(0);
+    //                Location location = locationService.getLocationById(locationId);
+    //                List<LocationIdentifier> identifiers = location.getIdentifiers();
+    //                if (identifiers == null) {
+    //                    return null;
+    //                }
+    //                for (LocationIdentifier locId : identifiers) {
+    //                    if("openmrs_location_id".equals(locId.getIdentifierName())) {
+    //                        OpenMRSLocationIdentifier openMrsLoc = (OpenMRSLocationIdentifier) locId;
+    //                        facilityName = openMrsLoc.getFacilityName();
+    //                        logger.info("Using : " + facilityName);
+    //                        return facilityName;
+    //                    }
+    //                }
+    //            } else {
+    //                logger.warn("NO LOCATIONS FOUND FOR PROVIDER");
+    //            }
+    //        } else {
+    //            logger.warn("NO PROVIDER FOUND");
+    //        }
+    //        return null;
+    //    }
 }

@@ -35,16 +35,6 @@
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
-            <artifactId>motech-location-repository</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.motechproject</groupId>
-            <artifactId>motech-provider-repository</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.motechproject</groupId>
             <artifactId>motech-mrs-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -143,6 +133,11 @@
             <artifactId>org.springframework.osgi.web</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-osgi-web-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -154,9 +149,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-Activator>
-                            org.motechproject.commcarestdemo.osgi.Activator
-                        </Bundle-Activator>
+                        <Bundle-Activator>org.motechproject.osgi.web.Activator</Bundle-Activator>
                         <Import-Package>
                             *,
                             org.motechproject.event.listener,

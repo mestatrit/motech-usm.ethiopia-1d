@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import org.joda.time.DateTime;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
-import org.motechproject.commcare.service.CommcareUserService;
 import org.motechproject.mapper.adapters.ActivityFormAdapter;
 import org.motechproject.mapper.adapters.mappings.MRSActivity;
 import org.motechproject.mapper.adapters.mappings.OpenMRSRegistrationActivity;
@@ -34,10 +33,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
 
     @Autowired
     private PatientAdapter mrsPatientAdapter;
-
-    @Autowired
-    private CommcareUserService userService;
-
+    /* CHECKSTYLE:OFF */
     @Override
     public void adaptForm(CommcareForm form, MRSActivity activity) {
 
@@ -183,24 +179,27 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         } else {
             facilityName = openMrsUtil.getFacility(form);
 
-            //                if (registrationActivity.getFacilityScheme() != null && "commcareUser".equals(registrationActivity.getFacilityScheme().get("type"))) {
-            //                    String facilityUserFieldName = registrationActivity.getFacilityScheme().get("fieldName");
-            //                    if (facilityUserFieldName != null) {
-            //                        String userId = form.getMetadata().get("userID");
-            //                        logger.info("Retreiving user: " + userId);
-            //                        CommcareUser user = userService.getCommcareUserById(userId);
-            //                        if (user != null) {
-            //                            logger.info("User: " + user.getId() + " is being used");
-            //                            if (user.getUserData() != null) {
-            //                                facilityName = user.getUserData().get(facilityUserFieldName);
-            //                            }
-            //                        } else {
-            //                            logger.info("Could not find user: " + userId);
-            //                        }
-            //                    }
-            //                } else {
-            //                    logger.info("No facility scheme defined");
-            //                }
+            // if (registrationActivity.getFacilityScheme() != null &&
+            // "commcareUser".equals(registrationActivity.getFacilityScheme().get("type")))
+            // {
+            // String facilityUserFieldName =
+            // registrationActivity.getFacilityScheme().get("fieldName");
+            // if (facilityUserFieldName != null) {
+            // String userId = form.getMetadata().get("userID");
+            // logger.info("Retreiving user: " + userId);
+            // CommcareUser user = userService.getCommcareUserById(userId);
+            // if (user != null) {
+            // logger.info("User: " + user.getId() + " is being used");
+            // if (user.getUserData() != null) {
+            // facilityName = user.getUserData().get(facilityUserFieldName);
+            // }
+            // } else {
+            // logger.info("Could not find user: " + userId);
+            // }
+            // }
+            // } else {
+            // logger.info("No facility scheme defined");
+            // }
         }
 
         if (facilityName == null) {
@@ -215,7 +214,8 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
 
         if (patient == null && facility != null && firstName != null && lastName != null && dateOfBirth != null
                 && motechId != null) {
-            person = new OpenMRSPerson().firstName(firstName).lastName(lastName).gender(gender).dateOfBirth(new DateTime(dateOfBirth));
+            person = new OpenMRSPerson().firstName(firstName).lastName(lastName).gender(gender)
+                    .dateOfBirth(new DateTime(dateOfBirth));
             if (mappedAttributes != null) {
                 for (Entry<String, String> entry : mappedAttributes.entrySet()) {
                     FormValueElement attributeElement = topFormElement.getElementByName(entry.getValue());
@@ -231,33 +231,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
                 }
             }
 
-            if (middleName != null) {
-                person.middleName(middleName);
-            }
-
-            if (preferredName != null) {
-                person.preferredName(preferredName);
-            }
-
-            if (address != null) {
-                person.address(address);
-            }
-
-            if (birthDateIsEstimated != null) {
-                person.birthDateEstimated(birthDateIsEstimated);
-            }
-
-            if (age != null) {
-                person.age(age);
-            }
-
-            if (isDead != null) {
-                person.dead(isDead);
-            }
-
-            if (deathDate != null) {
-                person.deathDate(new DateTime(deathDate));
-            }
+            setPerson(middleName, preferredName, address, birthDateIsEstimated, age, isDead, deathDate, person);
 
             patient = new OpenMRSPatient(motechId, person, facility);
             try {
@@ -289,23 +263,12 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
             }
         }
     }
-
-    private void updatePatient(OpenMRSPatient patient, OpenMRSPerson person, String firstName, String lastName,
-            Date dateOfBirth, String gender, String middleName, String preferredName, String address,
-            Boolean birthDateIsEstimated, Integer age, Boolean isDead, Date deathDate) {
-        if (firstName != null) {
-            person.firstName(firstName);
-        }
-        if (lastName != null) {
-            person.lastName(lastName);
-        }
-        if (dateOfBirth != null) {
-            person.dateOfBirth(new DateTime(dateOfBirth));
-        }
-        if (gender != null) {
-            person.gender(gender);
-        }
-
+    /* CHECKSTYLE:ON */
+    
+    /* CHECKSTYLE:OFF */
+    private void setPerson(String middleName, String preferredName, String address, Boolean birthDateIsEstimated,
+            Integer age, Boolean isDead, Date deathDate, OpenMRSPerson person) {
+    /* CHECKSTYLE:ON */
         if (middleName != null) {
             person.middleName(middleName);
         }
@@ -333,24 +296,46 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         if (deathDate != null) {
             person.deathDate(new DateTime(deathDate));
         }
+    }
+
+    /* CHECKSTYLE:OFF */
+    private void updatePatient(OpenMRSPatient patient, OpenMRSPerson person, String firstName, String lastName,
+            Date dateOfBirth, String gender, String middleName, String preferredName, String address,
+            Boolean birthDateIsEstimated, Integer age, Boolean isDead, Date deathDate) {
+    /* CHECKSTYLE:ON */
+        if (firstName != null) {
+            person.firstName(firstName);
+        }
+        if (lastName != null) {
+            person.lastName(lastName);
+        }
+        if (dateOfBirth != null) {
+            person.dateOfBirth(new DateTime(dateOfBirth));
+        }
+        if (gender != null) {
+            person.gender(gender);
+        }
+
+        setPerson(middleName, preferredName, address, birthDateIsEstimated, age, isDead, deathDate, person);
+
 
         mrsPatientAdapter.updatePatient(patient);
     }
 
     private Integer populateIntegerValue(String fieldName, FormValueElement topFormElement) {
+        Integer value = null;
         if (fieldName != null) {
             FormValueElement element = topFormElement.getElementByName(fieldName);
             if (element != null) {
-                Integer value = null;
                 try {
-                    value = new Integer(element.getValue());
+                    value = Integer.valueOf(element.getValue());
                 } catch (NumberFormatException e) {
                     logger.error("Error parsing age value from registration form: " + e.getMessage());
                     return null;
                 }
             }
         }
-        return null;
+        return value;
     }
 
     private Boolean populateBooleanValue(String fieldName, FormValueElement topFormElement) {

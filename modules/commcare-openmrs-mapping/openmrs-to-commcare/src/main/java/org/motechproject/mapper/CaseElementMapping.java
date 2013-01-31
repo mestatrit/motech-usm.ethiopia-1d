@@ -1,19 +1,20 @@
 package org.motechproject.mapper;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class CaseElementMapping {
 
     private boolean required;
     private String conceptName;
     private String caseElementName;
-    private HashMap<String, String> translationMappings;
+    private Map<String, String> translationMappings;
 
     public CaseElementMapping() {
         translationMappings = new HashMap<String, String>();
     }
 
-    public CaseElementMapping(String conceptName, String caseElementName) {
+    public CaseElementMapping(String conceptName) {
         this.conceptName = conceptName;
         translationMappings = new HashMap<String, String>();
     }
@@ -59,11 +60,11 @@ public class CaseElementMapping {
         this.caseElementName = caseElementName;
     }
 
-    public HashMap<String, String> getObsValuesToCaseValue() {
+    public Map<String, String> getObsValuesToCaseValue() {
         return translationMappings;
     }
 
-    public void setObsValuesToCaseValue(HashMap<String, String> obsValuesToCaseValue) {
+    public void setObsValuesToCaseValue(Map<String, String> obsValuesToCaseValue) {
         this.translationMappings = obsValuesToCaseValue;
     }
 }

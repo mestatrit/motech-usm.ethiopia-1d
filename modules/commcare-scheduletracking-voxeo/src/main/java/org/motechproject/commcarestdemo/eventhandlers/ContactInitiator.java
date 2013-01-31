@@ -86,12 +86,12 @@ public class ContactInitiator {
                 CallRequest request = new CallRequest(patientPhoneNum, 119, content.getValue());
                 request.getPayload().put("USER_ID", motechID);
                 request.getPayload().put("applicationName", "CommCareApp");
-                request.setMotechId(motechID);
+//                request.setMotechId(motechID);
                 request.setOnBusyEvent(new MotechEvent("CALL_BUSY"));
                 request.setOnFailureEvent(new MotechEvent("CALL_FAIL"));
                 request.setOnNoAnswerEvent(new MotechEvent("CALL_NO_ANSWER"));
                 request.setOnSuccessEvent(new MotechEvent("CALL_SUCCESS"));
-                request.setVxml(vxmlCalculator.calculateVxmlLocation(messageName));
+//                request.setVxml(vxmlCalculator.calculateVxmlLocation(messageName));
                 voxeoService.initiateCall(request);
             } else {
                 logger.error("Could not find IVR content for language: " + language + " and name: " + messageName);
@@ -127,7 +127,7 @@ public class ContactInitiator {
             CallRequest request = new CallRequest(providerPhoneNum, 119, content.getValue());
             request.getPayload().put("USER_ID", motechID);
             request.getPayload().put("applicationName", "CommCareApp");
-            request.setVxml(vxmlCalculator.calculateVxmlLocation(messageName));
+//            request.setVxml(vxmlCalculator.calculateVxmlLocation(messageName));
             voxeoService.initiateCall(request);
         } else {
             logger.error("Could not find IVR content for language: " + language + " and name: " + messageName);

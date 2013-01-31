@@ -133,8 +133,7 @@
                             org.motechproject.event.listener,
                             org.springframework.beans.factory.xml,
                             org.motechproject.event.listener.annotations,
-                            org.springframework.context.config,
-                            org.springframework.osgi.config
+                            org.springframework.context.config
                         </Import-Package>
                         <Private-Package>
                             org.ektorp.impl,

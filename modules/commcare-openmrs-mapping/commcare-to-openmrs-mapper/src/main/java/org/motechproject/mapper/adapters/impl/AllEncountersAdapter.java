@@ -9,7 +9,6 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
-import org.motechproject.commcare.service.CommcareUserService;
 import org.motechproject.mapper.adapters.ActivityFormAdapter;
 import org.motechproject.mapper.adapters.mappings.MRSActivity;
 import org.motechproject.mapper.adapters.mappings.ObservationMapping;
@@ -30,9 +29,6 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
 
     @Autowired
     private OpenMRSCommcareUtil openMrsUtil;
-
-    @Autowired
-    private CommcareUserService userService;
 
     @Override
     public void adaptForm(CommcareForm form, MRSActivity activity) {
@@ -99,6 +95,7 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
                 encounterActivity.getEncounterType());
     }
 
+    /* CHECKSTYLE:OFF */
     private Set<OpenMRSObservation> generateObservations(FormValueElement form, List<ObservationMapping> observationMappings) {
         Set<OpenMRSObservation> observations = new HashSet<OpenMRSObservation>();
         for (ObservationMapping obs : observationMappings) {
@@ -123,6 +120,7 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
         }
         return observations;
     }
+    /* CHECKSTYLE:ON */
 
     private static Collection<? extends OpenMRSObservation> addObservations(ObservationMapping obs, FormValueElement form) {
         Set<OpenMRSObservation> observations = new HashSet<OpenMRSObservation>();

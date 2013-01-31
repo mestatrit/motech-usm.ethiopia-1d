@@ -10,26 +10,9 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
-//import org.motech.location.repository.domain.CommcareLocationIdentifier;
-import org.motech.location.repository.domain.CustomLocationIdentifier;
-import org.motech.location.repository.domain.Location;
-import org.motech.location.repository.domain.LocationIdentifier;
-//import org.motech.location.repository.domain.MotechLocationIdentifier;
-import org.motech.location.repository.domain.OpenMRSLocationIdentifier;
-import org.motech.location.repository.service.LocationRepositoryService;
-import org.motech.provider.repository.domain.CommcareProviderIdentifier;
-import org.motech.provider.repository.domain.MotechIdentifier;
-import org.motech.provider.repository.domain.OpenMRSProviderIdentifier;
-import org.motech.provider.repository.domain.Provider;
-import org.motech.provider.repository.domain.ProviderIdentifier;
-import org.motech.provider.repository.service.ProviderRepositoryService;
 import org.motechproject.mrs.exception.UserAlreadyExistsException;
-import org.motechproject.mrs.model.MRSFacility;
-import org.motechproject.mrs.model.MRSPerson;
-import org.motechproject.mrs.model.MRSUser;
-import org.motechproject.mrs.services.MRSFacilityAdapter;
-//import org.motechproject.mrs.services.MRSPatientAdapter;
-import org.motechproject.mrs.services.MRSUserAdapter;
+import org.motechproject.mrs.services.FacilityAdapter;
+import org.motechproject.mrs.services.UserAdapter;
 import org.motechproject.scheduletracking.api.service.ScheduleTrackingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,17 +25,17 @@ public class SchedulesUtil {
     @Autowired
     private ScheduleTrackingService scheduleTrackingService;
 
-    @Autowired
-    private LocationRepositoryService locationService;
+//    @Autowired
+//    private LocationRepositoryService locationService;
+//
+//    @Autowired
+//    private ProviderRepositoryService providerService;
 
     @Autowired
-    private ProviderRepositoryService providerService;
+    private FacilityAdapter facilityAdapter;
 
     @Autowired
-    private MRSFacilityAdapter facilityAdapter;
-
-    @Autowired
-    private MRSUserAdapter userAdapter;
+    private UserAdapter userAdapter;
 
     private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
 
@@ -76,10 +59,10 @@ public class SchedulesUtil {
 
             logger.warn("Adding schedule... ");
 
-            scheduleTrackingService.updateSchedule(writer.toString());
+            scheduleTrackingService.add(writer.toString());
 
-            bootstrapProvidersAndLocations("123", "96b15408c06fe7b6efa654f0a9ad84a6", "Bruce");
-            bootstrapProvidersAndLocations("456", "887c0eb8c9d8813f04b642881b43698a", "Russell");            
+//            bootstrapProvidersAndLocations("123", "96b15408c06fe7b6efa654f0a9ad84a6", "Bruce");
+//            bootstrapProvidersAndLocations("456", "887c0eb8c9d8813f04b642881b43698a", "Russell");            
 
             //            Location location = new Location();
             //
@@ -199,90 +182,90 @@ public class SchedulesUtil {
 
     }
 
-    public void bootstrapProvidersAndLocations(String motechString, String commcareUserId, String userName) throws UserAlreadyExistsException {
-        MotechIdentifier motechId = new MotechIdentifier();
-        motechId.setExternalId(motechString);
-        
-        Provider demoProvider1 = providerService.getProviderByMotechId(motechId);
-
-        if (demoProvider1 == null) {
-            Provider provider = new Provider();
-            provider.setMotechId(motechId);
-
-            List<String> locationIdentities = new ArrayList<String>();
-            List<ProviderIdentifier> providerIds = new ArrayList<ProviderIdentifier>();
-
-            MRSFacility facility = null;
-
-            //Make sure USM facility is in both OpenMRS and Motech repository
-            List<MRSFacility> facilities = facilityAdapter.getFacilities("USM");
-            if (facilities.size() == 0) {
-                facility = new MRSFacility("USM", null, null, null, null);
-                facility = facilityAdapter.saveFacility(facility);
-            } else {
-                facility = facilities.get(0);
-            }
-
-            String facilityName = facility.getName();
-            String locationId = facility.getId();
-            
-            logger.warn("location id: " + locationId);
-
-            locationIdentities.add(locationId);
-
-            if (locationService.getLocationById(locationId) == null) {
-                Location location = new Location();
-                Map<String, String> identifyingProperties = new HashMap<String, String>();
-                identifyingProperties.put("facilityName", "USM");
-                identifyingProperties.put("uuid", "280af894-59d6-4d7c-9adb-769f54ab55d3");
-                CustomLocationIdentifier custom = new CustomLocationIdentifier("idtype1", identifyingProperties);
-                List<CustomLocationIdentifier> customIdentifiers = new ArrayList<CustomLocationIdentifier>();
-                customIdentifiers.add(custom);
-                List<LocationIdentifier> locationIdentifiers = new ArrayList<LocationIdentifier>();
-                OpenMRSLocationIdentifier openMrsLocation = new OpenMRSLocationIdentifier();
-                openMrsLocation.setUuid(locationId);
-                openMrsLocation.setFacilityName(facilityName);
-                locationIdentifiers.add(openMrsLocation);
-                location.setIdentifiers(locationIdentifiers);
-                location.setCustomIdentifiers(customIdentifiers);
-                locationService.saveLocation(location);
-            }
-
-            if (userAdapter.getUserByUserName(userName) == null) {
-
-                MRSUser user = new MRSUser();
-                user.userName(userName);
-                user.securityRole("Provider");
-
-                MRSPerson person = new MRSPerson().address("USM Fantasy Land").dateOfBirth(new Date()).gender("M").firstName("Bruce").lastName("MacLeod");
-
-                user.person(person);
-
-                Map<String, Object> dataMap = userAdapter.saveUser(user);
-                MRSUser userObj = (MRSUser) dataMap.get("User");
-                MRSPerson personObj = userObj.getPerson();
-
-                OpenMRSProviderIdentifier openMrsProvider = new OpenMRSProviderIdentifier();
-                openMrsProvider.setUserName(userName);
-                openMrsProvider.setUuid(personObj.getId());
-                providerIds.add(openMrsProvider);
-            } else {
-                OpenMRSProviderIdentifier openMrsProvider = new OpenMRSProviderIdentifier();
-                openMrsProvider.setUserName(userName);
-                openMrsProvider.setUuid(userAdapter.getUserByUserName(userName).getId());
-                providerIds.add(openMrsProvider);
-            }
-
-            CommcareProviderIdentifier commcareId = new CommcareProviderIdentifier();
-            commcareId.setDomain("mvp-sauri-testing");
-            commcareId.setUsername(userName);
-            commcareId.setUserId(commcareUserId);
-            providerIds.add(commcareId);
-
-            provider.setLocationIdentities(locationIdentities);
-            provider.setIdentifiers(providerIds);
-            providerService.saveProvider(provider);
-        }
-    }
+//    public void bootstrapProvidersAndLocations(String motechString, String commcareUserId, String userName) throws UserAlreadyExistsException {
+//        MotechIdentifier motechId = new MotechIdentifier();
+//        motechId.setExternalId(motechString);
+//        
+//        Provider demoProvider1 = providerService.getProviderByMotechId(motechId);
+//
+//        if (demoProvider1 == null) {
+//            Provider provider = new Provider();
+//            provider.setMotechId(motechId);
+//
+//            List<String> locationIdentities = new ArrayList<String>();
+//            List<ProviderIdentifier> providerIds = new ArrayList<ProviderIdentifier>();
+//
+//            MRSFacility facility = null;
+//
+//            //Make sure USM facility is in both OpenMRS and Motech repository
+//            List<MRSFacility> facilities = facilityAdapter.getFacilities("USM");
+//            if (facilities.size() == 0) {
+//                facility = new MRSFacility("USM", null, null, null, null);
+//                facility = facilityAdapter.saveFacility(facility);
+//            } else {
+//                facility = facilities.get(0);
+//            }
+//
+//            String facilityName = facility.getName();
+//            String locationId = facility.getId();
+//            
+//            logger.warn("location id: " + locationId);
+//
+//            locationIdentities.add(locationId);
+//
+//            if (locationService.getLocationById(locationId) == null) {
+//                Location location = new Location();
+//                Map<String, String> identifyingProperties = new HashMap<String, String>();
+//                identifyingProperties.put("facilityName", "USM");
+//                identifyingProperties.put("uuid", "280af894-59d6-4d7c-9adb-769f54ab55d3");
+//                CustomLocationIdentifier custom = new CustomLocationIdentifier("idtype1", identifyingProperties);
+//                List<CustomLocationIdentifier> customIdentifiers = new ArrayList<CustomLocationIdentifier>();
+//                customIdentifiers.add(custom);
+//                List<LocationIdentifier> locationIdentifiers = new ArrayList<LocationIdentifier>();
+//                OpenMRSLocationIdentifier openMrsLocation = new OpenMRSLocationIdentifier();
+//                openMrsLocation.setUuid(locationId);
+//                openMrsLocation.setFacilityName(facilityName);
+//                locationIdentifiers.add(openMrsLocation);
+//                location.setIdentifiers(locationIdentifiers);
+//                location.setCustomIdentifiers(customIdentifiers);
+//                locationService.saveLocation(location);
+//            }
+//
+//            if (userAdapter.getUserByUserName(userName) == null) {
+//
+//                MRSUser user = new MRSUser();
+//                user.userName(userName);
+//                user.securityRole("Provider");
+//
+//                MRSPerson person = new MRSPerson().address("USM Fantasy Land").dateOfBirth(new Date()).gender("M").firstName("Bruce").lastName("MacLeod");
+//
+//                user.person(person);
+//
+//                Map<String, Object> dataMap = userAdapter.saveUser(user);
+//                MRSUser userObj = (MRSUser) dataMap.get("User");
+//                MRSPerson personObj = userObj.getPerson();
+//
+//                OpenMRSProviderIdentifier openMrsProvider = new OpenMRSProviderIdentifier();
+//                openMrsProvider.setUserName(userName);
+//                openMrsProvider.setUuid(personObj.getId());
+//                providerIds.add(openMrsProvider);
+//            } else {
+//                OpenMRSProviderIdentifier openMrsProvider = new OpenMRSProviderIdentifier();
+//                openMrsProvider.setUserName(userName);
+//                openMrsProvider.setUuid(userAdapter.getUserByUserName(userName).getId());
+//                providerIds.add(openMrsProvider);
+//            }
+//
+//            CommcareProviderIdentifier commcareId = new CommcareProviderIdentifier();
+//            commcareId.setDomain("mvp-sauri-testing");
+//            commcareId.setUsername(userName);
+//            commcareId.setUserId(commcareUserId);
+//            providerIds.add(commcareId);
+//
+//            provider.setLocationIdentities(locationIdentities);
+//            provider.setIdentifiers(providerIds);
+//            providerService.saveProvider(provider);
+//        }
+//    }
 
 }

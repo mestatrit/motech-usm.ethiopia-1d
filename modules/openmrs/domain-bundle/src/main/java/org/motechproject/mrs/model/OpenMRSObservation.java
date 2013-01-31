@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.joda.time.DateTime;
-import org.motechproject.mrs.domain.Encounter;
 import org.motechproject.mrs.domain.Observation;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;

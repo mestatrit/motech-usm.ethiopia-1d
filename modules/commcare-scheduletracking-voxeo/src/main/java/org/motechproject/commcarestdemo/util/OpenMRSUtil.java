@@ -2,9 +2,9 @@ package org.motechproject.commcarestdemo.util;
 
 import java.util.List;
 import org.joda.time.DateTime;
-import org.motechproject.mrs.model.MRSEncounter;
-import org.motechproject.mrs.model.MRSObservation;
-import org.motechproject.mrs.services.MRSEncounterAdapter;
+import org.motechproject.mrs.domain.Encounter;
+import org.motechproject.mrs.domain.Observation;
+import org.motechproject.mrs.services.EncounterAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 public class OpenMRSUtil {
 
     @Autowired
-    private MRSEncounterAdapter mrsEncounterAdapter;
+    private EncounterAdapter mrsEncounterAdapter;
 
-    public DateTime dateOfLastEncounter(String motechId, String encounterType, List<MRSObservation> requiredObservations) {
+    public DateTime dateOfLastEncounter(String motechId, String encounterType, List<Observation> requiredObservations) {
 
-        List<MRSEncounter> encounters = mrsEncounterAdapter.getEncountersByEncounterType(motechId, encounterType);
+        List<Encounter> encounters = mrsEncounterAdapter.getEncountersByEncounterType(motechId, encounterType);
 
         DateTime latestDate = null;
 
@@ -24,7 +24,7 @@ public class OpenMRSUtil {
             return null;
         }
 
-        for (MRSEncounter encounter : encounters) {
+        for (Encounter encounter : encounters) {
             if (latestDate == null) {
                 latestDate = new DateTime(encounter.getDate());
             } else {

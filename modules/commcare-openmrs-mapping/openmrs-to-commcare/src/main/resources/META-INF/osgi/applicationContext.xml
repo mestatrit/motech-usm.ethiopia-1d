@@ -24,11 +24,5 @@
 
     <osgi:reference id="eventRegistrationOsgi" cardinality="0..1" interface="org.motechproject.event.listener.EventListenerRegistryService" />
 
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/webapp/" />
-        <property name="suffix" value=".jsp" />
-        <property name="viewClass" value="org.motechproject.mapper.BundledJspView" />
-    </bean>
-
     <mvc:annotation-driven />
 </beans>

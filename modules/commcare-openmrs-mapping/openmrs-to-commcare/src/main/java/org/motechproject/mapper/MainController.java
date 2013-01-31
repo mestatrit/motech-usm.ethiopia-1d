@@ -2,7 +2,6 @@ package org.motechproject.mapper;
 
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
-import org.motechproject.mrs.services.EncounterAdapter;
 import org.motechproject.openmrs.atomfeed.events.EventDataKeys;
 import org.motechproject.openmrs.atomfeed.events.EventSubjects;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class MainController {
-
-    @Autowired
-    private EncounterAdapter encounterAdapter;
 
     @Autowired
     private EventRelay eventRelay;

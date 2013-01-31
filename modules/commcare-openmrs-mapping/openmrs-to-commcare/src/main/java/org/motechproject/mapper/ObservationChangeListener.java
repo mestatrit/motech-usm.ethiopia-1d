@@ -10,8 +10,6 @@ import org.motechproject.openmrs.atomfeed.events.EventDataKeys;
 import org.motechproject.openmrs.atomfeed.events.EventSubjects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Listens on Observation update events from the Atom Feed and updates a case if the observation updated is in the case
@@ -22,7 +20,7 @@ public class ObservationChangeListener {
     private final ObservationAdapter obsAdapter;
     private final PatientAdapter patientAdapter;
     private final CommcarePregnancyModule pregnancyApplication;
-    private static Logger logger = LoggerFactory.getLogger("openmrs-commcare-mapper");
+//    private static Logger logger = LoggerFactory.getLogger("openmrs-commcare-mapper");
 
     @Autowired
     public ObservationChangeListener(CommcarePregnancyModule pregnancyApplication, ObservationAdapter obsAdapter,

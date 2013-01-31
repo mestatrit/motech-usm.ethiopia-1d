@@ -1159,7 +1159,7 @@
 
         <!-- OSGI modules -->
         <module>modules/ethiopia</module>
-        <module>modules/commcare-scheduletracking-voxeo</module>
+<!--         <module>modules/commcare-scheduletracking-voxeo</module> -->
         <module>modules/commcare-openmrs-mapping/commcare-to-openmrs-mapper</module>
         <module>modules/commcare-openmrs-mapping/openmrs-to-commcare</module>
         <module>platform/server-bundle</module>

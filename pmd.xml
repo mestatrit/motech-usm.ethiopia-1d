@@ -16,7 +16,7 @@
 
     <rule ref="rulesets/codesize.xml/NcssMethodCount">
         <properties>
-            <property name="minimum" value="50"/>
+            <property name="minimum" value="200"/>
         </properties>
     </rule>
 
