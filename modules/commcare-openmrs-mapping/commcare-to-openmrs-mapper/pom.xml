@@ -39,16 +39,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.motechproject</groupId>
-            <artifactId>motech-location-repository</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.motechproject</groupId>
-            <artifactId>motech-provider-repository</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
             <version>4.2.0</version>
@@ -118,6 +108,11 @@
             <artifactId>org.springframework.osgi.web</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-osgi-web-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -129,9 +124,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-Activator>
-                            org.motechproject.mapper.osgi.Activator
-                        </Bundle-Activator>
+                        <Bundle-Activator>org.motechproject.osgi.web.Activator</Bundle-Activator>
                         <Export-Package>
                             org.motechproject.mapper.*
                         </Export-Package>

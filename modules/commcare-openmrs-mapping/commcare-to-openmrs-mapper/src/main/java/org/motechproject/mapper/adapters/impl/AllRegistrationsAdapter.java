@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.joda.time.DateTime;
-import org.motech.location.repository.service.LocationRepositoryService;
-import org.motech.provider.repository.service.ProviderRepositoryService;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.service.CommcareUserService;
@@ -16,11 +14,11 @@ import org.motechproject.mapper.adapters.mappings.OpenMRSRegistrationActivity;
 import org.motechproject.mapper.constants.FormMappingConstants;
 import org.motechproject.mapper.util.OpenMRSCommcareUtil;
 import org.motechproject.mrs.exception.MRSException;
-import org.motechproject.mrs.model.Attribute;
-import org.motechproject.mrs.model.MRSFacility;
-import org.motechproject.mrs.model.MRSPatient;
-import org.motechproject.mrs.model.MRSPerson;
-import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.model.OpenMRSAttribute;
+import org.motechproject.mrs.model.OpenMRSFacility;
+import org.motechproject.mrs.model.OpenMRSPatient;
+import org.motechproject.mrs.model.OpenMRSPerson;
+import org.motechproject.mrs.services.PatientAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +33,10 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
     private OpenMRSCommcareUtil openMrsUtil;
 
     @Autowired
-    private MRSPatientAdapter mrsPatientAdapter;
+    private PatientAdapter mrsPatientAdapter;
 
     @Autowired
     private CommcareUserService userService;
-
-    @Autowired
-    private LocationRepositoryService locationService;
-
-    @Autowired
-    private ProviderRepositoryService providerService;
 
     @Override
     public void adaptForm(CommcareForm form, MRSActivity activity) {
@@ -74,7 +66,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
             logger.debug("No ID scheme was specified");
         }
 
-        MRSPatient patient = mrsPatientAdapter.getPatientByMotechId(motechId);
+        OpenMRSPatient patient = (OpenMRSPatient) mrsPatientAdapter.getPatientByMotechId(motechId);
 
         if (patient == null) {
             logger.info("Registering new patient by MotechId " + motechId);
@@ -178,7 +170,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
             }
         }
 
-        MRSFacility facility = null;
+        OpenMRSFacility facility = null;
 
         String facilityName = populateStringValue(facilityNameField, topFormElement);
 
@@ -187,7 +179,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         }
 
         if (facilityName != null) {
-            facility = openMrsUtil.findFacility(facilityName);
+            facility = (OpenMRSFacility) openMrsUtil.findFacility(facilityName);
         } else {
             facilityName = openMrsUtil.getFacility(form);
 
@@ -214,16 +206,16 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         if (facilityName == null) {
             logger.warn("No facility name provided, using " + FormMappingConstants.DEFAULT_FACILITY);
             facilityName = FormMappingConstants.DEFAULT_FACILITY;
-            facility = openMrsUtil.findFacility(facilityName);
+            facility = (OpenMRSFacility) openMrsUtil.findFacility(facilityName);
         } else {
-            facility = openMrsUtil.findFacility(facilityName);
+            facility = (OpenMRSFacility) openMrsUtil.findFacility(facilityName);
         }
 
-        MRSPerson person = null;
+        OpenMRSPerson person = null;
 
         if (patient == null && facility != null && firstName != null && lastName != null && dateOfBirth != null
                 && motechId != null) {
-            person = new MRSPerson().firstName(firstName).lastName(lastName).gender(gender).dateOfBirth(dateOfBirth);
+            person = new OpenMRSPerson().firstName(firstName).lastName(lastName).gender(gender).dateOfBirth(new DateTime(dateOfBirth));
             if (mappedAttributes != null) {
                 for (Entry<String, String> entry : mappedAttributes.entrySet()) {
                     FormValueElement attributeElement = topFormElement.getElementByName(entry.getValue());
@@ -233,7 +225,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
                     }
                     if (attributeValue != null && attributeValue.trim().length() > 0) {
                         String attributeName = entry.getKey();
-                        Attribute attribute = new Attribute(attributeName, attributeValue);
+                        OpenMRSAttribute attribute = new OpenMRSAttribute(attributeName, attributeValue);
                         person.addAttribute(attribute);
                     }
                 }
@@ -264,12 +256,12 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
             }
 
             if (deathDate != null) {
-                person.deathDate(deathDate);
+                person.deathDate(new DateTime(deathDate));
             }
 
-            patient = new MRSPatient(motechId, person, facility);
+            patient = new OpenMRSPatient(motechId, person, facility);
             try {
-                patient = mrsPatientAdapter.savePatient(patient);
+                patient = (OpenMRSPatient) mrsPatientAdapter.savePatient(patient);
                 logger.info("New patient saved: " + motechId);
             } catch (MRSException e) {
                 logger.info("Could not save patient: " + e.getMessage());
@@ -298,7 +290,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         }
     }
 
-    private void updatePatient(MRSPatient patient, MRSPerson person, String firstName, String lastName,
+    private void updatePatient(OpenMRSPatient patient, OpenMRSPerson person, String firstName, String lastName,
             Date dateOfBirth, String gender, String middleName, String preferredName, String address,
             Boolean birthDateIsEstimated, Integer age, Boolean isDead, Date deathDate) {
         if (firstName != null) {
@@ -308,7 +300,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
             person.lastName(lastName);
         }
         if (dateOfBirth != null) {
-            person.dateOfBirth(dateOfBirth);
+            person.dateOfBirth(new DateTime(dateOfBirth));
         }
         if (gender != null) {
             person.gender(gender);
@@ -339,7 +331,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         }
 
         if (deathDate != null) {
-            person.deathDate(deathDate);
+            person.deathDate(new DateTime(deathDate));
         }
 
         mrsPatientAdapter.updatePatient(patient);
