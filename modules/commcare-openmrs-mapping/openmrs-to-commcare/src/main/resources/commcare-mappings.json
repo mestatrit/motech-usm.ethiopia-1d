@@ -1,0 +1,44 @@
+[
+  {
+    "type": "observation",
+    "matchOnEncounterType": "PregnancyRegistration",
+    "action": "update",
+    "mappings": [
+      {
+        "conceptName": "ESTIMATED DATE OF CONFINEMENT",
+        "caseElementName": "edd_calc",
+        "required": "true"
+      },
+      {
+        "conceptName": "contact phone number",
+        "caseElementName": "mobile_phone_number",
+        "translationMappings": {
+          "true": "yes",
+          "false": "no"
+        }
+      }
+    ]
+  },
+  {
+    "matchOnEncounterType": "visit",
+    "action": "create",
+    "mappings": [
+      {
+        "conceptName": "EDUCATION/COUNSELING ORDERS",
+        "caseElementName": "counsel_type",
+        "translationMappings": {
+          "NUTRITION COUNSELING": "nutrition",
+          "BEDNET COUNSELING": "bednet"
+        }
+      },
+      {
+        "conceptName": "PATIENT REFERRED",
+        "caseElementName": "referral_given",
+        "translationMappings": {
+          "true": "yes",
+          "false": "no"
+        }
+      }
+    ]
+  }
+]
