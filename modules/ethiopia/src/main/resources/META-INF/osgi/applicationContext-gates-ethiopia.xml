@@ -43,6 +43,8 @@
     <osgi:reference id="eventRelayOsgi" cardinality="0..1" interface="org.motechproject.event.listener.EventRelay" />
 
     <osgi:reference id="eventQueryServiceOsgi" cardinality="0..1" interface="org.motechproject.eventlogging.service.EventQueryService" />
+    
+    <osgi:reference id="locationRepositoryServiceOsgi" cardinality="0..1" interface="org.motech.location.repository.service.LocationRepositoryService"/>
 
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
 
