@@ -49,6 +49,10 @@ public class CommCareAPIHttpClient {
         return this.getRequest(commcareFormUrl(formId), null);
     }
 
+    public String individualCaseRequest(String caseId) {
+        return this.getRequest(commcareIndividualCaseUrl(caseId), null);
+    }
+
     public String casesRequest(NameValuePair[] queryParams) {
         return this.getRequest(baseCommcareUrl(), queryParams);
     }
@@ -151,6 +155,9 @@ public class CommCareAPIHttpClient {
         return String.format("%s/%s/cloudcare/api/cases/", getCommcareBaseUrl(), getCommcareDomain());
     }
 
+    private String commcareIndividualCaseUrl(String caseId) {
+        return String.format("%s/%s/api/v0.3/case/%s/?format=json", getCommcareBaseUrl(), getCommcareDomain(), caseId);
+    }
     private String commcareCaseUploadUrl() {
         return String.format("%s/%s/receiver/", getCommcareBaseUrl(), getCommcareDomain());
     }

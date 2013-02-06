@@ -56,15 +56,9 @@ public class CommcareCaseServiceImpl implements CommcareCaseService {
 
     @Override
     public CaseInfo getCaseByCaseId(String caseId) {
-        NameValuePair[] queryParams = new NameValuePair[1];
-        queryParams[0] = new NameValuePair("case_id", caseId);
-        String response = commcareHttpClient.casesRequest(queryParams);
-        List<CaseResponseJson> caseResponses = parseCasesFromResponse(response);
-        List<CaseInfo> cases = generateCasesFromCaseResponse(caseResponses);
-        if (cases.size() == 0) {
-            return null;
-        }
-        return cases.get(0);
+        String response = commcareHttpClient.individualCaseRequest(caseId);
+        CaseResponseJson caseResponses = parseCaseFromResponse(response);
+        return generateCaseFromCaseResponse(caseResponses);
     }
 
     @Override
@@ -118,6 +112,19 @@ public class CommcareCaseServiceImpl implements CommcareCaseService {
         return allCases;
     }
 
+
+    private CaseResponseJson parseCaseFromResponse(String response) {
+        CaseResponseJson caseResponse = null;
+
+        try {
+            caseResponse = (CaseResponseJson) motechJsonReader.readFromString(response, CaseResponseJson.class);
+        } catch (Exception e) {
+            logger.warn("Exception while trying to read in case JSON: " + e.getMessage());
+        }
+
+        return caseResponse;
+    }
+
     private List<CaseInfo> generateCasesFromCaseResponse(
             List<CaseResponseJson> caseResponses) {
         List<CaseInfo> caseList = new ArrayList<CaseInfo>();
@@ -127,42 +134,53 @@ public class CommcareCaseServiceImpl implements CommcareCaseService {
         }
 
         for (CaseResponseJson caseResponse : caseResponses) {
-            CaseInfo caseInfo = new CaseInfo();
-
-            Map<String, String> properties = caseResponse.getProperties();
-
-            String caseType = properties.get("case_type");
-            String dateOpened = properties.get("date_opened");
-            String ownerId = properties.get("owner_id)");
-            String caseName = properties.get("case_name");
-
-            caseInfo.setCaseType(caseType);
-            caseInfo.setDateOpened(dateOpened);
-            caseInfo.setOwnerId(ownerId);
-            caseInfo.setCaseName(caseName);
-
-            properties.remove("case_type");
-            properties.remove("date_opened");
-            properties.remove("owner_id");
-            properties.remove("case_name");
-
-            caseInfo.setFieldValues(properties);
-            caseInfo.setClosed(caseResponse.isClosed());
-            caseInfo.setDateClosed(caseResponse.getDateClosed());
-            caseInfo.setDomain(caseResponse.getDomain());
-            caseInfo.setIndices(caseResponse.getIndices());
-            caseInfo.setServerDateModified(caseResponse.getServerDateModified());
-            caseInfo.setServerDateOpened(caseResponse.getServerDateOpened());
-            caseInfo.setVersion(caseResponse.getVersion());
-            caseInfo.setXformIds(caseResponse.getXformIds());
-            caseInfo.setCaseId(caseResponse.getCaseId());
-            caseInfo.setUserId(caseResponse.getUserId());
+            CaseInfo caseInfo = generateCaseInfo(caseResponse);
 
             caseList.add(caseInfo);
-
         }
 
         return caseList;
+    }
+
+
+    private CaseInfo generateCaseInfo(CaseResponseJson caseResponse) {
+        CaseInfo caseInfo = new CaseInfo();
+
+
+        Map<String, String> properties = caseResponse.getProperties();
+
+        String caseType = properties.get("case_type");
+        String dateOpened = properties.get("date_opened");
+        String ownerId = properties.get("owner_id)");
+        String caseName = properties.get("case_name");
+
+        caseInfo.setCaseType(caseType);
+        caseInfo.setDateOpened(dateOpened);
+        caseInfo.setOwnerId(ownerId);
+        caseInfo.setCaseName(caseName);
+
+        properties.remove("case_type");
+        properties.remove("date_opened");
+        properties.remove("owner_id");
+        properties.remove("case_name");
+
+        caseInfo.setFieldValues(properties);
+        caseInfo.setClosed(caseResponse.isClosed());
+        caseInfo.setDateClosed(caseResponse.getDateClosed());
+        caseInfo.setDomain(caseResponse.getDomain());
+        caseInfo.setIndices(caseResponse.getIndices());
+        caseInfo.setServerDateModified(caseResponse.getServerDateModified());
+        caseInfo.setServerDateOpened(caseResponse.getServerDateOpened());
+        caseInfo.setVersion(caseResponse.getVersion());
+        caseInfo.setXformIds(caseResponse.getXformIds());
+        caseInfo.setCaseId(caseResponse.getCaseId());
+        caseInfo.setUserId(caseResponse.getUserId());
+
+        return caseInfo;
+    }
+
+    private CaseInfo generateCaseFromCaseResponse(CaseResponseJson caseResponse) {
+        return generateCaseInfo(caseResponse);
     }
 
     @Override

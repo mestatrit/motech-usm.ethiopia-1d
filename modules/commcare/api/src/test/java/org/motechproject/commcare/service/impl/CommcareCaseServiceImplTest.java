@@ -44,11 +44,8 @@ public class CommcareCaseServiceImplTest {
     public void testCaseByCaseId() {
         String caseId = "testCase";
 
-        NameValuePair[] queryParams = new NameValuePair[1];
-        queryParams[0] = new NameValuePair("case_id", caseId);
-
-        when(commcareHttpClient.casesRequest(queryParams)).thenReturn(
-                singleCase());
+        when(commcareHttpClient.individualCaseRequest(caseId)).thenReturn(
+                nonListCase());
 
         CaseInfo caseInstance = caseService.getCaseByCaseId(caseId);
 
@@ -93,6 +90,11 @@ public class CommcareCaseServiceImplTest {
 
     private String singleCase() {
         return "[{\"date_closed\": null, \"domain\": \"usm-motech\", \"xform_ids\": [\"UPMW4L9RB4JWYFQYRDRWFKETV\"], \"version\": \"1.0\", \"server_date_opened\": \"2012-04-12T18:59:04Z\", \"properties\": {\"case_type\": \"checkup\", \"date_opened\": \"2012-04-12T14:58:58Z\", \"external_id\": \"Gddd\", \"owner_id\": null, \"case_name\": \"Gddd\"}, \"server_date_modified\": \"2012-04-12T18:59:04Z\", \"user_id\": \"5d622c4336d118a9020d1c758e71f368\", \"date_modified\": \"2012-04-12T14:58:58Z\", \"case_id\": \"JQHFW1DBNQRQJ8VVKZ0M7RKJ4\", \"closed\": false, \"indices\": {}}]";
+    }
+    
+    private String nonListCase() {
+        return "{\"date_closed\": null, \"domain\": \"usm-motech\", \"xform_ids\": [\"UPMW4L9RB4JWYFQYRDRWFKETV\"], \"version\": \"1.0\", \"server_date_opened\": \"2012-04-12T18:59:04Z\", \"properties\": {\"case_type\": \"checkup\", \"date_opened\": \"2012-04-12T14:58:58Z\", \"external_id\": \"Gddd\", \"owner_id\": null, \"case_name\": \"Gddd\"}, \"server_date_modified\": \"2012-04-12T18:59:04Z\", \"user_id\": \"5d622c4336d118a9020d1c758e71f368\", \"date_modified\": \"2012-04-12T14:58:58Z\", \"case_id\": \"JQHFW1DBNQRQJ8VVKZ0M7RKJ4\", \"closed\": false, \"indices\": {}}";
+
     }
 
 }
