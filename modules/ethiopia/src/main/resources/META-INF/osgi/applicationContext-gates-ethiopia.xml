@@ -46,6 +46,8 @@
     
     <osgi:reference id="locationRepositoryServiceOsgi" cardinality="0..1" interface="org.motech.location.repository.service.LocationRepositoryService"/>
 
+    <osgi:reference id="locationIdentifierServiceOsgi" cardinality="0..1" interface="org.motech.location.repository.service.LocationIdentifierService"/>
+
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">

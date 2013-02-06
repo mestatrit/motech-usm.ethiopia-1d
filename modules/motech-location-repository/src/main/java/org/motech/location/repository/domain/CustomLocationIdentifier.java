@@ -7,12 +7,14 @@ public class CustomLocationIdentifier  {
     private String identifierType;
 
     private Map<String, String> identifyingProperties;
-    
+
+    public CustomLocationIdentifier() { }
+
     public CustomLocationIdentifier(String identifierType, Map<String, String> identifyingProperties) {
         this.identifierType = identifierType;
         this.identifyingProperties = identifyingProperties;
     }
-    
+
     public String getIdentity() {
         return identifyingProperties.get("uniqueId");
     }

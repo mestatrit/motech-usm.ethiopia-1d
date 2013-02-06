@@ -10,6 +10,8 @@ public interface LocationRepositoryService {
     
     Location getLocationById(String id);
     
+    List<Location> getLocationsByPropertyValue(String property, String value);
+    
     Location getLocationByMotechId(MotechLocationIdentifier motechId);
     
     void saveLocation(Location location);
@@ -22,7 +24,9 @@ public interface LocationRepositoryService {
     
     List<Location> getImmediateChildren(Location parent);
     
-    List<Location> getAllChildren(Location parent);
+    List<Location> getAllChildren(String node);
+    
+    List<Location> getAllChildrenByType(String node, String locationType);
     
     Location getParent(Location child);
 }

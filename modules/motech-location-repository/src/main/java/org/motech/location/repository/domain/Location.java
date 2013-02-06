@@ -11,7 +11,9 @@ public class Location extends MotechBaseDataObject {
     private static final long serialVersionUID = 1L;
 
     private String motechId;
-    
+
+    private String locationType;
+
     private List<CustomLocationIdentifier> customIdentifiers;
 
     private Map<String, String> attributes;
@@ -49,5 +51,13 @@ public class Location extends MotechBaseDataObject {
     public void setCustomIdentifiers(
             List<CustomLocationIdentifier> customIdentifiers) {
         this.customIdentifiers = customIdentifiers;
+    }
+
+    public String getLocationType() {
+        return locationType;
+    }
+
+    public void setLocationType(String locationType) {
+        this.locationType = locationType;
     }
 }

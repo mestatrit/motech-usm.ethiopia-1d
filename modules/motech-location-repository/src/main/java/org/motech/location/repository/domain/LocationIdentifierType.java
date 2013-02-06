@@ -1,5 +1,6 @@
 package org.motech.location.repository.domain;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.ektorp.support.TypeDiscriminator;
@@ -10,7 +11,7 @@ public class LocationIdentifierType extends MotechBaseDataObject {
     
     private String identifierName;
     
-    private Map<String, Boolean> identifyingProperties;
+    private Map<String, Boolean> identifyingProperties = new HashMap<String, Boolean>();
     
     private List<String> identifyingComponents;
 

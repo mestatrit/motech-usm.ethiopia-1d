@@ -23,11 +23,11 @@ public class LocationRepositoryServiceImpl implements LocationRepositoryService 
     private LocationIdentifierService identifierService;
 
     @Autowired
-    private LocationCouchDAO providerDao;
+    private LocationCouchDAO locationDao;
 
     @Override
     public void saveLocation(Location location) {
-        providerDao.addLocation(location);
+        locationDao.addLocation(location);
     }
 
     @Override
@@ -61,29 +61,31 @@ public class LocationRepositoryServiceImpl implements LocationRepositoryService 
 
     @Override
     public Location getLocationById(String id) {
-        return providerDao.queryLocationByIdString(id);
+        return locationDao.queryLocationByIdString(id);
     }
 
     @Override
     public Location getLocationByMotechId(MotechLocationIdentifier motechId) {
-        return providerDao.queryLocationByMotechId(motechId);
+        return locationDao.queryLocationByMotechId(motechId);
     }
 
     @Override
     public void addChildLocation(Location parent, Location child) throws LocationValidationException {
-        List<String> parentPath = parent.getPath();
+        List<String> parentPath = null;
+        if (parent != null) {
+            parentPath = parent.getPath();
+        }
         List<String> childPath = new ArrayList<String>();
         if (parentPath == null || parentPath.size() == 0) {
-            childPath.add(child.getMotechId().getExternalId());
+            childPath.add(child.getMotechId());
             child.setPath(childPath);
             saveLocationValidated(child);
         } else {
             childPath.addAll(parentPath);
-            childPath.add(child.getMotechId().getExternalId());
+            childPath.add(child.getMotechId());
             child.setPath(childPath);
             saveLocationValidated(child);
         }
-        
     }
 
     @Override
@@ -103,15 +105,25 @@ public class LocationRepositoryServiceImpl implements LocationRepositoryService 
     }
 
     @Override
-    public List<Location> getAllChildren(Location parent) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Location> getAllChildren(String node) {
+        return locationDao.queryChildLocationNodes(node);
     }
 
     @Override
     public Location getParent(Location child) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public List<Location> getAllChildrenByType(String node, String locationType) {
+        return locationDao.queryChildLocationNodesByType(node, locationType);
+    }
+
+    @Override
+    public List<Location> getLocationsByPropertyValue(String property,
+            String value) {
+        return locationDao.queryLocationByPropertyValue(property, value);
     }
 
 }

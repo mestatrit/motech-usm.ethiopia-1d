@@ -4,9 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.PostConstruct;
-
 import org.motechproject.commcare.domain.CaseInfo;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
@@ -51,10 +48,10 @@ public class OpenMRSCommcareUtil {
     @Autowired
     private PatientAdapter mrsPatientAdapter;
 
-    @PostConstruct
-    public void test() {
-        User user = mrsUserAdapter.getUserByUserName("Unknown");
-    }
+//    @PostConstruct
+//    public void test() {
+//        User user = mrsUserAdapter.getUserByUserName("Unknown");
+//    }
 
     public Person findProvider(String providerName) {
 
