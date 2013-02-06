@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.motech.location.repository.dao.LocationCouchDAO;
 import org.motech.location.repository.domain.CustomLocationIdentifier;
 import org.motech.location.repository.domain.Location;
 import org.motech.location.repository.domain.LocationIdentifierType;
 import org.motech.location.repository.domain.LocationValidationException;
-import org.motech.location.repository.domain.MotechLocationIdentifier;
 import org.motech.location.repository.service.LocationIdentifierService;
 import org.motech.location.repository.service.LocationRepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +63,7 @@ public class LocationRepositoryServiceImpl implements LocationRepositoryService 
     }
 
     @Override
-    public Location getLocationByMotechId(MotechLocationIdentifier motechId) {
+    public Location getLocationByMotechId(String motechId) {
         return locationDao.queryLocationByMotechId(motechId);
     }
 

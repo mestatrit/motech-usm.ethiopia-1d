@@ -5,17 +5,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import javax.annotation.PostConstruct;
-
 import org.motech.location.repository.domain.CustomLocationIdentifier;
 import org.motech.location.repository.domain.Location;
 import org.motech.location.repository.domain.LocationIdentifierType;
 import org.motech.location.repository.domain.LocationValidationException;
 import org.motech.location.repository.service.LocationIdentifierService;
 import org.motech.location.repository.service.LocationRepositoryService;
+import org.motech.provider.repository.domain.CustomProviderIdentifier;
+import org.motech.provider.repository.domain.ProviderIdBroker;
+import org.motech.provider.repository.service.ProviderRepositoryService;
 import org.motechproject.commcare.domain.CaseInfo;
+import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.service.CommcareCaseService;
+import org.motechproject.commcare.service.CommcareFormService;
+import org.motechproject.couch.mrs.model.CouchAttribute;
+import org.motechproject.couch.mrs.model.CouchPerson;
+import org.motechproject.couch.mrs.model.CouchProvider;
+import org.motechproject.mrs.domain.Attribute;
+import org.motechproject.mrs.domain.Person;
+import org.motechproject.mrs.domain.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +41,27 @@ public class LocationInitiator {
 
     public static final String FACILITY = "facility";
 
+    public static final String HEW_NAME = "hew_name";
+
+    public static final String HEW_MOBILE_NUMBER = "hew_mobile_number";
+
+    public static final String COMMCARE_HEW = "HEW";
+
+    private static final String COMMCARE_CASE = "COMMCARE_CASE";
+
+    private static final String CASE_ID = "case_id";
+
     @Autowired
     private LocationRepositoryService locationService;
 
     @Autowired
     private LocationIdentifierService locationIdService;
+
+    @Autowired
+    private ProviderRepositoryService providerService;
+
+    @Autowired
+    private CommcareFormService formService;
 
     @Autowired
     private CommcareCaseService caseService;
@@ -60,6 +85,47 @@ public class LocationInitiator {
         }
 
         outputLocations();
+
+        checkNumberOfForms();
+    }
+
+    private void checkNumberOfForms() {
+        List<Location> regions = locationService.getAllLocationsByType("region");
+
+        for (Location region : regions) {
+            //Get facilities for each region
+            List<Location> facilities = locationService.getAllChildrenByType(region.getMotechId(), FACILITY);
+            for (Location facility : facilities) {
+                List<ProviderIdBroker> providers = providerService.getProvidersByLocationId(facility.getMotechId());
+                for (ProviderIdBroker provider : providers) {
+                    logger.warn("HEW for facility " + facility.getCustomIdentifiers().get(0).getIdentifyingProperties().get(FACILITY_NAME) + " : " + provider.getMrsProvider().getPerson().getPreferredName());
+                    String caseId = provider.getIdentifiers().get(1).getIdentifyingProperties().get(CASE_ID);
+                    CaseInfo caseInfo = caseService.getCaseByCaseId(caseId);
+                    checkForms(caseInfo.getXformIds());
+                }
+            }
+        }
+    }
+
+    private void checkForms(List<String> xformIds) {
+        int formsSubmitted = 0;
+        for (String formId : xformIds) {
+            CommcareForm form = formService.retrieveForm(formId);
+            if (form != null) {
+                String xmlns = form.getForm().getAttributes().get("xmlns");
+                logger.warn("xmlns: " + xmlns);
+                if ("http://openrosa.org/formdesigner/EA962226-BAB0-4F00-8BA3-FCCD821E7E97".equals(xmlns)) {
+                    formsSubmitted++;
+                    logger.warn("Submitted a form");
+                } else {
+                    logger.warn("other kind of form");
+                }
+
+            } else {
+                logger.warn("Null form");
+            }
+        }
+        logger.warn("# of forms submitted: " + formsSubmitted);
     }
 
     private void outputLocations() {
@@ -69,6 +135,9 @@ public class LocationInitiator {
             //Get facilities for each region
             List<Location> facilities = locationService.getAllChildrenByType(region.getMotechId(), FACILITY);
             logger.warn("Region: " + region.getCustomIdentifiers().get(0).getIdentifyingProperties().get(REGION) + " has " + facilities.size() + " facilities");
+            for (Location facility : facilities) {
+                logger.warn("Facility: " + facility.getCustomIdentifiers().get(0).getIdentifyingProperties().get(FACILITY_NAME));
+            }
         }
     }
 
@@ -109,10 +178,78 @@ public class LocationInitiator {
 
         Location parentRegion = addOrUpdateRegionLocation(region);
         Location parentWoreda = addOrUpdateWoredaLocation(parentRegion, woreda);
-        addOrUpdateHealthFacilityLocation(parentWoreda, healthFacility);
+        Location facility = addOrUpdateHealthFacilityLocation(parentWoreda, healthFacility);
+
+        addOrUpdateHew(facility, hewCase);
     }
 
-    private void addOrUpdateHealthFacilityLocation(Location parentWoreda, String facilityName) {
+    private void addOrUpdateHew(Location facility, CaseInfo hewCase) {
+        String preferredName = hewCase.getFieldValues().get(HEW_NAME);
+        String mobileNumber = hewCase.getFieldValues().get(HEW_MOBILE_NUMBER);
+        String caseId = hewCase.getCaseId();
+
+        List<ProviderIdBroker> providers = providerService.getProvidersByPropertyAndValue(HEW_NAME, preferredName);
+
+        if (providers == null || providers.size() > 0) {
+            logger.warn("Provider already exists");
+            //no updates for the time being
+            return;
+        }
+
+        logger.warn("Registering new provider...");
+
+        ProviderIdBroker providerBroker = new ProviderIdBroker();
+        String motechId = UUID.randomUUID().toString();
+        providerBroker.setMotechId(motechId);
+
+        Person person = new CouchPerson();
+        person.setPersonId(motechId);
+
+
+        person.setPreferredName(preferredName);
+
+        Attribute couchAttribute = new CouchAttribute();
+        couchAttribute.setName(HEW_MOBILE_NUMBER);
+        couchAttribute.setValue(mobileNumber);
+        person.getAttributes().add(couchAttribute);
+
+        Provider provider = new CouchProvider(motechId, person);
+
+        providerBroker.setMrsProvider(provider);
+
+        List<String> locationIdentities = new ArrayList<String>();
+        locationIdentities.add(facility.getMotechId());
+
+        providerBroker.setLocationIdentities(locationIdentities);
+
+        List<CustomProviderIdentifier> identifiers = new ArrayList<CustomProviderIdentifier>();
+
+        CustomProviderIdentifier identifier = new CustomProviderIdentifier();
+        identifier.setIdentifierType(COMMCARE_HEW);
+
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put(HEW_NAME, preferredName);
+
+        identifier.setIdentifyingProperties(properties);
+
+        identifiers.add(identifier);
+
+        CustomProviderIdentifier caseIdentifier = new CustomProviderIdentifier();
+        caseIdentifier.setIdentifierType(COMMCARE_CASE);
+
+        Map<String, String> caseProperties = new HashMap<String, String>();
+        caseProperties.put(CASE_ID, caseId);
+
+        caseIdentifier.setIdentifyingProperties(caseProperties);
+        identifiers.add(caseIdentifier);
+
+        providerBroker.setIdentifiers(identifiers);
+
+        providerService.saveProvider(providerBroker);
+
+    }
+
+    private Location addOrUpdateHealthFacilityLocation(Location parentWoreda, String facilityName) {
         List<Location> locations = locationService.getLocationsByPropertyValue(FACILITY_NAME, facilityName);
 
         if (locations == null || locations.size() == 0) {
@@ -133,8 +270,10 @@ public class LocationInitiator {
             } catch (LocationValidationException e) {
                 logger.warn("Unable to save health facility location due to: " + e.getMessage());
             }
+            return facilityLocation;
         } else {
             logger.warn("Health facility already exists");
+            return locations.get(0);
         }
     }
 

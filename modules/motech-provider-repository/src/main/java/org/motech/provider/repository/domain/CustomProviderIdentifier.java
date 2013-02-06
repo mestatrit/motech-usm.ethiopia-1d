@@ -1,16 +1,17 @@
-package org.motech.location.repository.domain;
+package org.motech.provider.repository.domain;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class CustomLocationIdentifier  {
+public class CustomProviderIdentifier  {
 
     private String identifierType;
 
-    private Map<String, String> identifyingProperties;
+    private Map<String, String> identifyingProperties = new HashMap<String, String>();
 
-    public CustomLocationIdentifier() { }
+    public CustomProviderIdentifier() { }
 
-    public CustomLocationIdentifier(String identifierType, Map<String, String> identifyingProperties) {
+    public CustomProviderIdentifier(String identifierType, Map<String, String> identifyingProperties) {
         this.identifierType = identifierType;
         this.identifyingProperties = identifyingProperties;
     }

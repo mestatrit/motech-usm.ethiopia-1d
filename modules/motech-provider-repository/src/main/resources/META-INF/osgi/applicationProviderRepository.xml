@@ -14,18 +14,21 @@
     <context:annotation-config />
     <context:component-scan base-package="org.motech.provider" />
 
-    <bean id="settingsFacade" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
-        <property name="moduleName" value="provider-repository" />
-    </bean>
+    <osgi:reference id="couchDbManager" interface="org.motechproject.commons.couchdb.service.CouchDbManager" />
 
-    <bean id="providerRepositoryDatabaseConnector" factory-bean="settingsFacade" factory-method="getConnector">
-        <constructor-arg value="provider-repository" />
-        <constructor-arg value="couchdb.properties" />
+    <bean id="providerRepositoryDatabaseConnector" factory-bean="couchDbManager"
+        factory-method="getConnector">
+        <constructor-arg value="provider-identity-repository" />
     </bean>
 
     <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor"/>
 
     <osgi:service id="providerRepositoryServiceOsgi" auto-export="interfaces" ref="providerRepositoryServiceImpl"
                   interface="org.motech.provider.repository.service.ProviderRepositoryService"/>
+
+    <osgi:service id="providerIdentifierServiceOsgi" auto-export="interfaces" ref="providerIdentifierServiceImpl"
+                  interface="org.motech.provider.repository.service.ProviderIdentifierService"/>
+
+    <osgi:reference id="providerAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.ProviderAdapter" />
 
 </beans>

@@ -1,11 +1,8 @@
 package org.motech.provider.repository.service.impl;
 
 import java.util.List;
-
 import org.motech.provider.repository.dao.ProviderCouchDAO;
-import org.motech.provider.repository.domain.MotechIdentifier;
-import org.motech.provider.repository.domain.Provider;
-import org.motech.provider.repository.domain.ProviderIdentifier;
+import org.motech.provider.repository.domain.ProviderIdBroker;
 import org.motech.provider.repository.service.ProviderRepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,30 +13,25 @@ public class ProviderRepositoryServiceImpl implements ProviderRepositoryService 
     
     @Autowired
     private ProviderCouchDAO providerDao;
-    
+
     @Override
-    public Provider getProviderByIdentifier(ProviderIdentifier identifier) {
-        return providerDao.queryProviderByIdentifier(identifier);
+    public List<ProviderIdBroker> getProvidersByPropertyAndValue(String property, String value) {
+        return providerDao.queryProvidersByPropertyAndValue(property, value);
     }
 
     @Override
-    public Provider getProviderByIdentifiers(List<ProviderIdentifier> identifiers) {
-        //
-        return null;
+    public ProviderIdBroker getProviderByMotechId(String motechId) {
+        return providerDao.queryProviderByMotechId(motechId);
     }
 
     @Override
-    public void saveProvider(Provider provider) {
+    public void saveProvider(ProviderIdBroker provider) {
         providerDao.addProvider(provider);
     }
 
     @Override
-    public List<Provider> getProvidersByLocationId(String locationId) {
-        return providerDao.queryProvidersByLocationId(locationId);
+    public List<ProviderIdBroker> getProvidersByLocationId(String motechId) {
+        return providerDao.queryProvidersByLocationId(motechId);
     }
 
-    @Override
-    public Provider getProviderByMotechId(MotechIdentifier motechId) {
-        return providerDao.queryProviderByMotechId(motechId);
-    }
 }

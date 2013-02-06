@@ -1,10 +1,8 @@
 package org.motech.location.repository.service;
 
 import java.util.List;
-
 import org.motech.location.repository.domain.Location;
 import org.motech.location.repository.domain.LocationValidationException;
-import org.motech.location.repository.domain.MotechLocationIdentifier;
 
 public interface LocationRepositoryService {
 
@@ -14,7 +12,7 @@ public interface LocationRepositoryService {
 
     List<Location> getAllLocationsByType(String type);
 
-    Location getLocationByMotechId(MotechLocationIdentifier motechId);
+    Location getLocationByMotechId(String motechId);
 
     void saveLocation(Location location);
 

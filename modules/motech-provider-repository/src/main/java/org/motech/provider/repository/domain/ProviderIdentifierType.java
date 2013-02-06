@@ -1,12 +1,12 @@
-package org.motech.location.repository.domain;
+package org.motech.provider.repository.domain;
 
 import java.util.HashMap;
 import java.util.Map;
 import org.ektorp.support.TypeDiscriminator;
 import org.motechproject.commons.couchdb.model.MotechBaseDataObject;
 
-@TypeDiscriminator("doc.type === 'LocationIdentifierType'")
-public class LocationIdentifierType extends MotechBaseDataObject {
+@TypeDiscriminator("doc.type === 'ProviderIdentifierType'")
+public class ProviderIdentifierType extends MotechBaseDataObject {
 
     private String identifierName;
 

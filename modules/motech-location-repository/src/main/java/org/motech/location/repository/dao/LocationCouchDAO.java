@@ -7,7 +7,6 @@ import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.motech.location.repository.domain.Location;
-import org.motech.location.repository.domain.MotechLocationIdentifier;
 import org.motechproject.commons.couchdb.dao.MotechBaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class LocationCouchDAO extends MotechBaseRepository<Location> {
 
-    //    private static final String FUNCTION_DOC_EMIT_LOCATION_IDENTIFIER = "function(doc) { if(doc.type === \'Location\') for (var identifier in doc.identifiers) emit([doc.identifiers[identifier].identifierName, doc.identifiers[identifier].identity], doc._id);}";
+    //private static final String FUNCTION_DOC_EMIT_LOCATION_IDENTIFIER = "function(doc) { if(doc.type === \'Location\') for (var identifier in doc.identifiers) emit([doc.identifiers[identifier].identifierName, doc.identifiers[identifier].identity], doc._id);}";
 
     private static final String FUNCTION_DOC_EMIT_LOCATION_MOTECH_IDENTIFIER = "function(doc) { if(doc.type === \'Location\') emit(doc.motechId, doc._id);}";
 
@@ -66,8 +65,8 @@ public class LocationCouchDAO extends MotechBaseRepository<Location> {
     }
 
     @View(name = "find_location_by_motech_id", map = FUNCTION_DOC_EMIT_LOCATION_MOTECH_IDENTIFIER)
-    public Location queryLocationByMotechId(MotechLocationIdentifier motechId) {
-        List<Location> locations = queryView("find_location_by_motech_id", motechId.getIdentity());
+    public Location queryLocationByMotechId(String motechId) {
+        List<Location> locations = queryView("find_location_by_motech_id", motechId);
         return locations.size() > 0 ? locations.get(0) : null;
     }
 
