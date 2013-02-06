@@ -25,6 +25,9 @@ public class LocationCouchDAO extends MotechBaseRepository<Location> {
     private static final String FUNCTION_DOC_EMIT_LOCATION_CHILD_NODES = "function(doc) { for (var i in doc.path) { emit([doc.path[i], doc.path], doc)}}";
 
     private static final String FUNCTION_DOC_EMIT_LOCATION_BY_PROPERTY_AND_VALUE = "function(doc) { if(doc.type === \'Location\') for (var identifier in doc.customIdentifiers) { for (var fieldValue in doc.customIdentifiers[identifier].identifyingProperties) emit([fieldValue, doc.customIdentifiers[identifier].identifyingProperties[fieldValue]], doc._id)};}";
+
+    private static final String FUNCTION_DOC_EMIT_LOCATION_BY_TYPE = "function(doc) { emit(doc.locationType, doc);}";
+
     @Autowired
     protected LocationCouchDAO(@Qualifier("locationRepositoryDatabaseConnector") CouchDbConnector db) {
         super(Location.class, db);
@@ -86,6 +89,11 @@ public class LocationCouchDAO extends MotechBaseRepository<Location> {
 
     @View(name = "find_locations_by_property_and_value", map = FUNCTION_DOC_EMIT_LOCATION_BY_PROPERTY_AND_VALUE)
     public List<Location> queryLocationByPropertyValue(String property, String value) {
-         return queryView("find_locations_by_property_and_value", ComplexKey.of(property, value));
+        return queryView("find_locations_by_property_and_value", ComplexKey.of(property, value));
+    }
+
+    @View(name = "find_locations_by_type", map = FUNCTION_DOC_EMIT_LOCATION_BY_TYPE)
+    public List<Location> queryLocationsByType(String type) {
+        return queryView("find_locations_by_type", type);
     }
 }

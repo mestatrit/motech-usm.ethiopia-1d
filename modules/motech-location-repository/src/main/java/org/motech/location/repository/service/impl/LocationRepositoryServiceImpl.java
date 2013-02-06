@@ -95,7 +95,7 @@ public class LocationRepositoryServiceImpl implements LocationRepositoryService 
                 addChildLocation(parent, child);
             }
         }
-        
+
     }
 
     @Override
@@ -121,9 +121,13 @@ public class LocationRepositoryServiceImpl implements LocationRepositoryService 
     }
 
     @Override
-    public List<Location> getLocationsByPropertyValue(String property,
-            String value) {
+    public List<Location> getLocationsByPropertyValue(String property, String value) {
         return locationDao.queryLocationByPropertyValue(property, value);
+    }
+
+    @Override
+    public List<Location> getAllLocationsByType(String type) {
+        return locationDao.queryLocationsByType(type);
     }
 
 }
