@@ -26,6 +26,12 @@ public class LocationInitiator {
 
     public static final String REGION = "region";
 
+    public static final String WOREDA = "woreda";
+
+    public static final String FACILITY_NAME = "facility_name";
+
+    public static final String FACILITY = "facility";
+
     @Autowired
     private LocationRepositoryService locationService;
 
@@ -52,6 +58,18 @@ public class LocationInitiator {
                 addOrUpdateLocation(hewCase);
             }
         }
+
+        outputLocations();
+    }
+
+    private void outputLocations() {
+        List<Location> regions = locationService.getAllLocationsByType("region");
+
+        for (Location region : regions) {
+            //Get facilities for each region
+            List<Location> facilities = locationService.getAllChildrenByType(region.getMotechId(), FACILITY);
+            logger.warn("Region: " + region.getCustomIdentifiers().get(0).getIdentifyingProperties().get(REGION) + " has " + facilities.size() + " facilities");
+        }
     }
 
     private void initiateIdentifierTypes() {
@@ -64,30 +82,91 @@ public class LocationInitiator {
         } else {
             logger.warn("Id type already exists.");
         }
-
+        LocationIdentifierType woredaId = locationIdService.getIdentifierTypeByName(WOREDA);
+        if (woredaId == null) {
+            logger.warn("Registering new id type");
+            woredaId = new LocationIdentifierType();
+            woredaId.setIdentifierName(WOREDA);
+            locationIdService.addIdentifierType(woredaId);
+        } else {
+            logger.warn("Id type already exists.");
+        }
+        LocationIdentifierType facilityId = locationIdService.getIdentifierTypeByName(FACILITY_NAME);
+        if (facilityId == null) {
+            logger.warn("Registering new id type");
+            facilityId = new LocationIdentifierType();
+            facilityId.setIdentifierName(FACILITY_NAME);
+            locationIdService.addIdentifierType(facilityId);
+        } else {
+            logger.warn("Id type already exists.");
+        }
     }
 
     private void addOrUpdateLocation(CaseInfo hewCase) {
         String region = hewCase.getFieldValues().get(REGION);
-        //        String woreda = hewCase.getFieldValues().get("woreda");
-        //        String healthFacility = hewCase.getFieldValues().get("facility_name");
+        String woreda = hewCase.getFieldValues().get(WOREDA);
+        String healthFacility = hewCase.getFieldValues().get(FACILITY_NAME);
 
-        addOrUpdateRegionLocation(region);
-        //        addOrUpdateWoredaLocation(woreda);
-        //        addOrUpdateHealthFacilityLocation(healthFacility);
+        Location parentRegion = addOrUpdateRegionLocation(region);
+        Location parentWoreda = addOrUpdateWoredaLocation(parentRegion, woreda);
+        addOrUpdateHealthFacilityLocation(parentWoreda, healthFacility);
     }
 
-    //    private void addOrUpdateHealthFacilityLocation(String healthFacility) {
-    //        // TODO Auto-generated method stub
-    //
-    //    }
-    //
-    //    private void addOrUpdateWoredaLocation(String woreda) {
-    //        // TODO Auto-generated method stub
-    //
-    //    }
+    private void addOrUpdateHealthFacilityLocation(Location parentWoreda, String facilityName) {
+        List<Location> locations = locationService.getLocationsByPropertyValue(FACILITY_NAME, facilityName);
 
-    private void addOrUpdateRegionLocation(String region) {
+        if (locations == null || locations.size() == 0) {
+            logger.warn("Registering new health facility");
+            Location facilityLocation = new Location();
+            facilityLocation.setMotechId(UUID.randomUUID().toString());
+            facilityLocation.setLocationType(FACILITY);
+            List<CustomLocationIdentifier> customIdentifiers = new ArrayList<CustomLocationIdentifier>();
+            CustomLocationIdentifier facilityId = new CustomLocationIdentifier();
+            facilityId.setIdentifierType(FACILITY_NAME);
+            Map<String, String> idProperties = new HashMap<String, String>();
+            idProperties.put(FACILITY_NAME, facilityName);
+            facilityId.setIdentifyingProperties(idProperties);
+            customIdentifiers.add(facilityId);
+            facilityLocation.setCustomIdentifiers(customIdentifiers);
+            try {
+                locationService.addChildLocation(parentWoreda, facilityLocation);
+            } catch (LocationValidationException e) {
+                logger.warn("Unable to save health facility location due to: " + e.getMessage());
+            }
+        } else {
+            logger.warn("Health facility already exists");
+        }
+    }
+
+    private Location addOrUpdateWoredaLocation(Location parentRegion, String woreda) {
+        List<Location> locations = locationService.getLocationsByPropertyValue(WOREDA, woreda);
+
+        if (locations == null || locations.size() == 0) {
+            logger.warn("Registering new Woreda");
+            Location woredaLocation = new Location();
+            woredaLocation.setMotechId(UUID.randomUUID().toString());
+            woredaLocation.setLocationType(WOREDA);
+            List<CustomLocationIdentifier> customIdentifiers = new ArrayList<CustomLocationIdentifier>();
+            CustomLocationIdentifier woredaId = new CustomLocationIdentifier();
+            woredaId.setIdentifierType(WOREDA);
+            Map<String, String> idProperties = new HashMap<String, String>();
+            idProperties.put(WOREDA, woreda);
+            woredaId.setIdentifyingProperties(idProperties);
+            customIdentifiers.add(woredaId);
+            woredaLocation.setCustomIdentifiers(customIdentifiers);
+            try {
+                locationService.addChildLocation(parentRegion, woredaLocation);
+            } catch (LocationValidationException e) {
+                logger.warn("Unable to save Woreda location due to: " + e.getMessage());
+            }
+            return woredaLocation;
+        } else {
+            logger.warn("Woreda already exists");
+            return locations.get(0);
+        }
+    }
+
+    private Location addOrUpdateRegionLocation(String region) {
         List<Location> locations = locationService.getLocationsByPropertyValue(REGION, region);
 
         if (locations == null || locations.size() == 0) {
@@ -108,8 +187,10 @@ public class LocationInitiator {
             } catch (LocationValidationException e) {
                 logger.warn("Unable to save region location due to: " + e.getMessage());
             }
+            return regionLocation;
         } else {
             logger.warn("Region already exists");
+            return locations.get(0);
         }
 
     }
