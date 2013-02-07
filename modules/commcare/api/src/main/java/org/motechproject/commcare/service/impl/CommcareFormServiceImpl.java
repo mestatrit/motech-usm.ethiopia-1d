@@ -7,6 +7,8 @@ import org.motechproject.commcare.util.CommCareAPIHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.JsonParseException;
+
 @Service
 public class CommcareFormServiceImpl implements CommcareFormService {
 
@@ -21,9 +23,11 @@ public class CommcareFormServiceImpl implements CommcareFormService {
     public CommcareForm retrieveForm(String id) {
         String returnJson = commcareHttpClient.formRequest(id);
 
-        CommcareForm formObject = FormAdapter.readJson(returnJson);
-
-        return formObject;
+        try {
+            return FormAdapter.readJson(returnJson);
+        } catch (JsonParseException e) {
+            return null;
+        }
     }
 
     @Override
