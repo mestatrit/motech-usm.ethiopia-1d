@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
+import org.gates.ethiopia.constants.CommcareConstants;
+import org.joda.time.DateTime;
 import org.motech.location.repository.domain.CustomLocationIdentifier;
 import org.motech.location.repository.domain.Location;
 import org.motech.location.repository.domain.LocationIdentifierType;
@@ -17,6 +19,7 @@ import org.motech.provider.repository.domain.ProviderIdBroker;
 import org.motech.provider.repository.service.ProviderRepositoryService;
 import org.motechproject.commcare.domain.CaseInfo;
 import org.motechproject.commcare.domain.CommcareForm;
+import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.service.CommcareCaseService;
 import org.motechproject.commcare.service.CommcareFormService;
 import org.motechproject.couch.mrs.model.CouchAttribute;
@@ -83,63 +86,200 @@ public class LocationInitiator {
                 addOrUpdateLocation(hewCase);
             }
         }
+        DateTime date1 = DateTime.now().minusWeeks(52);
+        DateTime date2 = DateTime.now();
 
-        outputLocations();
+        allFacilitiesReport(null, date1, date2);
 
-        checkNumberOfForms();
+        //        outputLocations();
+
+        //        checkNumberOfForms();
     }
 
-    private void checkNumberOfForms() {
-        List<Location> regions = locationService.getAllLocationsByType("region");
+    private void allFacilitiesReport(String locationId, DateTime date1, DateTime date2) {
+        if (locationId == null) {
+            List<CommcareReport> combinedRegionReports = new ArrayList<CommcareReport>();
+            List<Location> regions = locationService.getAllLocationsByType("region");
 
-        for (Location region : regions) {
-            //Get facilities for each region
-            List<Location> facilities = locationService.getAllChildrenByType(region.getMotechId(), FACILITY);
-            for (Location facility : facilities) {
-                List<ProviderIdBroker> providers = providerService.getProvidersByLocationId(facility.getMotechId());
-                for (ProviderIdBroker provider : providers) {
-                    logger.warn("HEW for facility " + facility.getCustomIdentifiers().get(0).getIdentifyingProperties().get(FACILITY_NAME) + " : " + provider.getMrsProvider().getPerson().getPreferredName());
-                    String caseId = provider.getIdentifiers().get(1).getIdentifyingProperties().get(CASE_ID);
-                    CaseInfo caseInfo = caseService.getCaseByCaseId(caseId);
-                    checkForms(caseInfo.getXformIds());
-                }
+            for (Location region : regions) {
+                CommcareReport regionReport = tallySubFacilities(region.getMotechId(), date1, date2);
+                regionReport.setLocationId(region.getMotechId());
+                regionReport.setStartDate(date1);
+                regionReport.setEndDate(date2);
+                regionReport.setLocationName(region.getCustomIdentifiers().get(0).getIdentifyingProperties().get(REGION));
+                logger.warn("TOTAL FOR A REGION: " + FormReporter.generateJsonString(regionReport));
+                combinedRegionReports.add(regionReport);
             }
+
+            CommcareReport totalReport = combineReports(combinedRegionReports);
+            totalReport.setStartDate(date1);
+            totalReport.setStartDate(date2);
+            totalReport.setLocationName("All regions");
+            logger.warn("TOTAL FROM ALL REGIONS: " + FormReporter.generateJsonString(totalReport));
         }
     }
 
-    private void checkForms(List<String> xformIds) {
-        int formsSubmitted = 0;
+    private CommcareReport tallySubFacilities(String parentLocation, DateTime date1, DateTime date2) {
+        List<Location> facilities = locationService.getAllChildrenByType(parentLocation, FACILITY);
+        List<CommcareReport> combinedFacilityReports = new ArrayList<CommcareReport>();
+        for (Location facility : facilities) {
+            List<CommcareReport> providerReports = new ArrayList<CommcareReport>();
+            List<ProviderIdBroker> providers = providerService.getProvidersByLocationId(facility.getMotechId());
+            for (ProviderIdBroker provider : providers) {
+                String caseId = provider.getIdentifiers().get(1).getIdentifyingProperties().get(CASE_ID);
+                CaseInfo caseInfo = caseService.getCaseByCaseId(caseId);
+                CommcareReport report = tallyForms(caseInfo.getXformIds(), date1, date2, facility);
+                providerReports.add(report);
+            }
+            CommcareReport combinedFacilityReport = combineReports(providerReports);
+            logger.warn("Combined report: "  + FormReporter.generateJsonString(combinedFacilityReport));
+            combinedFacilityReports.add(combinedFacilityReport);
+        }
+        return combineReports(combinedFacilityReports);
+    }
+
+    private CommcareReport combineReports(List<CommcareReport> providerReports) {
+        List<String> fieldsToTally = getFields();
+
+        CommcareReport facilityReport = new CommcareReport();
+        Map<String, String> facilityValues = facilityReport.getReportingValues();
+
+        for (CommcareReport report : providerReports) {
+            int numberOfForms = report.getNumberOfForms();
+            facilityReport.setNumberOfForms(facilityReport.getNumberOfForms() + numberOfForms);
+            Map<String, String> values = report.getReportingValues();
+            for (String field : fieldsToTally) {
+                try {
+                    if (facilityValues.get(field) == null) {
+                        facilityValues.put(field, "0");
+                    }
+                    facilityValues.put(field, (Integer.parseInt(facilityValues.get(field)) + Integer.parseInt(values.get(field))) + "");
+                } catch (NumberFormatException e) {
+                }
+            }
+        }
+
+        return facilityReport;
+    }
+
+    private CommcareReport tallyForms(List<String> xformIds, DateTime date1, DateTime date2, Location facility) {
+        List<CommcareForm> formsToCount = new ArrayList<CommcareForm>();
         for (String formId : xformIds) {
             CommcareForm form = formService.retrieveForm(formId);
             if (form != null) {
                 String xmlns = form.getForm().getAttributes().get("xmlns");
-                logger.warn("xmlns: " + xmlns);
                 if ("http://openrosa.org/formdesigner/EA962226-BAB0-4F00-8BA3-FCCD821E7E97".equals(xmlns)) {
-                    formsSubmitted++;
-                    logger.warn("Submitted a form");
-                } else {
-                    logger.warn("other kind of form");
+                    if (checkDates(form, date1, date2)) {
+                        formsToCount.add(form);
+                    }
+                } 
+            } 
+        }
+        CommcareReport report = FormReporter.calculateFields(getFields(), formsToCount);
+        report.setLocationId(facility.getMotechId());
+        report.setLocationName(facility.getCustomIdentifiers().get(0).getIdentifyingProperties().get(FACILITY_NAME));
+        report.setStartDate(date1);
+        report.setEndDate(date2);
+        logger.warn(FormReporter.generateJsonString(report));
+        return report;
+    }
+
+
+
+    private List<String> getFields() {
+        List<String> fields = new ArrayList<String>();
+        fields.add("new_acceptors");
+        fields.add("repeat_acceptors");
+        fields.add("total_acceptors");
+        fields.add("first_anc");
+        fields.add("attended_by_hew");
+        fields.add("live_births");
+        fields.add("still_births");
+        fields.add("attended_by_tba");
+        fields.add("total_births");
+        fields.add("child_deaths");
+        fields.add("early_neonatal_deaths");
+        fields.add("maternal_deaths");
+        fields.add("total_deaths");
+        fields.add("lt3yr_weighed");
+        fields.add("moderate_malnutrition");
+        fields.add("severe_malnutrition");
+        fields.add("lt1yr_given_measles_vaccine");
+        fields.add("lt1yr_given_penta3_vaccine");
+        fields.add("graduated_households");
+        fields.add("condom_users");
+        fields.add("oral_contraceptive_users");
+        fields.add("injectable_users");
+        fields.add("implanol_users");
+        fields.add("malaria_lt5yr_male_p_falciparum_confirmed_new");
+        fields.add("malaria_lt5yr_female_p_falciparum_confirmed_new");
+        fields.add("malaria_lt5yr_male_other_confirmed_new");
+        fields.add("malaria_lt5yr_female_other_confirmed_new");
+        fields.add("tracer_drugs_out_of_stock");
+        return fields;
+    }
+
+    private boolean checkDates(CommcareForm form, DateTime date1, DateTime date2) {
+        FormValueElement formData = form.getForm();
+        FormValueElement lastSubmitted = formData.getElementByName(CommcareConstants.LAST_SUBMITTED);
+
+        if (lastSubmitted != null) {
+            String lastSubmittedDate = lastSubmitted.getValue();
+            if (lastSubmittedDate != null) {
+                DateTime date = DateTime.parse(lastSubmittedDate);
+                if (date.isAfter(date1) && date.isBefore(date2)) {
+                    return true;
                 }
-
-            } else {
-                logger.warn("Null form");
             }
         }
-        logger.warn("# of forms submitted: " + formsSubmitted);
+        return false;
+
     }
 
-    private void outputLocations() {
-        List<Location> regions = locationService.getAllLocationsByType("region");
+    //    private void checkNumberOfForms() {
+    //        List<Location> regions = locationService.getAllLocationsByType("region");
+    //
+    //        for (Location region : regions) {
+    //            //Get facilities for each region
+    //            List<Location> facilities = locationService.getAllChildrenByType(region.getMotechId(), FACILITY);
+    //            for (Location facility : facilities) {
+    //                List<ProviderIdBroker> providers = providerService.getProvidersByLocationId(facility.getMotechId());
+    //                for (ProviderIdBroker provider : providers) {
+    //                    logger.warn("HEW for facility " + facility.getCustomIdentifiers().get(0).getIdentifyingProperties().get(FACILITY_NAME) + " : " + provider.getMrsProvider().getPerson().getPreferredName());
+    //                    String caseId = provider.getIdentifiers().get(1).getIdentifyingProperties().get(CASE_ID);
+    //                    CaseInfo caseInfo = caseService.getCaseByCaseId(caseId);
+    //                    checkForms(caseInfo.getXformIds());
+    //                }
+    //            }
+    //        }
+    //    }
 
-        for (Location region : regions) {
-            //Get facilities for each region
-            List<Location> facilities = locationService.getAllChildrenByType(region.getMotechId(), FACILITY);
-            logger.warn("Region: " + region.getCustomIdentifiers().get(0).getIdentifyingProperties().get(REGION) + " has " + facilities.size() + " facilities");
-            for (Location facility : facilities) {
-                logger.warn("Facility: " + facility.getCustomIdentifiers().get(0).getIdentifyingProperties().get(FACILITY_NAME));
-            }
-        }
-    }
+    //    private void checkForms(List<String> xformIds) {
+    //        List<CommcareForm> formsToCount = new ArrayList<CommcareForm>();
+    //        for (String formId : xformIds) {
+    //            CommcareForm form = formService.retrieveForm(formId);
+    //            if (form != null) {
+    //                String xmlns = form.getForm().getAttributes().get("xmlns");
+    //                if ("http://openrosa.org/formdesigner/EA962226-BAB0-4F00-8BA3-FCCD821E7E97".equals(xmlns)) {
+    //                    formsToCount.add(form);
+    //                } 
+    //            } 
+    //        }
+    //                tallyResult(formsToCount);
+    //    }
+
+    //    private void outputLocations() {
+    //        List<Location> regions = locationService.getAllLocationsByType("region");
+    //
+    //        for (Location region : regions) {
+    //            //Get facilities for each region
+    //            List<Location> facilities = locationService.getAllChildrenByType(region.getMotechId(), FACILITY);
+    //            logger.warn("Region: " + region.getCustomIdentifiers().get(0).getIdentifyingProperties().get(REGION) + " has " + facilities.size() + " facilities");
+    //            for (Location facility : facilities) {
+    //                logger.warn("Facility: " + facility.getCustomIdentifiers().get(0).getIdentifyingProperties().get(FACILITY_NAME));
+    //            }
+    //        }
+    //    }
 
     private void initiateIdentifierTypes() {
         LocationIdentifierType regionId = locationIdService.getIdentifierTypeByName(REGION);
