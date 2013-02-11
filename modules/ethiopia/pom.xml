@@ -67,7 +67,7 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-                <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>motech-platform-server-config</artifactId>
             <version>${project.version}</version>
@@ -85,6 +85,11 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-mrs-couchdb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-tasks-bundle</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -131,6 +136,15 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>*.jsp</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -151,6 +165,8 @@
                             org.springframework.beans.factory.config,
                             org.springframework.beans.factory.xml,
                             org.springframework.context.config,
+                            org.motechproject.tasks.service,
+                            org.motechproject.tasks.util,
                             *
                         </Import-Package>
                         <Private-Package>

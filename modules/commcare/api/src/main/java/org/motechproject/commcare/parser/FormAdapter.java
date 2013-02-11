@@ -27,7 +27,10 @@ public final class FormAdapter {
 
     public static CommcareForm readJson(String json) {
         Type type = new TypeToken<CommcareForm>() { } .getType();
-        return (CommcareForm) READER.readFromString(json, type, providedAdapters);
+        CommcareForm form = (CommcareForm) READER.readFromString(json, type, providedAdapters);
+        FormValueElement caseElement = form.getForm().getElementByNameIncludeCase("case");
+        form.setCaseElement(caseElement);
+        return form;
     }
 
 

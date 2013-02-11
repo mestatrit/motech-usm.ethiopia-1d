@@ -7,6 +7,7 @@ import java.util.Map;
 public class CommcareForm {
 
     private FormValueElement form;
+    @SerializedName("case")
     private FormValueElement caseElement;
     private String id;
     private String md5;

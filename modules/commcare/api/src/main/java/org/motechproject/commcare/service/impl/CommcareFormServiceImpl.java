@@ -24,7 +24,9 @@ public class CommcareFormServiceImpl implements CommcareFormService {
         String returnJson = commcareHttpClient.formRequest(id);
 
         try {
-            return FormAdapter.readJson(returnJson);
+            CommcareForm form = FormAdapter.readJson(returnJson);
+            form.setCaseElement(form.getForm().getElementByNameIncludeCase("case"));
+            return form;
         } catch (JsonParseException e) {
             return null;
         }

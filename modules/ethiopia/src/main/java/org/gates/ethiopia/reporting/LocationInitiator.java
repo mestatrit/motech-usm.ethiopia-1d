@@ -88,12 +88,29 @@ public class LocationInitiator {
         }
         DateTime date1 = DateTime.now().minusWeeks(52);
         DateTime date2 = DateTime.now();
+        
+        testCaseElement();
 
-        allFacilitiesReport(null, date1, date2);
+        allFacilitiesReport("123", date1, date2);
 
         //        outputLocations();
 
         //        checkNumberOfForms();
+    }
+
+    private void testCaseElement() {
+        CommcareForm form = formService.retrieveForm("d7ebcab3-3714-4b01-9761-8df63e04ed6a");
+        if (form != null) {
+            FormValueElement caseElement = form.getCaseElement();
+            if (caseElement != null) {
+                logger.warn("Case element not null");
+            } else {
+                logger.warn("NULL");
+            }
+        } else {
+            logger.warn("FORM NULL");
+        }
+        logger.warn("ID: " + form.getId());
     }
 
     private void allFacilitiesReport(String locationId, DateTime date1, DateTime date2) {
