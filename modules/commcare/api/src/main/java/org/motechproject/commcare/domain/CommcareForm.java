@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class CommcareForm {
 
+    private boolean archived;
     private FormValueElement form;
     @SerializedName("case")
     private FormValueElement caseElement;
@@ -73,5 +74,13 @@ public class CommcareForm {
 
     public void setCaseElement(FormValueElement caseElement) {
         this.caseElement = caseElement;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 }
