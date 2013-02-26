@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.PostConstruct;
 import org.gates.ethiopia.constants.CommcareConstants;
 import org.joda.time.DateTime;
 import org.motech.location.repository.domain.CustomLocationIdentifier;
@@ -22,12 +21,6 @@ import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.service.CommcareCaseService;
 import org.motechproject.commcare.service.CommcareFormService;
-import org.motechproject.couch.mrs.model.CouchAttribute;
-import org.motechproject.couch.mrs.model.CouchPerson;
-import org.motechproject.couch.mrs.model.CouchProvider;
-import org.motechproject.mrs.domain.Attribute;
-import org.motechproject.mrs.domain.Person;
-import org.motechproject.mrs.domain.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +64,6 @@ public class LocationInitiator {
 
     private Logger logger = LoggerFactory.getLogger("gates-ethiopia");
 
-    @PostConstruct
     public void initialize() {
         logger.warn("initializing...");
 
@@ -359,20 +351,20 @@ public class LocationInitiator {
         String motechId = UUID.randomUUID().toString();
         providerBroker.setMotechId(motechId);
 
-        Person person = new CouchPerson();
-        person.setPersonId(motechId);
+//        Person person = new CouchPerson();
+//        person.setPersonId(motechId);
+//
+//
+//        person.setPreferredName(preferredName);
+//
+//        Attribute couchAttribute = new CouchAttribute();
+//        couchAttribute.setName(HEW_MOBILE_NUMBER);
+//        couchAttribute.setValue(mobileNumber);
+//        person.getAttributes().add(couchAttribute);
 
+//        Provider provider = new CouchProvider(motechId, person);
 
-        person.setPreferredName(preferredName);
-
-        Attribute couchAttribute = new CouchAttribute();
-        couchAttribute.setName(HEW_MOBILE_NUMBER);
-        couchAttribute.setValue(mobileNumber);
-        person.getAttributes().add(couchAttribute);
-
-        Provider provider = new CouchProvider(motechId, person);
-
-        providerBroker.setMrsProvider(provider);
+//        providerBroker.setMrsProvider(provider);
 
         List<String> locationIdentities = new ArrayList<String>();
         locationIdentities.add(facility.getMotechId());
