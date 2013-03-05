@@ -334,7 +334,7 @@ public class LocationInitiator {
 
     private void addOrUpdateHew(Location facility, CaseInfo hewCase) {
         String preferredName = hewCase.getFieldValues().get(HEW_NAME);
-        String mobileNumber = hewCase.getFieldValues().get(HEW_MOBILE_NUMBER);
+//        String mobileNumber = hewCase.getFieldValues().get(HEW_MOBILE_NUMBER);
         String caseId = hewCase.getCaseId();
 
         List<ProviderIdBroker> providers = providerService.getProvidersByPropertyAndValue(HEW_NAME, preferredName);
