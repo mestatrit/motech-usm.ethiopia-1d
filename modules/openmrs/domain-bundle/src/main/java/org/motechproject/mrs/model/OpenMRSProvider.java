@@ -8,6 +8,10 @@ public class OpenMRSProvider implements Provider {
     private String providerId;
     private OpenMRSPerson person;
 
+    public OpenMRSProvider (String providerId, OpenMRSPerson person) {
+        this.providerId = providerId;
+        this.person = person;
+    }
     public OpenMRSProvider(OpenMRSPerson person) {
         this.person = person;
     }

@@ -9,4 +9,8 @@ public interface Provider {
     String getProviderId();
 
     void setProviderId(String providerId);
+
+    String getProviderUuid();
+    
+    void setProviderUuid(String providerUuid);
 }

@@ -13,6 +13,7 @@ import org.motechproject.openmrs.ws.resource.model.Observation;
 import org.motechproject.openmrs.ws.resource.model.Person;
 import org.motechproject.openmrs.ws.resource.model.Person.PreferredAddress;
 import org.motechproject.openmrs.ws.resource.model.Person.PreferredName;
+import org.motechproject.openmrs.ws.resource.model.Provider;
 
 public final class ConverterUtils {
 
@@ -97,5 +98,10 @@ public final class ConverterUtils {
             obs.setPatientId(ob.getEncounter().getPatient().getUuid());
         }
         return obs;
+    }
+
+    public static Provider convertToProvider(org.motechproject.mrs.domain.Provider provider) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
