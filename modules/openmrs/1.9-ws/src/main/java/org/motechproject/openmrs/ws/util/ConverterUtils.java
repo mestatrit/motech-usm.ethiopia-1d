@@ -21,6 +21,10 @@ public final class ConverterUtils {
     }
 
     public static OpenMRSPerson convertToMrsPerson(Person person) {
+        if (person == null) {
+            return null;
+        }
+
         OpenMRSPerson converted = new OpenMRSPerson();
         converted.id(person.getUuid()).birthDateEstimated(person.isBirthdateEstimated())
         .dead(person.isDead()).firstName(person.getPreferredName().getGivenName())
@@ -104,4 +108,5 @@ public final class ConverterUtils {
         // TODO Auto-generated method stub
         return null;
     }
+
 }

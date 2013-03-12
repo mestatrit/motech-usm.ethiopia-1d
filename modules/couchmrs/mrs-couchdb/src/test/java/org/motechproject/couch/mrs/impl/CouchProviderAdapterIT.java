@@ -49,7 +49,7 @@ public class CouchProviderAdapterIT extends SpringIntegrationTest {
 
         providerAdapter.saveProvider(provider);
 
-        Provider retrievedProvider = providerAdapter.getProviderByProviderId("providerId");
+        Provider retrievedProvider = providerAdapter.getProviderByProviderId("providerId").get(0);
 
         assertEquals(retrievedProvider.getProviderId(), "providerId");
         assertNotNull(retrievedProvider.getPerson());

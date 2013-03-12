@@ -7,6 +7,7 @@ public class OpenMRSProvider implements Provider {
 
     private String providerId;
     private OpenMRSPerson person;
+    private String uuid;
 
     public OpenMRSProvider (String providerId, OpenMRSPerson person) {
         this.providerId = providerId;
@@ -38,6 +39,14 @@ public class OpenMRSProvider implements Provider {
     @Override
     public void setProviderId(String providerId) {
         this.providerId = providerId;
+    }
+    @Override
+    public String getProviderUuid() {
+        return uuid;
+    }
+    @Override
+    public void setProviderUuid(String providerUuid) {
+        this.uuid = providerUuid;
     }
 
 }

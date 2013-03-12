@@ -19,6 +19,8 @@ public class CouchProvider extends MotechBaseDataObject implements Provider {
     private CouchPerson person;
     @JsonProperty
     private String providerId;
+    @JsonProperty
+    private String uuid;
 
     CouchProvider() { }
 
@@ -44,5 +46,15 @@ public class CouchProvider extends MotechBaseDataObject implements Provider {
 
     public void setProviderId(String providerId) {
         this.providerId = providerId;
+    }
+
+    @Override
+    public String getProviderUuid() {
+        return uuid;
+    }
+
+    @Override
+    public void setProviderUuid(String providerUuid) {
+        this.uuid = providerUuid;
     }
 }

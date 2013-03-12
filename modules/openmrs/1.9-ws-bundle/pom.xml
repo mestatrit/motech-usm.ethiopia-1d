@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>motech-openmrs-ws</artifactId>
+            <artifactId>1.9-motech-openmrs-ws</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -94,7 +94,7 @@
                             org.springframework.http.converter,
                             *
                         </Import-Package>
-                        <Embed-Dependency>motech-openmrs-ws</Embed-Dependency>
+                        <Embed-Dependency>1.9-motech-openmrs-ws</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>

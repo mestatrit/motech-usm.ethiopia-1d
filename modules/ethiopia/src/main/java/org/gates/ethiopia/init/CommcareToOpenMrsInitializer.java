@@ -11,6 +11,7 @@ import org.motech.provider.repository.domain.ProviderIdBroker;
 import org.motech.provider.repository.service.ProviderRepositoryService;
 import org.motechproject.commcare.domain.CommcareUser;
 import org.motechproject.commcare.service.CommcareUserService;
+import org.motechproject.commons.api.MotechException;
 import org.motechproject.mrs.domain.Person;
 import org.motechproject.mrs.domain.Provider;
 import org.motechproject.mrs.model.OpenMRSPerson;
@@ -31,8 +32,15 @@ public class CommcareToOpenMrsInitializer {
     @Autowired
     private ProviderAdapter providerAdapter;
 
-
     @PostConstruct
+    public void testProviders() {
+        List<OpenMRSProvider> providers = (List<OpenMRSProvider>) providerAdapter.getProviderByProviderId("198");
+        if (providers.size() != 4) {
+            throw new MotechException("There weren't 4");
+        }
+    }
+
+//    @PostConstruct
     public void initializeProviders() {
         List<CommcareUser> commcareUsers = userService.getAllUsers();
 
@@ -55,7 +63,7 @@ public class CommcareToOpenMrsInitializer {
         String firstName = commcareUser.getFirstName();
         String lastName = commcareUser.getLastName();
 
-        Provider addOpenMrsProvider = providerAdapter.getProviderByProviderId(generatedMotechId);
+        Provider addOpenMrsProvider = providerAdapter.getProviderByProviderId(generatedMotechId).get(0);
 
         if (addOpenMrsProvider == null) {
             Provider newOpenMrsProvider = new OpenMRSProvider();

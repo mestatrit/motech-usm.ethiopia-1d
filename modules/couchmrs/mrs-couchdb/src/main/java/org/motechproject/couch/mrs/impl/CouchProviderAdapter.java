@@ -31,11 +31,11 @@ public class CouchProviderAdapter implements ProviderAdapter {
     }
 
     @Override
-    public Provider getProviderByProviderId(String motechId) {
+    public List<CouchProvider> getProviderByProviderId(String motechId) {
         List<CouchProvider> providers = allCouchProviders.findByProviderId(motechId);
 
         if (providers != null && providers.size() > 0) {
-            return providers.get(0);
+            return providers;
         }
 
         return null;
