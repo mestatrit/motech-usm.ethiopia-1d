@@ -1,9 +1,8 @@
 package org.motechproject.mapper.adapters.impl;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import org.joda.time.DateTime;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
@@ -12,11 +11,14 @@ import org.motechproject.mapper.adapters.mappings.MRSActivity;
 import org.motechproject.mapper.adapters.mappings.OpenMRSRegistrationActivity;
 import org.motechproject.mapper.constants.FormMappingConstants;
 import org.motechproject.mapper.util.OpenMRSCommcareUtil;
+import org.motechproject.mrs.domain.Facility;
+import org.motechproject.mrs.domain.Patient;
+import org.motechproject.mrs.domain.Person;
 import org.motechproject.mrs.exception.MRSException;
-import org.motechproject.mrs.model.OpenMRSAttribute;
 import org.motechproject.mrs.model.OpenMRSFacility;
-import org.motechproject.mrs.model.OpenMRSPatient;
 import org.motechproject.mrs.model.OpenMRSPerson;
+import org.motechproject.mrs.model.PatientDto;
+import org.motechproject.mrs.services.FacilityAdapter;
 import org.motechproject.mrs.services.PatientAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,17 +34,28 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
     private OpenMRSCommcareUtil openMrsUtil;
 
     @Autowired
+    private FacilityAdapter facilityAdapter;
+
+    public void unknownFacilityBootstrap() {
+        Facility facility = new OpenMRSFacility("facilityId");
+        facility.setName("Unknown Location");
+        facilityAdapter.saveFacility(facility);
+    }
+
+    @Autowired
     private PatientAdapter mrsPatientAdapter;
     /* CHECKSTYLE:OFF */
     @Override
     public void adaptForm(CommcareForm form, MRSActivity activity) {
+
+        unknownFacilityBootstrap();
 
         OpenMRSRegistrationActivity registrationActivity = (OpenMRSRegistrationActivity) activity;
 
         FormValueElement topFormElement = form.getForm();
 
         Map<String, String> idScheme = registrationActivity.getIdScheme();
-        Map<String, String> mappedAttributes = registrationActivity.getAttributes();
+        //        Map<String, String> mappedAttributes = registrationActivity.getAttributes();
         Map<String, String> registrationMappings = registrationActivity.getRegistrationMappings();
 
         String idSchemeType = idScheme.get(FormMappingConstants.ID_SCHEME_TYPE);
@@ -52,9 +65,9 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
 
         if (idSchemeType.equals(FormMappingConstants.DEFAULT_ID_SCHEME)) {
             // id field exists in form
-            List<FormValueElement> subElements = (List<FormValueElement>) topFormElement.getSubElements().get(
+            Set<FormValueElement> subElements = (Set<FormValueElement>) topFormElement.getSubElements().get(
                     idFieldName);
-            motechId = subElements.get(0).getValue();
+            motechId = subElements.iterator().next().getValue();
             logger.debug("MoTeCH Id retrieved: " + motechId);
         } else if (idSchemeType.equals(FormMappingConstants.COMMCARE_ID_SCHEME)) {
             logger.error("Still need to implement Commcare ID scheme");
@@ -62,7 +75,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
             logger.debug("No ID scheme was specified");
         }
 
-        OpenMRSPatient patient = (OpenMRSPatient) mrsPatientAdapter.getPatientByMotechId(motechId);
+        Patient patient = mrsPatientAdapter.getPatientByMotechId(motechId);
 
         if (patient == null) {
             logger.info("Registering new patient by MotechId " + motechId);
@@ -166,7 +179,7 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
             }
         }
 
-        OpenMRSFacility facility = null;
+        Facility facility = null;
 
         String facilityName = populateStringValue(facilityNameField, topFormElement);
 
@@ -205,37 +218,39 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         if (facilityName == null) {
             logger.warn("No facility name provided, using " + FormMappingConstants.DEFAULT_FACILITY);
             facilityName = FormMappingConstants.DEFAULT_FACILITY;
-            facility = (OpenMRSFacility) openMrsUtil.findFacility(facilityName);
+            facility = openMrsUtil.findFacility(facilityName);
         } else {
-            facility = (OpenMRSFacility) openMrsUtil.findFacility(facilityName);
+            facility = openMrsUtil.findFacility(facilityName);
         }
 
-        OpenMRSPerson person = null;
+        Person person = null;
 
         if (patient == null && facility != null && firstName != null && lastName != null && dateOfBirth != null
                 && motechId != null) {
             person = new OpenMRSPerson().firstName(firstName).lastName(lastName).gender(gender)
                     .dateOfBirth(new DateTime(dateOfBirth));
-            if (mappedAttributes != null) {
-                for (Entry<String, String> entry : mappedAttributes.entrySet()) {
-                    FormValueElement attributeElement = topFormElement.getElementByName(entry.getValue());
-                    String attributeValue = null;
-                    if (attributeElement != null) {
-                        attributeValue = attributeElement.getValue();
-                    }
-                    if (attributeValue != null && attributeValue.trim().length() > 0) {
-                        String attributeName = entry.getKey();
-                        OpenMRSAttribute attribute = new OpenMRSAttribute(attributeName, attributeValue);
-                        person.addAttribute(attribute);
-                    }
-                }
-            }
+            //            if (mappedAttributes != null) {
+            //                for (Entry<String, String> entry : mappedAttributes.entrySet()) {
+            //                    FormValueElement attributeElement = topFormElement.getElementByName(entry.getValue());
+            //                    String attributeValue = null;
+            //                    if (attributeElement != null) {
+            //                        attributeValue = attributeElement.getValue();
+            //                    }
+            //                    if (attributeValue != null && attributeValue.trim().length() > 0) {
+            //                        String attributeName = entry.getKey();
+            //                        OpenMRSAttribute attribute = new OpenMRSAttribute(attributeName, attributeValue);
+            //                        person.addAttribute(attribute);
+            //                    }
+            //                }
+            //            }
 
             setPerson(middleName, preferredName, address, birthDateIsEstimated, age, isDead, deathDate, person);
 
-            patient = new OpenMRSPatient(motechId, person, facility);
+            patient = new PatientDto();
+            patient.setMotechId(motechId);
+
             try {
-                patient = (OpenMRSPatient) mrsPatientAdapter.savePatient(patient);
+                patient = mrsPatientAdapter.savePatient(patient);
                 logger.info("New patient saved: " + motechId);
             } catch (MRSException e) {
                 logger.info("Could not save patient: " + e.getMessage());
@@ -264,56 +279,56 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         }
     }
     /* CHECKSTYLE:ON */
-    
+
     /* CHECKSTYLE:OFF */
     private void setPerson(String middleName, String preferredName, String address, Boolean birthDateIsEstimated,
-            Integer age, Boolean isDead, Date deathDate, OpenMRSPerson person) {
-    /* CHECKSTYLE:ON */
+            Integer age, Boolean isDead, Date deathDate, Person person) {
+        /* CHECKSTYLE:ON */
         if (middleName != null) {
-            person.middleName(middleName);
+            person.setMiddleName(middleName);
         }
 
         if (preferredName != null) {
-            person.preferredName(preferredName);
+            person.setPreferredName(preferredName);
         }
 
         if (address != null) {
-            person.address(address);
+            person.setAddress(address);
         }
 
         if (birthDateIsEstimated != null) {
-            person.birthDateEstimated(birthDateIsEstimated);
+            person.setBirthDateEstimated(birthDateIsEstimated);
         }
 
         if (age != null) {
-            person.age(age);
+            person.setAge(age);
         }
 
         if (isDead != null) {
-            person.dead(isDead);
+            person.setDead(isDead);
         }
 
         if (deathDate != null) {
-            person.deathDate(new DateTime(deathDate));
+            person.setDeathDate(new DateTime(deathDate));
         }
     }
 
     /* CHECKSTYLE:OFF */
-    private void updatePatient(OpenMRSPatient patient, OpenMRSPerson person, String firstName, String lastName,
+    private void updatePatient(Patient patient, Person person, String firstName, String lastName,
             Date dateOfBirth, String gender, String middleName, String preferredName, String address,
             Boolean birthDateIsEstimated, Integer age, Boolean isDead, Date deathDate) {
-    /* CHECKSTYLE:ON */
+        /* CHECKSTYLE:ON */
         if (firstName != null) {
-            person.firstName(firstName);
+            person.setFirstName(firstName);
         }
         if (lastName != null) {
-            person.lastName(lastName);
+            person.setLastName(lastName);
         }
         if (dateOfBirth != null) {
-            person.dateOfBirth(new DateTime(dateOfBirth));
+            person.setDateOfBirth(new DateTime(dateOfBirth));
         }
         if (gender != null) {
-            person.gender(gender);
+            person.setGender(gender);
         }
 
         setPerson(middleName, preferredName, address, birthDateIsEstimated, age, isDead, deathDate, person);

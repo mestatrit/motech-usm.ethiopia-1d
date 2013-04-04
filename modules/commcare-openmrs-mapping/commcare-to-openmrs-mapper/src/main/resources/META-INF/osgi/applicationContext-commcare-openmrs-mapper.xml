@@ -16,8 +16,6 @@
 
     <osgi:reference id="commcareUserServiceOsgi" cardinality="0..1" interface="org.motechproject.commcare.service.CommcareUserService" />
 
-    <osgi:reference id="eventListenerRegistryService" cardinality="0..1" interface="org.motechproject.event.listener.EventListenerRegistryService" />
-
     <osgi:reference id="eventRelayOsgi" cardinality="0..1" interface="org.motechproject.event.listener.EventRelay" />
 
     <osgi:reference id="personAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.PatientAdapter" />
@@ -30,6 +28,6 @@
 
     <osgi:reference id="facilityAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.FacilityAdapter" />
 
-    <bean class="org.motechproject.event.listener.annotations.EventAnnotationBeanPostProcessor" />
+    <osgi:reference id="eventListenerRegistry" interface="org.motechproject.event.listener.EventListenerRegistryService"/>
 
 </beans>

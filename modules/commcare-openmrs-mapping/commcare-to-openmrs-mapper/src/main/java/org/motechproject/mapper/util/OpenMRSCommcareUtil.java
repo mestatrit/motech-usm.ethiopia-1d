@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+
+import org.joda.time.DateTime;
 import org.motechproject.commcare.domain.CaseInfo;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
@@ -13,16 +16,14 @@ import org.motechproject.mrs.domain.Encounter;
 import org.motechproject.mrs.domain.Facility;
 import org.motechproject.mrs.domain.Patient;
 import org.motechproject.mrs.domain.Person;
-import org.motechproject.mrs.domain.User;
 import org.motechproject.mrs.exception.MRSException;
-import org.motechproject.mrs.model.OpenMRSEncounter.MRSEncounterBuilder;
+import org.motechproject.mrs.model.EncounterDto;
 import org.motechproject.mrs.model.OpenMRSObservation;
-import org.motechproject.mrs.model.OpenMRSPatient;
+import org.motechproject.mrs.model.OpenMRSPerson;
 import org.motechproject.mrs.model.OpenMRSProvider;
 import org.motechproject.mrs.services.EncounterAdapter;
 import org.motechproject.mrs.services.FacilityAdapter;
 import org.motechproject.mrs.services.PatientAdapter;
-import org.motechproject.mrs.services.UserAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,26 +43,27 @@ public class OpenMRSCommcareUtil {
     @Autowired
     private FacilityAdapter mrsFacilityAdapter;
 
-    @Autowired
-    private UserAdapter mrsUserAdapter;
+    //    @Autowired
+    //    private UserAdapter mrsUserAdapter;
 
     @Autowired
     private PatientAdapter mrsPatientAdapter;
 
-//    @PostConstruct
-//    public void test() {
-//        User user = mrsUserAdapter.getUserByUserName("Unknown");
-//    }
+    //    @PostConstruct
+    //    public void test() {
+    //        User user = mrsUserAdapter.getUserByUserName("Unknown");
+    //    }
 
     public Person findProvider(String providerName) {
 
-        User provider = mrsUserAdapter.getUserByUserName(providerName);
+        //        User provider = mrsUserAdapter.getUserByUserName(providerName);
 
-        if (provider == null) {
-            return null;
-        }
-
-        return provider.getPerson();
+        return null; 
+        //        if (provider == null) {
+        //            return null;
+        //        }
+        //
+        //        return provider.getPerson();
     }
 
     public Facility findFacility(String location) {
@@ -94,17 +96,31 @@ public class OpenMRSCommcareUtil {
 
         Facility facility = findFacility(facilityName);
 
-        Person providerPerson = findProvider(providerName);
         OpenMRSProvider provider = new OpenMRSProvider();
+
+        Person providerPerson = findProvider(providerName);
+
+        if (providerPerson == null) {
+            providerPerson = new OpenMRSPerson();
+            providerPerson.setPersonId("UnknownProvider");
+        }
+
         provider.setPerson(providerPerson);
         provider.setProviderId(providerPerson.getPersonId());
 
 
         logger.info("Using provider: " + provider);
 
-        MRSEncounterBuilder builder = new MRSEncounterBuilder();
 
-        Encounter mrsEncounter = builder.withProvider(provider).withFacility(facility).withDate(encounterDate).withPatient((OpenMRSPatient) patient).withEncounterType(encounterType).withObservations(observations).build();
+
+        Encounter mrsEncounter = new EncounterDto();
+        mrsEncounter.setFacility(facility);
+        mrsEncounter.setDate(new DateTime(encounterDate));
+        mrsEncounter.setPatient(patient);
+        mrsEncounter.setProvider(provider);
+        mrsEncounter.setEncounterType(encounterType);
+        mrsEncounter.setObservations(observations);
+        mrsEncounter.setEncounterId(UUID.randomUUID().toString());
 
         try {
             mrsEncounterAdapter.createEncounter(mrsEncounter);
@@ -127,7 +143,7 @@ public class OpenMRSCommcareUtil {
         if (idSchemeType.equals(FormMappingConstants.DEFAULT_ID_SCHEME)) {
             motechId = element.getElementByName(idFieldName).getValue();
         } else if (idSchemeType.equals(FormMappingConstants.COMMCARE_ID_SCHEME)) {
-            motechId = getCaseId(element.getElementByNameIncludeCase(FormMappingConstants.CASE_ELEMENT), idFieldName);
+            motechId = getCaseId(element.getElementByName(FormMappingConstants.CASE_ELEMENT), idFieldName);
         }
 
         return motechId;

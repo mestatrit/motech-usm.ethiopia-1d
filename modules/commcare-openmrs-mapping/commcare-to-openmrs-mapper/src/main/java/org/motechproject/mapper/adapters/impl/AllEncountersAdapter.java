@@ -56,6 +56,8 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
         Set<OpenMRSObservation> observations = generateObservations(form.getForm(),
                 encounterActivity.getObservationMappings());
 
+        logger.info("# of observations: " + observations.size());
+
         String providerName = form.getMetadata().get(FormMappingConstants.FORM_USERNAME);
 
         String facilityNameField = null;

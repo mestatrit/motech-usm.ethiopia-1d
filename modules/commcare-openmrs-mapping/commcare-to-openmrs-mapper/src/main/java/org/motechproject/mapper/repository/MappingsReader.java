@@ -1,4 +1,4 @@
-package org.motechproject.mapper.adapters.mappings;
+package org.motechproject.mapper.repository;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.motechproject.commons.api.json.MotechJsonReader;
+import org.motechproject.mapper.adapters.mappings.MRSActivity;
+import org.motechproject.mapper.adapters.mappings.OpenMRSEncounterActivity;
+import org.motechproject.mapper.adapters.mappings.OpenMRSMapping;
+import org.motechproject.mapper.adapters.mappings.OpenMRSRegistrationActivity;
 import org.motechproject.mapper.constants.FormMappingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
