@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.Set;
 import org.joda.time.DateTime;
 import org.motechproject.commcare.domain.CommcareForm;
+import org.motechproject.commcare.domain.CommcareUser;
 import org.motechproject.commcare.domain.FormValueElement;
+import org.motechproject.commcare.service.CommcareUserService;
 import org.motechproject.mapper.adapters.ActivityFormAdapter;
 import org.motechproject.mapper.adapters.mappings.MRSActivity;
 import org.motechproject.mapper.adapters.mappings.OpenMRSRegistrationActivity;
@@ -44,6 +46,10 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
 
     @Autowired
     private PatientAdapter mrsPatientAdapter;
+
+    @Autowired
+    private CommcareUserService userService;
+
     /* CHECKSTYLE:OFF */
     @Override
     public void adaptForm(CommcareForm form, MRSActivity activity) {
@@ -190,29 +196,28 @@ public class AllRegistrationsAdapter implements ActivityFormAdapter {
         if (facilityName != null) {
             facility = (OpenMRSFacility) openMrsUtil.findFacility(facilityName);
         } else {
-            facilityName = openMrsUtil.getFacility(form);
 
-            // if (registrationActivity.getFacilityScheme() != null &&
-            // "commcareUser".equals(registrationActivity.getFacilityScheme().get("type")))
-            // {
-            // String facilityUserFieldName =
-            // registrationActivity.getFacilityScheme().get("fieldName");
-            // if (facilityUserFieldName != null) {
-            // String userId = form.getMetadata().get("userID");
-            // logger.info("Retreiving user: " + userId);
-            // CommcareUser user = userService.getCommcareUserById(userId);
-            // if (user != null) {
-            // logger.info("User: " + user.getId() + " is being used");
-            // if (user.getUserData() != null) {
-            // facilityName = user.getUserData().get(facilityUserFieldName);
-            // }
-            // } else {
-            // logger.info("Could not find user: " + userId);
-            // }
-            // }
-            // } else {
-            // logger.info("No facility scheme defined");
-            // }
+            if (registrationActivity.getFacilityScheme() != null &&
+                    "commcareUser".equals(registrationActivity.getFacilityScheme().get("type")))
+            {
+                String facilityUserFieldName =
+                        registrationActivity.getFacilityScheme().get("fieldName");
+                if (facilityUserFieldName != null) {
+                    String userId = form.getMetadata().get("userID");
+                    logger.info("Retreiving user: " + userId);
+                    CommcareUser user = userService.getCommcareUserById(userId);
+                    if (user != null) {
+                        logger.info("User: " + user.getId() + " is being used");
+                        if (user.getUserData() != null) {
+                            facilityName = user.getUserData().get(facilityUserFieldName);
+                        }
+                    } else {
+                        logger.info("Could not find user: " + userId);
+                    }
+                }
+            } else {
+                logger.info("No facility scheme defined");
+            }
         }
 
         if (facilityName == null) {

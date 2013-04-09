@@ -33,6 +33,10 @@ public final class FormMappingConstants {
     public static final String FACILITY_NAME_FIELD = "facility";
     public static final String DEFAULT_FACILITY = "Unknown Location";
 
+    //Destination decides which values are required during the mapping process, configuration is in mappingConfiguration.properties
+    public static final String DESTINATION_COUCHDB = "couchdb";
+    public static final String DESTINATION_OPENMRS = "openmrs";
+
     private FormMappingConstants() {
     }
 }

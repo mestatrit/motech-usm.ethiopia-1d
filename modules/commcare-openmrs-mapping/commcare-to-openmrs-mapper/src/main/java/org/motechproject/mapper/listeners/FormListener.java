@@ -30,9 +30,7 @@ public class FormListener {
 
         Map<String, Object> parameters = event.getParameters();
 
-//        String receivedOn = (String) parameters.get(EventDataKeys.RECEIVED_ON);
         String formId = (String) parameters.get(EventDataKeys.FORM_ID);
-//        List<String> caseIds = (List<String>) parameters.get(EventDataKeys.CASE_IDS);
 
         logger.info("Received form: " + formId);
 

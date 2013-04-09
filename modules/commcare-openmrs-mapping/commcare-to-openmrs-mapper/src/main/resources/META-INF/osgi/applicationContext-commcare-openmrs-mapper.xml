@@ -30,4 +30,13 @@
 
     <osgi:reference id="eventListenerRegistry" interface="org.motechproject.event.listener.EventListenerRegistryService"/>
 
+    <bean id="commcareMapperSettings" class="org.motechproject.server.config.SettingsFacade" autowire="byType">
+        <property name="configFiles">
+            <list>
+                <value>classpath:mappingConfiguration.properties</value>
+            </list>
+        </property>
+        <property name="moduleName" value="commcare-form-mapper"/>
+    </bean>
+
 </beans>
