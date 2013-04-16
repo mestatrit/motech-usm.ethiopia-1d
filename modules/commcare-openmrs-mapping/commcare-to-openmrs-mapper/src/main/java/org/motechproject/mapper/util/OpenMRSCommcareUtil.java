@@ -10,20 +10,20 @@ import org.motechproject.commcare.domain.CaseInfo;
 import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.service.CommcareCaseService;
 import org.motechproject.mapper.constants.FormMappingConstants;
-import org.motechproject.mrs.domain.Encounter;
-import org.motechproject.mrs.domain.Facility;
-import org.motechproject.mrs.domain.Patient;
-import org.motechproject.mrs.domain.Person;
-import org.motechproject.mrs.domain.User;
+import org.motechproject.mrs.domain.MRSEncounter;
+import org.motechproject.mrs.domain.MRSFacility;
+import org.motechproject.mrs.domain.MRSPatient;
+import org.motechproject.mrs.domain.MRSPerson;
+import org.motechproject.mrs.domain.MRSUser;
 import org.motechproject.mrs.exception.MRSException;
-import org.motechproject.mrs.model.EncounterDto;
-import org.motechproject.mrs.model.ObservationDto;
-import org.motechproject.mrs.model.PersonDto;
-import org.motechproject.mrs.model.ProviderDto;
-import org.motechproject.mrs.services.EncounterAdapter;
-import org.motechproject.mrs.services.FacilityAdapter;
-import org.motechproject.mrs.services.PatientAdapter;
-import org.motechproject.mrs.services.UserAdapter;
+import org.motechproject.mrs.model.MRSEncounterDto;
+import org.motechproject.mrs.model.MRSObservationDto;
+import org.motechproject.mrs.model.MRSPersonDto;
+import org.motechproject.mrs.model.MRSProviderDto;
+import org.motechproject.mrs.services.MRSEncounterAdapter;
+import org.motechproject.mrs.services.MRSFacilityAdapter;
+import org.motechproject.mrs.services.MRSPatientAdapter;
+import org.motechproject.mrs.services.MRSUserAdapter;
 import org.motechproject.server.config.SettingsFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,24 +38,24 @@ public class OpenMRSCommcareUtil {
     private Logger logger = LoggerFactory.getLogger("commcare-openmrs-mapper");
 
     @Autowired
-    private EncounterAdapter mrsEncounterAdapter;
+    private MRSEncounterAdapter mrsEncounterAdapter;
 
     @Autowired
     private CommcareCaseService caseService;
 
     @Autowired
-    private FacilityAdapter mrsFacilityAdapter;
+    private MRSFacilityAdapter mrsFacilityAdapter;
 
     @Autowired
-    private UserAdapter mrsUserAdapter;
+    private MRSUserAdapter mrsUserAdapter;
 
     @Autowired
-    private PatientAdapter mrsPatientAdapter;
+    private MRSPatientAdapter mrsPatientAdapter;
 
     @Autowired
     private SettingsFacade settings;
 
-    public Person findProvider(String providerName) {
+    public MRSPerson findProvider(String providerName) {
         //CouchDB module does not have a user service yet
         String destination = settings.getProperties(MAPPING_CONFIGURATION_FILE_NAME).getProperty("destination");
 
@@ -63,7 +63,7 @@ public class OpenMRSCommcareUtil {
             return null;
         }
 
-        User provider = mrsUserAdapter.getUserByUserName(providerName);
+        MRSUser provider = mrsUserAdapter.getUserByUserName(providerName);
 
         if (provider == null) {
             return null;
@@ -72,8 +72,8 @@ public class OpenMRSCommcareUtil {
         return provider.getPerson();
     }
 
-    public Facility findFacility(String location) {
-        List<? extends Facility> facilities = null;
+    public MRSFacility findFacility(String location) {
+        List<? extends MRSFacility> facilities = null;
         try {
             facilities = mrsFacilityAdapter.getFacilities(location);
         } catch (MRSException e) {
@@ -97,17 +97,17 @@ public class OpenMRSCommcareUtil {
         return caseInfo.getFieldValues().get(openMrsPatientIdentifier);
     }
 
-    public void addEncounter(Patient patient, Set<ObservationDto> observations, String providerName,
+    public void addEncounter(MRSPatient patient, Set<MRSObservationDto> observations, String providerName,
             Date encounterDate, String facilityName, String encounterType) {
 
-        Facility facility = findFacility(facilityName);
+        MRSFacility facility = findFacility(facilityName);
 
-        ProviderDto provider = new ProviderDto();
+        MRSProviderDto provider = new MRSProviderDto();
 
-        Person providerPerson = findProvider(providerName);
+        MRSPerson providerPerson = findProvider(providerName);
 
         if (providerPerson == null) {
-            providerPerson = new PersonDto();
+            providerPerson = new MRSPersonDto();
             providerPerson.setPersonId("UnknownProvider");
         }
 
@@ -116,7 +116,7 @@ public class OpenMRSCommcareUtil {
 
         logger.info("Using provider: " + provider);
 
-        Encounter mrsEncounter = new EncounterDto();
+        MRSEncounter mrsEncounter = new MRSEncounterDto();
         mrsEncounter.setFacility(facility);
         mrsEncounter.setDate(new DateTime(encounterDate));
         mrsEncounter.setPatient(patient);
@@ -133,7 +133,7 @@ public class OpenMRSCommcareUtil {
         }
     }
 
-    public Patient getPatientByMotechId(String motechId) {
+    public MRSPatient getPatientByMotechId(String motechId) {
         return mrsPatientAdapter.getPatientByMotechId(motechId);
     }
 

@@ -17,8 +17,8 @@ import org.motechproject.mapper.adapters.mappings.ObservationMapping;
 import org.motechproject.mapper.adapters.mappings.OpenMRSEncounterActivity;
 import org.motechproject.mapper.constants.FormMappingConstants;
 import org.motechproject.mapper.util.OpenMRSCommcareUtil;
-import org.motechproject.mrs.domain.Patient;
-import org.motechproject.mrs.model.ObservationDto;
+import org.motechproject.mrs.domain.MRSPatient;
+import org.motechproject.mrs.model.MRSObservationDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
 
         String motechId = openMrsUtil.retrieveId(idScheme, rootElement);
 
-        Patient patient = openMrsUtil.getPatientByMotechId(motechId);
+        MRSPatient patient = openMrsUtil.getPatientByMotechId(motechId);
 
         if (patient == null) {
             logger.info("Patient " + motechId + " does not exist, failed to handle form " + form.getId());
@@ -58,7 +58,7 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
 
         Date dateReceived = DateTime.parse(form.getMetadata().get(FormMappingConstants.FORM_TIME_END)).toDate();
 
-        Set<ObservationDto> observations = generateObservations(form.getForm(),
+        Set<MRSObservationDto> observations = generateObservations(form.getForm(),
                 encounterActivity.getObservationMappings());
 
         logger.info("# of observations: " + observations.size());
@@ -99,8 +99,8 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
     }
 
     /* CHECKSTYLE:OFF */
-    private Set<ObservationDto> generateObservations(FormValueElement form, List<ObservationMapping> observationMappings) {
-        Set<ObservationDto> observations = new HashSet<ObservationDto>();
+    private Set<MRSObservationDto> generateObservations(FormValueElement form, List<ObservationMapping> observationMappings) {
+        Set<MRSObservationDto> observations = new HashSet<MRSObservationDto>();
         for (ObservationMapping obs : observationMappings) {
             String conceptId = obs.getConceptId();
             if (conceptId != null && conceptId.trim().length() > 0) {
@@ -130,8 +130,8 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
     }
     /* CHECKSTYLE:ON */
 
-    private static Collection<ObservationDto> addObservations(ObservationMapping obs, FormValueElement form) {
-        Set<ObservationDto> observations = new HashSet<ObservationDto>();
+    private static Collection<MRSObservationDto> addObservations(ObservationMapping obs, FormValueElement form) {
+        Set<MRSObservationDto> observations = new HashSet<MRSObservationDto>();
 
         if (FormMappingConstants.LIST_TYPE.equals(obs.getType())) {
             observations.addAll(adaptList(obs, form));
@@ -142,11 +142,11 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
                 mappedValue = valueMappings.get(form.getValue());
             }
             String conceptName = obs.getConceptName();
-            ObservationDto observation;
+            MRSObservationDto observation;
             if (mappedValue != null) {
-                observation = new ObservationDto(new Date(), conceptName, mappedValue);
+                observation = new MRSObservationDto(new Date(), conceptName, mappedValue);
             } else {
-                observation = new ObservationDto(new Date(), conceptName, form.getValue());
+                observation = new MRSObservationDto(new Date(), conceptName, form.getValue());
             }
             observations.add(observation);
         }
@@ -154,8 +154,8 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
     }
 
 
-    private static Collection<? extends ObservationDto> adaptList(ObservationMapping obs, FormValueElement form) {
-        Set<ObservationDto> observations = new HashSet<ObservationDto>();
+    private static Collection<? extends MRSObservationDto> adaptList(ObservationMapping obs, FormValueElement form) {
+        Set<MRSObservationDto> observations = new HashSet<MRSObservationDto>();
 
         String[] values = form.getValue().split(FormMappingConstants.LIST_DELIMITER);
         Map<String, String> valueMappings = obs.getValues();
@@ -167,11 +167,11 @@ public class AllEncountersAdapter implements ActivityFormAdapter {
             if (valueMappings != null) {
                 mappedValue = valueMappings.get(value);
             }
-            ObservationDto observation;
+            MRSObservationDto observation;
             if (mappedValue != null) {
-                observation = new ObservationDto(new Date(), conceptName, mappedValue);
+                observation = new MRSObservationDto(new Date(), conceptName, mappedValue);
             } else {
-                observation = new ObservationDto(new Date(), conceptName, value);
+                observation = new MRSObservationDto(new Date(), conceptName, value);
             }
             observations.add(observation);
         }

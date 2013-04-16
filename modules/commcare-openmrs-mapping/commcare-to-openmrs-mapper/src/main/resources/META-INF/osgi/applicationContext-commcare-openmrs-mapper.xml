@@ -18,15 +18,15 @@
 
     <osgi:reference id="eventRelayOsgi" cardinality="0..1" interface="org.motechproject.event.listener.EventRelay" />
 
-    <osgi:reference id="personAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.PatientAdapter" />
+    <osgi:reference id="personAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSPatientAdapter" />
 
-    <osgi:reference id="encounterAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.EncounterAdapter" />
+    <osgi:reference id="encounterAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSEncounterAdapter" />
 
-    <osgi:reference id="userAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.UserAdapter" />
+    <osgi:reference id="userAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSUserAdapter" />
 
-    <osgi:reference id="observationAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.ObservationAdapter" />
+    <osgi:reference id="observationAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSObservationAdapter" />
 
-    <osgi:reference id="facilityAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.FacilityAdapter" />
+    <osgi:reference id="facilityAdapterOsgi" cardinality="0..1" interface="org.motechproject.mrs.services.MRSFacilityAdapter" />
 
     <osgi:reference id="eventListenerRegistry" interface="org.motechproject.event.listener.EventListenerRegistryService"/>
 
